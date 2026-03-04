@@ -95,8 +95,9 @@
                 <i data-lucide="layout-dashboard" class="w-5 h-5 group-hover:text-blue-600 transition-colors"></i> <span
                     class="hidden xl:block">Dashboard</span>
             </a>
-            <a href="#" onclick="switchTab('students')" id="navStudents" class="flex items-center lg:justify-start justify-center gap-3 px-3 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors font-medium text-sm group">
-                <i data-lucide="users" class="w-5 h-5 group-hover:text-blue-600 transition-colors"></i> 
+            <a href="#" onclick="switchTab('students')" id="navStudents"
+                class="flex items-center lg:justify-start justify-center gap-3 px-3 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors font-medium text-sm group">
+                <i data-lucide="users" class="w-5 h-5 group-hover:text-blue-600 transition-colors"></i>
                 <span class="hidden lg:block">Students</span>
             </a>
             <a href="#" onclick="switchTab('pending')" id="navPending"
@@ -118,14 +119,33 @@
             class="h-16 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center px-8 flex-shrink-0 transition-colors duration-300">
             <h1 class="font-semibold text-lg text-slate-800 dark:text-white">Live Verification</h1>
             <div class="flex items-center gap-5">
-                <button class="relative text-slate-500 hover:text-blue-600 transition-colors focus:outline-none">
-                    <i data-lucide="bell" class="w-5 h-5"></i>
-                    <span id="notificationBadge" class="hidden absolute -top-1 -right-1 flex h-2.5 w-2.5">
-                        <span
-                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
-                    </span>
-                </button>
+                <div class="relative">
+                    <button id="bellBtn" onclick="toggleNotifications()"
+                        class="relative text-slate-500 hover:text-blue-600 transition-colors focus:outline-none">
+                        <i data-lucide="bell" class="w-5 h-5"></i>
+                        <span id="notificationBadge"
+                            class="hidden absolute -top-1.5 -right-1.5 h-4 w-4 rounded-full bg-red-500 text-[10px] font-bold text-white flex items-center justify-center border border-white dark:border-slate-900">0</span>
+                    </button>
+                    <div id="notificationPanel"
+                        class="hidden absolute right-0 mt-3 w-80 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 z-[9999] overflow-hidden">
+                        <div
+                            class="p-3 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50">
+                            <span class="font-bold text-sm text-slate-800 dark:text-slate-200">Notifications</span>
+                            <button onclick="markAllRead()" class="text-xs text-blue-600 hover:underline">Mark all
+                                read</button>
+                        </div>
+                        <div id="notificationList"
+                            class="max-h-64 overflow-y-auto custom-scrollbar divide-y divide-slate-100 dark:divide-slate-700">
+                            <div class="p-4 text-center text-sm text-slate-500">No new notifications</div>
+                        </div>
+                        <div
+                            class="p-2 border-t border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
+                            <button onclick="loadNewData()"
+                                class="w-full py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">Load
+                                New Data</button>
+                        </div>
+                    </div>
+                </div>
 
                 <button id="theme-toggle"
                     class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all border border-slate-200 dark:border-slate-700 focus:outline-none">
@@ -216,46 +236,52 @@
         </div>
 
         <div id="studentsView" class="flex-1 flex flex-col p-8 overflow-hidden hidden">
-            
+
             <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-6 gap-4 flex-shrink-0">
                 <div>
                     <h2 class="text-xl font-bold text-slate-900 dark:text-white">Verified Students Database</h2>
-                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Manage final records, admit status, and serial numbers.</p>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Manage final records, admit status, and
+                        serial numbers.</p>
                 </div>
-                
-                <div class="flex items-center gap-3 w-full lg:w-auto">
+
+                <div class="flex items-center gap-3 w-full lg:w-auto flex-wrap">
+                    <button onclick="bulkAction('Release')"
+                        class="px-3 py-1.5 text-sm font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg hover:bg-emerald-100 hidden bulk-btn">Release
+                        Admit</button>
+                    <button onclick="bulkAction('Block')"
+                        class="px-3 py-1.5 text-sm font-medium bg-red-50 text-red-700 border border-red-200 rounded-lg hover:bg-red-100 hidden bulk-btn">Block</button>
+                    <button onclick="exportData()"
+                        class="px-3 py-1.5 text-sm font-medium bg-slate-100 text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-200 flex items-center gap-1"><i
+                            data-lucide="download" class="w-4 h-4"></i> Export</button>
+
                     <div class="relative w-full lg:w-64">
-                        <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400"></i>
-                        <input type="text" id="searchStudent" placeholder="Search ID or Name..." onkeyup="filterStudentsTable()" 
-                               class="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <i data-lucide="search"
+                            class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                        <input type="text" id="searchStudent" placeholder="Search ID or Name..."
+                            onkeyup="filterStudentsTable()"
+                            class="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
-                    <button onclick="fetchFinalStudents()" id="refreshBtnStudents" class="flex items-center gap-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 text-slate-700 dark:text-slate-300 px-4 py-2 rounded-xl text-sm font-medium transition-all shadow-sm whitespace-nowrap">
+                    <button onclick="fetchFinalStudents()" id="refreshBtnStudents"
+                        class="flex items-center gap-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 text-slate-700 dark:text-slate-300 px-4 py-2 rounded-xl text-sm font-medium shadow-sm">
                         <i data-lucide="refresh-cw" class="w-4 h-4"></i>
                     </button>
                 </div>
             </div>
 
-            <div class="flex items-center gap-2 mb-4 overflow-x-auto scrollbar-hide pb-2" id="classFilters">
-                <button onclick="applyClassFilter('All', this)" class="class-filter-btn filter-active px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap">All</button>
-                <button onclick="applyClassFilter('1', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-100">Class 1</button>
-                <button onclick="applyClassFilter('2', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-100">Class 2</button>
-                <button onclick="applyClassFilter('3', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-100">Class 3</button>
-                <button onclick="applyClassFilter('4', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-100">Class 4</button>
-                <button onclick="applyClassFilter('5', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-100">Class 5</button>
-                <button onclick="applyClassFilter('6', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-100">Class 6</button>
-                <button onclick="applyClassFilter('7', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-100">Class 7</button>
-                <button onclick="applyClassFilter('8', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-100">Class 8</button>
-                <button onclick="applyClassFilter('9', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-100">Class 9</button>
-                <button onclick="applyClassFilter('10', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-100">Class 10</button>
-                <button onclick="applyClassFilter('11', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-100">Class 11</button>
-                <button onclick="applyClassFilter('12', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-100">Class 12</button>
-            </div>
-
-            <div class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm flex flex-col min-h-0 overflow-hidden transition-colors duration-300 relative">
+            <div
+                class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm flex flex-col min-h-0 overflow-hidden transition-colors duration-300 relative">
                 <div class="flex-1 overflow-x-auto overflow-y-auto scrollbar-hide relative">
                     <table class="w-full text-left border-collapse min-w-max" id="studentsTableElement">
-                        <thead class="sticky top-0 z-20 bg-slate-50/95 dark:bg-slate-800/95 backdrop-blur shadow-sm">
-                            <tr class="border-b border-slate-200 dark:border-slate-800 text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold">
+                        <thead class="sticky top-0 z-30 bg-slate-50/95 dark:bg-slate-800/95 backdrop-blur shadow-sm">
+                            <tr
+                                class="border-b border-slate-200 dark:border-slate-800 text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold">
+                                <th class="px-4 py-3 w-10 text-center"><input type="checkbox" id="selectAll"
+                                        onclick="toggleSelectAll(this)"
+                                        class="rounded text-blue-600 focus:ring-blue-500"></th>
+                                <th class="px-4 py-3">Date & Time</th>
+                                <th
+                                    class="px-4 py-3 sticky left-0 z-20 bg-slate-50/95 dark:bg-slate-800/95 shadow-[4px_0_10px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-700">
+                                    Application ID</th>
                                 <th class="px-4 py-3">Student ID</th>
                                 <th class="px-4 py-3">Name</th>
                                 <th class="px-4 py-3">Class</th>
@@ -264,12 +290,19 @@
                                 <th class="px-4 py-3">DOB</th>
                                 <th class="px-4 py-3">Father's Name</th>
                                 <th class="px-4 py-3">Phone</th>
-                                <th class="px-4 py-3 border-x border-slate-200 dark:border-slate-800 bg-amber-50/50 dark:bg-amber-900/10 text-amber-700 dark:text-amber-500">Admit Status</th>
-                                <th class="px-4 py-3 bg-blue-50/50 dark:bg-blue-900/10 text-blue-700 dark:text-blue-400">Serial No.</th>
+                                <th class="px-4 py-3 border-r border-slate-200 dark:border-slate-800">Email ID</th>
+                                <th
+                                    class="px-4 py-3 border-x border-slate-200 dark:border-slate-800 bg-amber-50/50 dark:bg-amber-900/10 text-amber-700 dark:text-amber-500">
+                                    Admit Status</th>
+                                <th
+                                    class="px-4 py-3 bg-blue-50/50 dark:bg-blue-900/10 text-blue-700 dark:text-blue-400">
+                                    HY Serial No.</th>
+                                <th
+                                    class="px-4 py-3 bg-blue-50/50 dark:bg-blue-900/10 text-blue-700 dark:text-blue-400">
+                                    FY Serial No.</th>
                             </tr>
                         </thead>
                         <tbody id="studentsTableBody" class="divide-y divide-slate-200 dark:divide-slate-800 text-sm">
-                            <tr><td colspan="10" class="px-4 py-12 text-center text-slate-500">Loading student database...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -319,28 +352,48 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        const pageLoadTime = Date.now();
-        let newAppCount = 0;
+        let notifications = [];
+        let unreadCount = 0;
 
-        const notificationsRef = db.ref('notifications').orderByChild('timestamp').startAt(pageLoadTime);
+        function toggleNotifications() {
+            document.getElementById('notificationPanel').classList.toggle('hidden');
+        }
+
+        function markAllRead() {
+            unreadCount = 0;
+            updateBadge();
+            document.getElementById('notificationList').querySelectorAll('.bg-blue-50').forEach(el => {
+                el.classList.remove('bg-blue-50', 'dark:bg-blue-900/20');
+            });
+        }
+
+        function updateBadge() {
+            const badge = document.getElementById('notificationBadge');
+            if(unreadCount > 0) {
+                badge.innerText = unreadCount;
+                badge.classList.remove('hidden');
+            } else { badge.classList.add('hidden'); }
+        }
 
         notificationsRef.on('child_added', (snapshot) => {
             const data = snapshot.val();
-            showToast(`New application submitted by ${data.studentName}`, 'info');
-            document.getElementById('notificationBadge').classList.remove('hidden');
+            notifications.unshift(data); // Add to top
+            unreadCount++;
+            updateBadge();
+            showToast(`New application: ${data.studentName}`, 'info');
 
-            newAppCount++;
-            const alertBtn = document.getElementById('newDataAlert');
-            const alertText = document.getElementById('newDataText');
-
-            alertText.innerText = `${newAppCount} New Application${newAppCount > 1 ? 's' : ''}`;
-            alertBtn.classList.remove('hidden');
+            const list = document.getElementById('notificationList');
+            if(notifications.length === 1) list.innerHTML = ''; // Clear empty message
+            
+            const item = document.createElement('div');
+            item.className = "p-3 bg-blue-50 dark:bg-blue-900/20 border-b border-slate-100 dark:border-slate-700 cursor-pointer";
+            item.innerHTML = `<p class="text-sm font-semibold text-slate-800 dark:text-slate-200">${data.studentName}</p><p class="text-xs text-slate-500">${data.appId}</p>`;
+            list.prepend(item);
         });
 
         function loadNewData() {
-            document.getElementById('newDataAlert').classList.add('hidden');
-            document.getElementById('notificationBadge').classList.add('hidden');
-            newAppCount = 0;
+            toggleNotifications();
+            markAllRead();
             fetchData();
         }
 
@@ -369,13 +422,51 @@
             }
         });
 
+        function toggleSelectAll(source) {
+            const checkboxes = document.querySelectorAll('.student-checkbox');
+            checkboxes.forEach(cb => cb.checked = source.checked);
+            toggleBulkButtons();
+        }
+
+        function toggleBulkButtons() {
+            const anyChecked = document.querySelectorAll('.student-checkbox:checked').length > 0;
+            document.querySelectorAll('.bulk-btn').forEach(btn => {
+                anyChecked ? btn.classList.remove('hidden') : btn.classList.add('hidden');
+            });
+        }
+
+        function bulkAction(status) {
+            const checkedBoxes = document.querySelectorAll('.student-checkbox:checked');
+            if(checkedBoxes.length === 0) return;
+            if(!confirm(`Are you sure you want to change Admit Status to "${status}" for ${checkedBoxes.length} students?`)) return;
+
+            // Loop and save locally & remotely (simplified)
+            checkedBoxes.forEach(cb => {
+                const tr = cb.closest('tr');
+                const sId = tr.getAttribute('data-sid');
+                const sClass = tr.getAttribute('data-sclass');
+                const btnObj = { closest: () => tr.querySelector('[data-field="admitStatus"]'), innerHTML: '' };
+                
+                // Force update UI locally instantly
+                tr.querySelector('.cell-text').innerText = status;
+                
+                // Send background fetch
+                fetch(FINAL_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: 'update_cell', studentId: sId, studentClass: sClass, field: 'admitStatus', value: status })
+                });
+            });
+            showToast(`Bulk updated to ${status}`, 'success');
+        }
+
         function switchTab(tabName) {
             document.getElementById('pendingView').classList.add('hidden');
             document.getElementById('studentsView').classList.add('hidden');
-            
+
             document.getElementById('navPending').classList.remove('bg-blue-50', 'dark:bg-blue-900/20', 'text-blue-700', 'dark:text-blue-400');
             document.getElementById('navPending').classList.add('text-slate-600', 'dark:text-slate-400');
-            
+
             document.getElementById('navStudents').classList.remove('bg-blue-50', 'dark:bg-blue-900/20', 'text-blue-700', 'dark:text-blue-400');
             document.getElementById('navStudents').classList.add('text-slate-600', 'dark:text-slate-400');
 
@@ -486,7 +577,7 @@
         async function fetchFinalStudents() {
             const tbody = document.getElementById('studentsTableBody');
             const btn = document.getElementById('refreshBtnStudents');
-            btn.disabled = true; 
+            btn.disabled = true;
             btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i>`;
             lucide.createIcons({ root: btn });
 
@@ -501,7 +592,7 @@
             } catch (error) {
                 showToast('Failed to load students', 'error');
             } finally {
-                btn.disabled = false; 
+                btn.disabled = false;
                 btn.innerHTML = `<i data-lucide="refresh-cw" class="w-4 h-4"></i>`;
                 lucide.createIcons({ root: btn });
             }
@@ -531,23 +622,46 @@
         function renderFinalTable(dataArray) {
             const tbody = document.getElementById('studentsTableBody');
             tbody.innerHTML = '';
+            document.getElementById('selectAll').checked = false;
+            toggleBulkButtons();
+
             if (!dataArray || dataArray.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" class="px-4 py-12 text-center text-slate-500">No verified students found.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="15" class="px-4 py-12 text-center text-slate-500">No verified students found.</td></tr>`;
                 return;
             }
 
             dataArray.forEach(row => {
+                const dbType = 'final'; 
+                const uniqueKey = row.studentId; 
+                
+                // Fix Date string parsing to standard format if needed
+                let cleanDob = row.dob;
+                if(cleanDob.includes('T')) cleanDob = new Date(cleanDob).toLocaleDateString('en-GB');
+
+                let cleanTimestamp = row.timestamp;
+                if(cleanTimestamp.includes('T')) cleanTimestamp = new Date(cleanTimestamp).toLocaleDateString('en-GB');
+
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/20 transition-colors group/row";
+                tr.setAttribute('data-sid', row.studentId);
+                tr.setAttribute('data-sclass', row.studentClass);
+
                 tr.innerHTML = `
-                    <td class="px-4 py-3 whitespace-nowrap font-medium text-blue-600 dark:text-blue-400">${row.studentId}</td>
-                    <td class="px-4 py-3">${escapeHtml(row.studentName)}</td>
-                    <td class="px-4 py-3">${escapeHtml(row.studentClass)}</td>
-                    <td class="px-4 py-3">${escapeHtml(row.section)}</td>
-                    <td class="px-4 py-3">${escapeHtml(row.rollNo)}</td>
-                    <td class="px-4 py-3">${escapeHtml(row.dob)}</td>
-                    <td class="px-4 py-3">${escapeHtml(row.fatherName)}</td>
-                    <td class="px-4 py-3">${escapeHtml(row.phone)}</td>
+                    <td class="px-4 py-3 text-center"><input type="checkbox" onchange="toggleBulkButtons()" class="student-checkbox rounded text-blue-600 focus:ring-blue-500"></td>
+                    <td class="px-4 py-3 whitespace-nowrap text-slate-500">${cleanTimestamp}</td>
+                    <td class="px-4 py-3 whitespace-nowrap font-medium text-blue-600 bg-white dark:bg-slate-900 sticky left-0 z-10 shadow-[4px_0_10px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-700">${row.applicationId}</td>
+                    <td class="px-4 py-3 whitespace-nowrap font-bold text-slate-700">${row.studentId}</td>
+                    ${editableCell(row.studentName, 'studentName', uniqueKey, dbType, row.studentClass)}
+                    ${editableCell(row.studentClass, 'studentClass', uniqueKey, dbType, row.studentClass)}
+                    ${editableCell(row.section, 'section', uniqueKey, dbType, row.studentClass)}
+                    ${editableCell(row.rollNo, 'rollNo', uniqueKey, dbType, row.studentClass)}
+                    ${editableCell(cleanDob, 'dob', uniqueKey, dbType, row.studentClass)}
+                    ${editableCell(row.fatherName, 'fatherName', uniqueKey, dbType, row.studentClass)}
+                    ${editableCell(row.phone, 'phone', uniqueKey, dbType, row.studentClass)}
+                    ${editableCell(row.email, 'email', uniqueKey, dbType, row.studentClass)}
+                    ${editableCell(row.admitStatus || 'Not Release', 'admitStatus', uniqueKey, dbType, row.studentClass)}
+                    ${editableCell(row.hySerial || '-', 'hySerial', uniqueKey, dbType, row.studentClass)}
+                    ${editableCell(row.fySerial || '-', 'fySerial', uniqueKey, dbType, row.studentClass)}
                 `;
                 tbody.appendChild(tr);
             });
@@ -644,7 +758,7 @@
             lucide.createIcons();
         }
 
-        window.enableEdit = function(tdElement, rowId, fieldKey, dbType, studentClass) {
+        window.enableEdit = function (tdElement, rowId, fieldKey, dbType, studentClass) {
             if (tdElement.classList.contains('is-editing')) return;
             tdElement.classList.add('is-editing');
             tdElement.classList.remove('cursor-pointer');
@@ -670,12 +784,12 @@
             input.setSelectionRange(input.value.length, input.value.length);
         };
 
-        window.cancelEdit = function(buttonElement, originalValue, rowId, fieldKey, dbType, studentClass) {
+        window.cancelEdit = function (buttonElement, originalValue, rowId, fieldKey, dbType, studentClass) {
             const tdElement = buttonElement.closest('td');
             restoreCell(tdElement, originalValue, rowId, fieldKey, dbType, studentClass);
         };
 
-        window.saveEdit = async function(buttonElement, rowId, fieldKey, dbType, studentClass) {
+        window.saveEdit = async function (buttonElement, rowId, fieldKey, dbType, studentClass) {
             const tdElement = buttonElement.closest('td');
             const input = tdElement.querySelector('input');
             let newValue = input.value.trim();
@@ -690,9 +804,9 @@
 
             const targetUrl = dbType === 'pending' ? PENDING_SCRIPT_URL : FINAL_SCRIPT_URL;
             const payload = { action: 'update_cell', field: fieldKey, value: newValue };
-            
-            if(dbType === 'pending') payload.appId = rowId;
-            if(dbType === 'final') { payload.studentId = rowId; payload.studentClass = studentClass; }
+
+            if (dbType === 'pending') payload.appId = rowId;
+            if (dbType === 'final') { payload.studentId = rowId; payload.studentClass = studentClass; }
 
             try {
                 const response = await fetch(targetUrl, {
