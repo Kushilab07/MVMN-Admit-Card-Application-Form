@@ -790,23 +790,21 @@
 
             try {
                 if (pendingAction === 'approve') {
-                    // 1. Find the student data from our global array
-                    const studentData = window.currentApplications.find(row => row.applicationId === pendingAppId);
-                    if (!studentData) throw new Error("Could not find student data in memory.");
+                    // Make a clean copy of the data so we don't corrupt the memory array
+                    const originalData = window.currentApplications.find(row => row.applicationId === pendingAppId);
+                    if (!originalData) throw new Error("Could not find student data.");
+                    const studentData = { ...originalData, action: 'approve_student' };
 
-                    // Add the correct action flag
-                    studentData.action = 'approve_student';
-
-                    // 2. Send to FINAL Script to save and email
+                    // Send to FINAL Script to save and email
                     const finalRes = await fetch(FINAL_SCRIPT_URL, {
                         method: 'POST',
                         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                         body: JSON.stringify(studentData)
                     });
                     const finalResult = await finalRes.json();
-                    if (finalResult.status !== 'success') throw new Error(finalResult.message);
+                    if (finalResult.status !== 'success') throw new Error("Failed saving to Final DB: " + finalResult.message);
 
-                    // 3. If successful, tell PENDING Script to delete the row
+                    // If successful, tell PENDING Script to update history status
                     await fetch(PENDING_SCRIPT_URL, {
                         method: 'POST',
                         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -814,7 +812,7 @@
                     });
 
                 } else if (pendingAction === 'reject') {
-                    // Send rejection to PENDING Script (it handles email and deletion)
+                    // Send rejection to PENDING Script
                     const rejectRes = await fetch(PENDING_SCRIPT_URL, {
                         method: 'POST',
                         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -824,17 +822,13 @@
                     if (rejectResult.status !== 'success') throw new Error(rejectResult.message);
                 }
 
-                // UI Cleanup on Success
                 showToast(`Application successfully ${pendingAction}d!`, 'success');
                 closeConfirmModal();
-
-                // Remove row from table smoothly
-                // Refresh data to show new history badge
-                fetchData();
+                fetchData(); // Instantly refresh the table to show the new History Badge
 
             } catch (err) {
                 console.error(err);
-                showToast(`Failed to process application.`, 'error');
+                showToast(err.message || 'Failed to process application.', 'error');
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = originalText;
