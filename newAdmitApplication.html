@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MVM Nalbari - Online Application</title>
+    <style>
+        :root {
+            --primary-blue: #000080;
+            --secondary-blue: #1a237e;
+            --accent-red: #b71c1c;
+            --success-green: #28a745;
+            --text-main: #333333;
+            --text-light: #666666;
+            --bg-body: #f4f7f9;
+            --border-color: #d1d9e0;
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px 10px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .page-container {
+            width: 100%;
+            max-width: 900px;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-container,
+        .success-page-content {
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid #e1e8ed;
+            position: relative;
+            width: 100%;
+        }
+
+        .form-container::before,
+        .success-page-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background-color: var(--primary-blue);
+            border-radius: 12px 12px 0 0;
+        }
+
+        .form-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #eee;
+            gap: 15px;
+        }
+
+        .header-logo {
+            width: 80px;
+            height: auto;
+            flex-shrink: 0;
+        }
+
+        .header-text {
+            flex: 1;
+            text-align: center;
+        }
+
+        .header-text h1 {
+            color: var(--primary-blue);
+            margin: 0;
+            font-size: 1.4em;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+
+        .school-address {
+            color: var(--text-light);
+            font-size: 0.8em;
+            margin: 5px 0 10px 0;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .header-text h2 {
+            color: var(--accent-red);
+            margin: 5px 0 0 0;
+            font-size: 1.1em;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding-top: 8px;
+            border-top: 1px solid #f0f0f0;
+            display: inline-block;
+        }
+
+        .instructions {
+            background-color: #f8f9fb;
+            border-left: 4px solid var(--primary-blue);
+            padding: 15px 20px;
+            margin-bottom: 30px;
+            border-radius: 4px;
+        }
+
+        .instructions h3 {
+            color: var(--primary-blue);
+            margin: 0 0 10px 0;
+            font-size: 0.95em;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .instructions ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .instructions li {
+            margin-bottom: 6px;
+            color: #555;
+            font-size: 0.85em;
+            position: relative;
+            padding-left: 15px;
+        }
+
+        .instructions li::before {
+            content: '\2022';
+            position: absolute;
+            left: 0;
+            color: var(--primary-blue);
+            font-weight: bold;
+        }
+
+        .section-title {
+            color: var(--primary-blue);
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 8px;
+            margin: 30px 0 20px 0;
+            font-size: 1.05em;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 600;
+            color: #444;
+            margin-bottom: 6px;
+            font-size: 0.85em;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+            text-transform: uppercase;
+            background: #ffffff;
+        }
+
+        input[type="email"] {
+            text-transform: none;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(0, 0, 128, 0.05);
+            outline: none;
+        }
+
+        .declaration {
+            background-color: #fafbfc;
+            padding: 20px;
+            margin-top: 40px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #edf2f7;
+        }
+
+        .declaration-check {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.85em;
+        }
+
+        .declaration-check input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--primary-blue);
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .action-btn {
+            background-color: var(--primary-blue);
+            color: white;
+            font-size: 15px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: 0.3s;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .action-btn:hover {
+            background-color: var(--secondary-blue);
+            transform: translateY(-1px);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 12px;
+            width: 95%;
+            max-width: 600px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .preview-data table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+
+        .preview-data td {
+            padding: 10px 5px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .preview-data td:first-child {
+            font-weight: 700;
+            color: var(--primary-blue);
+            width: 40%;
+        }
+
+        /* Success Page Layout */
+        #successPage {
+            display: none;
+            width: 100%;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 40px;
+        }
+
+        .success-page-content {
+            text-align: center;
+            padding: 60px 30px;
+        }
+
+        /* Animated Green Tick Graphics */
+        .success-checkmark {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 30px;
+            position: relative;
+        }
+
+        .check-icon {
+            width: 80px;
+            height: 80px;
+            position: relative;
+            border-radius: 50%;
+            border: 4px solid var(--success-green);
+            box-sizing: content-box;
+        }
+
+        .icon-line {
+            height: 5px;
+            background-color: var(--success-green);
+            display: block;
+            border-radius: 2px;
+            position: absolute;
+            z-index: 10;
+        }
+
+        .line-tip {
+            width: 25px;
+            left: 14px;
+            top: 46px;
+            transform: rotate(45deg);
+            animation: icon-line-tip 0.75s;
+        }
+
+        .line-long {
+            width: 47px;
+            right: 8px;
+            top: 38px;
+            transform: rotate(-45deg);
+            animation: icon-line-long 0.75s;
+        }
+
+        .icon-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 4px solid rgba(40, 167, 69, 0.2);
+            position: absolute;
+            left: -4px;
+            top: -4px;
+            z-index: 10;
+            box-sizing: content-box;
+        }
+
+        @keyframes icon-line-tip {
+            0% {
+                width: 0;
+                left: 1px;
+                top: 19px;
+            }
+
+            54% {
+                width: 0;
+                left: 1px;
+                top: 19px;
+            }
+
+            100% {
+                width: 25px;
+                left: 14px;
+                top: 46px;
+            }
+        }
+
+        @keyframes icon-line-long {
+            0% {
+                width: 0;
+                right: 46px;
+                top: 54px;
+            }
+
+            65% {
+                width: 0;
+                right: 46px;
+                top: 54px;
+            }
+
+            100% {
+                width: 47px;
+                right: 8px;
+                top: 38px;
+            }
+        }
+
+        #displayAppId {
+            font-weight: 700;
+            background: #f0f4f8;
+            color: var(--primary-blue);
+            padding: 18px;
+            border-radius: 8px;
+            margin: 25px auto;
+            border: 1px solid #d1dce5;
+            font-size: 1.2em;
+            letter-spacing: 1px;
+            max-width: 320px;
+            width: 100%;
+            text-align: center;
+        }
+
+        #loader {
+            display: none;
+            position: fixed;
+            z-index: 4000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .loader-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--primary-blue);
+            font-weight: 700;
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+
+            .form-container,
+            .success-page-content {
+                padding: 30px 15px;
+            }
+
+            .form-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .header-logo {
+                width: 60px;
+            }
+
+            .header-text h1 {
+                font-size: 1.2em;
+            }
+
+            .header-text h2 {
+                font-size: 1.05em;
+            }
+
+            .grid-container {
+                grid-template-columns: 1fr;
+            }
+
+            .success-page-content {
+                padding: 40px 15px;
+            }
+
+            #displayStudentId {
+                font-size: 1.1em;
+                padding: 15px;
+            }
+        }
+
+        #statusPage {
+            display: none;
+            text-align: center;
+            width: 100%;
+            padding: 40px 20px;
+        }
+
+        .status-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            display: inline-block;
+            max-width: 400px;
+            border: 1px solid #eee;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-container">
+
+        <div id="statusPage">
+            <div class="status-card">
+                <h2 style="color: var(--accent-red); margin-top: 0;">Portal Closed</h2>
+                <p>The online application window is currently unavailable.</p>
+            </div>
+        </div>
+
+        <div class="form-container" id="formContainer">
+            <header class="form-header">
+                <img class="header-logo"
+                    src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgXpYeuf6hD01Ma9osE62vGUlDMaqwuFp92mFgZLci_-TmoJDwRBE-xlmLo6bUnFMLgo01gQ1mRffvjVv3RLbH36tsNvGURIb8Mx4zOK_Qx2udXKEgK3K_GEKqhe5RlCi0kZIydiBsmwyJV44-m66eCTNXb2NTpzjIctzFymBg-BgSEAhmqATIGrxPXRQ/s224/logo.png"
+                    alt="Logo">
+                <div class="header-text">
+                    <h1>MAHARISHI VIDYA MANDIR, NALBARI</h1>
+                    <div class="school-address">CBSE CURRICULUM • Nalbari, PIN-781335</div>
+                    <h2>Online Application Form</h2>
+                </div>
+                <img class="header-logo"
+                    src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgXpYeuf6hD01Ma9osE62vGUlDMaqwuFp92mFgZLci_-TmoJDwRBE-xlmLo6bUnFMLgo01gQ1mRffvjVv3RLbH36tsNvGURIb8Mx4zOK_Qx2udXKEgK3K_GEKqhe5RlCi0kZIydiBsmwyJV44-m66eCTNXb2NTpzjIctzFymBg-BgSEAhmqATIGrxPXRQ/s224/logo.png"
+                    alt="Logo">
+            </header>
+
+            <section class="instructions">
+                <h3>General Instructions</h3>
+                <ul>
+                    <li>Fill all information in CAPITAL LETTERS only.</li>
+                    <li>Ensure Mobile Number and Email are correctly entered.</li>
+                    <li>An Application ID will be generated upon submission. The Final Student ID will be issued after
+                        admin verification.</li>
+                </ul>
+            </section>
+
+            <form id="examForm">
+                <div class="form-body">
+                    <h3 class="section-title">Student Details</h3>
+                    <div class="grid-container">
+                        <div class="form-group">
+                            <label>STUDENT'S FULL NAME</label>
+                            <input type="text" id="student_name" name="student_name" placeholder="Full Name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>CLASS</label>
+                            <select id="class" name="class" required>
+                                <option value="">-- SELECT --</option>
+                                <option value="1">I</option>
+                                <option value="2">II</option>
+                                <option value="3">III</option>
+                                <option value="4">IV</option>
+                                <option value="5">V</option>
+                                <option value="6">VI</option>
+                                <option value="7">VII</option>
+                                <option value="8">VIII</option>
+                                <option value="9">IX</option>
+                                <option value="10">X</option>
+                                <option value="11">XI</option>
+                                <option value="12">XII</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>SECTION</label>
+                            <select id="section" name="section" required>
+                                <option value="">-- SELECT --</option>
+                                <option value="MAHA">MAHA</option>
+                                <option value="RISHI">RISHI</option>
+                                <option value="NONE">NONE</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>ROLL NO (2 DIGITS)</label>
+                            <input type="text" id="roll_no" name="roll_no" placeholder="e.g. 05" required
+                                pattern="\d{2}">
+                        </div>
+                        <div class="form-group">
+                            <label>DATE OF BIRTH</label>
+                            <input type="date" id="dob" name="dob" required>
+                        </div>
+                        <div class="form-group">
+                            <label>FATHER'S NAME</label>
+                            <input type="text" id="father_name" name="father_name" placeholder="Father's Full Name"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label>MOBILE NUMBER</label>
+                            <input type="tel" id="phone_number" name="phone_number" placeholder="10-digit number"
+                                required pattern="[6-9][0-9]{9}" title="Valid 10-digit number">
+                        </div>
+                        <div class="form-group">
+                            <label>EMAIL ADDRESS</label>
+                            <input type="email" id="email_id" name="email_id" placeholder="email@example.com" required>
+                        </div>
+                    </div>
+                </div>
+
+                <section class="declaration">
+                    <label class="declaration-check">
+                        <input type="checkbox" id="declaration_agree" required>
+                        I confirm that all provided details are correct.
+                    </label>
+                </section>
+
+                <div class="button-container">
+                    <button type="button" id="previewBtn" class="action-btn">Preview & Submit</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Success Page Section (Replaces formContainer on success) -->
+        <div id="successPage">
+            <div class="success-page-content">
+                <div class="success-checkmark">
+                    <div class="check-icon">
+                        <span class="icon-line line-tip"></span>
+                        <span class="icon-line line-long"></span>
+                        <div class="icon-circle"></div>
+                    </div>
+                </div>
+
+                <h2 style="color: var(--primary-blue); margin:0; font-size: 1.8em; font-weight: 800;">Thank you</h2>
+                <p style="color: #444; font-size: 1.05em; line-height: 1.6; margin: 20px 0;">
+                    Your application has been successfully submitted and is currently under review. You will receive
+                    your credentials via email once verified by the administration.
+                </p>
+
+                <div id="displayAppId"></div>
+
+                <div
+                    style="font-size: 0.85em; color: #888; border-top: 1px solid #eee; padding-top: 20px; margin-top: 30px;">
+                    Maharishi Vidya Mandir, Nalbari
+                </div>
+            </div>
+        </div>
+
+        <div id="previewModal" class="modal">
+            <div class="modal-content">
+                <h2
+                    style="color: var(--primary-blue); border-bottom: 1px solid #eee; padding-bottom: 10px; margin-top: 0; font-size: 1.1em;">
+                    Review Your Details</h2>
+                <div class="preview-data" id="previewData"></div>
+                <div style="display: flex; gap: 10px; margin-top: 25px;">
+                    <button id="editBtn"
+                        style="flex: 1; padding: 12px; background: #f5f5f5; color: #444; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; font-weight: 700;">Edit</button>
+                    <button id="submitBtn"
+                        style="flex: 2; padding: 12px; background: var(--primary-blue); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 700;">Confirm
+                        & Submit</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="loader">
+            <div class="loader-text">Processing Application...</div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
+    <script>
+        // 1. Initialize Firebase using the Compat SDK
+        const firebaseConfig = {
+            apiKey: "AIzaSyBBkITpfUjxFUFvgQhjnXedrIX4GhfCSCo",
+            authDomain: "mvmn-exam-management-system.firebaseapp.com",
+            projectId: "mvmn-exam-management-system",
+            storageBucket: "mvmn-exam-management-system.firebasestorage.app",
+            messagingSenderId: "652018919071",
+            appId: "1:652018919071:web:65cd8e632cda4c3f9624aa",
+            measurementId: "G-CX06N7M3HX"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // 2. Expose the global push function
+        window.notifyAdmin = function(appId, studentName) {
+            db.ref('notifications').push({
+                appId: appId,
+                studentName: studentName,
+                timestamp: Date.now(),
+                read: false
+            }).catch(error => console.error("Firebase push failed:", error));
+        };
+    </script>
+
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxfDAbIcrMrIM7NXBGO35xxmnG2jVKsHBGFNIO-R72O2c-Yc-_Ghi4U7N0JKi-MGXBrBw/exec";
+
+        const FORM_CONFIG = {
+            START_TIME: "2025-01-01T08:00:00",
+            END_TIME: "2026-12-31T23:59:00"
+        };
+
+        function checkFormAvailability() {
+            const now = new Date();
+            const start = new Date(FORM_CONFIG.START_TIME);
+            const end = new Date(FORM_CONFIG.END_TIME);
+            if (now < start || now > end) {
+                document.getElementById('formContainer').style.display = 'none';
+                document.getElementById('statusPage').style.display = 'block';
+            }
+        }
+
+        checkFormAvailability();
+
+        function generateStudentId() {
+            const classVal = document.getElementById('class').value.padStart(2, '0');
+            const rollVal = document.getElementById('roll_no').value.padStart(2, '0');
+            const sectionVal = document.getElementById('section').value;
+            const sectionCode = sectionVal === 'MAHA' ? 'M' : sectionVal === 'RISHI' ? 'R' : 'N';
+            const yearShort = new Date().getFullYear().toString().slice(-2);
+            return `MVMN${classVal}${rollVal}${sectionCode}${yearShort}`;
+        }
+
+        const form = document.getElementById('examForm');
+        const previewBtn = document.getElementById('previewBtn');
+        const modal = document.getElementById('previewModal');
+        const editBtn = document.getElementById('editBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        let generatedStudentId = '';
+
+        previewBtn.addEventListener('click', () => {
+            if (form.checkValidity()) {
+                generatedStudentId = generateStudentId(); // Keep this so it still saves to the database
+                let previewHTML = '<table>';
+                const formData = new FormData(form);
+
+                for (let [key, value] of formData.entries()) {
+                    if (key !== 'declaration_agree') {
+                        // Force uppercase for the Student and Father names in the preview
+                        if (key === 'student_name' || key === 'father_name') {
+                            value = value.toUpperCase();
+                        }
+                        previewHTML += `<tr><td>${key.replace(/_/g, ' ').toUpperCase()}</td><td>${value}</td></tr>`;
+                    }
+                }
+                previewHTML += '</table>';
+                document.getElementById('previewData').innerHTML = previewHTML;
+                modal.style.display = 'block';
+            } else {
+                form.reportValidity();
+            }
+        });
+
+        editBtn.addEventListener('click', () => modal.style.display = 'none');
+
+        submitBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+            document.getElementById('loader').style.display = 'block';
+            const formData = new FormData(form);
+            const dataObject = Object.fromEntries(formData.entries());
+            // Convert names to UPPERCASE right before sending to the database
+            dataObject.student_name = dataObject.student_name.toUpperCase();
+            dataObject.father_name = dataObject.father_name.toUpperCase();
+            dataObject.student_id = generatedStudentId;
+
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                // Removed mode: 'no-cors' so we can read the server response
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(dataObject)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('loader').style.display = 'none';
+                    document.getElementById('formContainer').style.display = 'none';
+
+                    if (data.status === 'success') {
+                        // --- SUCCESS FLOW ---
+                        // Display ONLY the newly generated Application ID
+                        document.getElementById('displayAppId').innerHTML = `APP ID: ${data.applicationId}`;
+                        document.getElementById('successPage').style.display = 'flex';
+
+                        // --- NEW: PING FIREBASE ADMIN NOTIFICATION ---
+                        if (window.notifyAdmin) {
+                            window.notifyAdmin(data.applicationId, dataObject.student_name);
+                        }
+
+                    } else if (data.status === 'exists') {
+                        // --- DUPLICATE FLOW ---
+                        // Show a warning and display their existing Application ID
+                        const successContent = document.querySelector('.success-page-content');
+                        successContent.innerHTML = `
+                        <h2 style="color: var(--accent-red); margin:0; font-size: 1.8em; font-weight: 800;">Application Exists</h2>
+                        <p style="color: #444; font-size: 1.05em; line-height: 1.6; margin: 20px 0;">
+                            ${data.message}
+                        </p>
+                        <div id="displayAppId" style="border-color: #fad2d2; background: #fff0f0; color: var(--accent-red);">
+                            APP ID: ${data.applicationId}
+                        </div>
+                        <button onclick="location.reload()" class="action-btn" style="margin-top: 20px;">Return to Form</button>
+                    `;
+                        document.getElementById('successPage').style.display = 'flex';
+
+                    } else {
+                        // --- ERROR FLOW ---
+                        alert('Server Error: ' + data.message);
+                        document.getElementById('formContainer').style.display = 'block';
+                    }
+
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                })
+                .catch(error => {
+                    document.getElementById('loader').style.display = 'none';
+                    alert('Submission failed. Please check your network connection.');
+                    console.error(error);
+                });
+        });
+    </script>
+</body>
+
+</html>
