@@ -338,22 +338,43 @@
     </main>
 
     <script>
+        // ==========================================
+        // 1. CONFIGURATION & GLOBALS
+        // ==========================================
+        const PENDING_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbygaLGAEqda9uHtzvoKg0IMP1Z-uSTBPyWWuw92RQ2ZoGMVZ23Gv68EOL6OTIxn6gF2vg/exec";
+        const FINAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzitYrZPK8eebHMvAjZqlT7vqlAjNjXLV6XO_s0V8FEWn6UMoVsqCEUpH1VvYB3UX16RA/exec";
+
         const firebaseConfig = {
             apiKey: "AIzaSyBBkITpfUjxFUFvgQhjnXedrIX4GhfCSCo",
             authDomain: "mvmn-exam-management-system.firebaseapp.com",
-            databaseURL: "https://mvmn-exam-management-system-default-rtdb.asia-southeast1.firebasedatabase.app", // 🔴 ADD THIS LINE
+            databaseURL: "https://mvmn-exam-management-system-default-rtdb.asia-southeast1.firebasedatabase.app",
             projectId: "mvmn-exam-management-system",
             storageBucket: "mvmn-exam-management-system.firebasestorage.app",
             messagingSenderId: "652018919071",
-            appId: "1:652018919071:web:65cd8e632cda4c3f9624aa",
-            measurementId: "G-CX06N7M3HX"
+            appId: "1:652018919071:web:65cd8e632cda4c3f9624aa"
         };
-
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
+        window.currentApplications = [];
+        window.finalStudentsData = [];
+        let currentClassFilter = 'All';
+        let currentAppFilter = 'Pending';
+
+        // Initialize UI
+        lucide.createIcons();
+        document.getElementById('theme-toggle').addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            localStorage.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+        });
+
+        // ==========================================
+        // 2. BELL NOTIFICATIONS
+        // ==========================================
         let notifications = [];
         let unreadCount = 0;
+        const pageLoadTime = Date.now();
+        const notificationsRef = db.ref('notifications').orderByChild('timestamp').startAt(pageLoadTime);
 
         function toggleNotifications() {
             document.getElementById('notificationPanel').classList.toggle('hidden');
@@ -369,7 +390,7 @@
 
         function updateBadge() {
             const badge = document.getElementById('notificationBadge');
-            if(unreadCount > 0) {
+            if (unreadCount > 0) {
                 badge.innerText = unreadCount;
                 badge.classList.remove('hidden');
             } else { badge.classList.add('hidden'); }
@@ -383,8 +404,8 @@
             showToast(`New application: ${data.studentName}`, 'info');
 
             const list = document.getElementById('notificationList');
-            if(notifications.length === 1) list.innerHTML = ''; // Clear empty message
-            
+            if (notifications.length === 1) list.innerHTML = ''; // Clear empty message
+
             const item = document.createElement('div');
             item.className = "p-3 bg-blue-50 dark:bg-blue-900/20 border-b border-slate-100 dark:border-slate-700 cursor-pointer";
             item.innerHTML = `<p class="text-sm font-semibold text-slate-800 dark:text-slate-200">${data.studentName}</p><p class="text-xs text-slate-500">${data.appId}</p>`;
@@ -398,75 +419,13 @@
         }
 
         // ==========================================
-        // 2. GOOGLE SHEETS & DASHBOARD LOGIC
+        // 3. UI NAVIGATION & TOASTS
         // ==========================================
-        const PENDING_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbygaLGAEqda9uHtzvoKg0IMP1Z-uSTBPyWWuw92RQ2ZoGMVZ23Gv68EOL6OTIxn6gF2vg/exec";
-        const FINAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzitYrZPK8eebHMvAjZqlT7vqlAjNjXLV6XO_s0V8FEWn6UMoVsqCEUpH1VvYB3UX16RA/exec";
-
-        // We will store the fetched array globally so we can access full row data on approve
-        window.currentApplications = [];
-        window.finalStudentsData = [];
-        let currentClassFilter = 'All';
-
-        lucide.createIcons();
-
-        const themeToggleBtn = document.getElementById('theme-toggle');
-        themeToggleBtn.addEventListener('click', () => {
-            const htmlEl = document.documentElement;
-            if (htmlEl.classList.contains('dark')) {
-                htmlEl.classList.remove('dark');
-                localStorage.theme = 'light';
-            } else {
-                htmlEl.classList.add('dark');
-                localStorage.theme = 'dark';
-            }
-        });
-
-        function toggleSelectAll(source) {
-            const checkboxes = document.querySelectorAll('.student-checkbox');
-            checkboxes.forEach(cb => cb.checked = source.checked);
-            toggleBulkButtons();
-        }
-
-        function toggleBulkButtons() {
-            const anyChecked = document.querySelectorAll('.student-checkbox:checked').length > 0;
-            document.querySelectorAll('.bulk-btn').forEach(btn => {
-                anyChecked ? btn.classList.remove('hidden') : btn.classList.add('hidden');
-            });
-        }
-
-        function bulkAction(status) {
-            const checkedBoxes = document.querySelectorAll('.student-checkbox:checked');
-            if(checkedBoxes.length === 0) return;
-            if(!confirm(`Are you sure you want to change Admit Status to "${status}" for ${checkedBoxes.length} students?`)) return;
-
-            // Loop and save locally & remotely (simplified)
-            checkedBoxes.forEach(cb => {
-                const tr = cb.closest('tr');
-                const sId = tr.getAttribute('data-sid');
-                const sClass = tr.getAttribute('data-sclass');
-                const btnObj = { closest: () => tr.querySelector('[data-field="admitStatus"]'), innerHTML: '' };
-                
-                // Force update UI locally instantly
-                tr.querySelector('.cell-text').innerText = status;
-                
-                // Send background fetch
-                fetch(FINAL_SCRIPT_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ action: 'update_cell', studentId: sId, studentClass: sClass, field: 'admitStatus', value: status })
-                });
-            });
-            showToast(`Bulk updated to ${status}`, 'success');
-        }
-
         function switchTab(tabName) {
             document.getElementById('pendingView').classList.add('hidden');
             document.getElementById('studentsView').classList.add('hidden');
-
             document.getElementById('navPending').classList.remove('bg-blue-50', 'dark:bg-blue-900/20', 'text-blue-700', 'dark:text-blue-400');
             document.getElementById('navPending').classList.add('text-slate-600', 'dark:text-slate-400');
-
             document.getElementById('navStudents').classList.remove('bg-blue-50', 'dark:bg-blue-900/20', 'text-blue-700', 'dark:text-blue-400');
             document.getElementById('navStudents').classList.add('text-slate-600', 'dark:text-slate-400');
 
@@ -487,40 +446,95 @@
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
             toast.className = `transform transition-all duration-300 translate-x-full opacity-0 flex items-center p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-lg border-l-4 pointer-events-auto`;
-
-            let iconName = 'info';
-            let iconColorClass = 'text-blue-500';
-
-            if (type === 'success') {
-                toast.classList.add('border-l-emerald-500');
-                iconName = 'check-circle';
-                iconColorClass = 'text-emerald-500';
-            } else if (type === 'error') {
-                toast.classList.add('border-l-red-500');
-                iconName = 'alert-circle';
-                iconColorClass = 'text-red-500';
-            } else {
-                toast.classList.add('border-l-blue-500');
-            }
-
+            let iconName = 'info'; let iconColorClass = 'text-blue-500';
+            if (type === 'success') { toast.classList.add('border-l-emerald-500'); iconName = 'check-circle'; iconColorClass = 'text-emerald-500'; }
+            else if (type === 'error') { toast.classList.add('border-l-red-500'); iconName = 'alert-circle'; iconColorClass = 'text-red-500'; }
+            else { toast.classList.add('border-l-blue-500'); }
             toast.innerHTML = `<i data-lucide="${iconName}" class="${iconColorClass} mr-3 w-5 h-5 flex-shrink-0"></i><span class="text-sm font-medium text-slate-800 dark:text-slate-200">${message}</span>`;
             container.appendChild(toast);
             lucide.createIcons({ root: toast });
-
-            requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                    toast.classList.remove('translate-x-full', 'opacity-0');
-                });
-            });
-
-            setTimeout(() => {
-                toast.classList.add('translate-x-full', 'opacity-0');
-                setTimeout(() => { toast.remove(); }, 300);
-            }, 3000);
+            requestAnimationFrame(() => { requestAnimationFrame(() => { toast.classList.remove('translate-x-full', 'opacity-0'); }); });
+            setTimeout(() => { toast.classList.add('translate-x-full', 'opacity-0'); setTimeout(() => { toast.remove(); }, 300); }, 3000);
         }
 
-        let currentAppFilter = 'Pending';
+        // ==========================================
+        // 4. SHARED INLINE EDITING LOGIC
+        // ==========================================
+        function escapeHtml(t) { return !t ? '' : t.toString().replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
+        function editableCell(value, fieldKey, rowId, dbType = 'pending', studentClass = '') {
+            const safeValue = escapeHtml(value);
+            return `
+        <td data-field="${fieldKey}" class="px-4 py-3 whitespace-nowrap text-slate-600 dark:text-slate-300 relative group cursor-pointer hover:bg-blue-50 dark:hover:bg-slate-800 transition-colors border-r border-transparent hover:border-blue-200 dark:hover:border-slate-700"
+            onclick="enableEdit(this, '${rowId}', '${fieldKey}', '${dbType}', '${studentClass}')" data-value="${safeValue}">
+            <div class="flex items-center gap-3 justify-between">
+                <span class="cell-text">${safeValue}</span>
+                <i data-lucide="pencil" class="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-blue-500"></i>
+            </div>
+        </td>`;
+        }
+
+        window.enableEdit = function (tdElement, rowId, fieldKey, dbType, studentClass) {
+            if (tdElement.classList.contains('is-editing')) return;
+            tdElement.classList.add('is-editing'); tdElement.classList.remove('cursor-pointer');
+            const currentVal = tdElement.getAttribute('data-value');
+            const isUpper = ['studentId', 'studentName', 'section', 'fatherName'].includes(fieldKey) ? 'uppercase' : '';
+
+            tdElement.innerHTML = `
+        <div class="flex items-center gap-1 min-w-[140px]" onclick="event.stopPropagation()">
+            <input type="text" value="${currentVal}" class="w-full px-2 py-1 text-sm border border-blue-400 dark:border-blue-500 rounded bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 shadow-inner ${isUpper}">
+            <button onclick="saveEdit(this, '${rowId}', '${fieldKey}', '${dbType}', '${studentClass}')" class="p-1.5 text-emerald-600 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 rounded transition-colors"><i data-lucide="check" class="w-4 h-4 stroke-[3]"></i></button>
+            <button onclick="cancelEdit(this, '${escapeHtml(currentVal)}', '${rowId}', '${fieldKey}', '${dbType}', '${studentClass}')" class="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors"><i data-lucide="x" class="w-4 h-4 stroke-[3]"></i></button>
+        </div>`;
+            lucide.createIcons({ root: tdElement });
+            const input = tdElement.querySelector('input'); input.focus(); input.setSelectionRange(input.value.length, input.value.length);
+        };
+
+        window.cancelEdit = function (btn, origVal, rowId, fieldKey, dbType, studentClass) { restoreCell(btn.closest('td'), origVal, rowId, fieldKey, dbType, studentClass); };
+
+        window.saveEdit = async function (btn, rowId, fieldKey, dbType, studentClass) {
+            const tdElement = btn.closest('td'); const input = tdElement.querySelector('input');
+            let newValue = input.value.trim();
+            if (['studentId', 'studentName', 'section', 'fatherName'].includes(fieldKey)) newValue = newValue.toUpperCase();
+
+            input.disabled = true; btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 spin"></i>`; lucide.createIcons({ root: tdElement });
+
+            const targetUrl = dbType === 'pending' ? PENDING_SCRIPT_URL : FINAL_SCRIPT_URL;
+            const payload = { action: 'update_cell', field: fieldKey, value: newValue };
+            if (dbType === 'pending') payload.appId = rowId;
+            if (dbType === 'final') { payload.studentId = rowId; payload.studentClass = studentClass; }
+
+            try {
+                const response = await fetch(targetUrl, { method: 'POST', body: JSON.stringify(payload) });
+                const result = await response.json();
+                if (result.status === 'success') {
+                    showToast(`Updated successfully`, 'success');
+                    restoreCell(tdElement, newValue, rowId, fieldKey, dbType, studentClass);
+
+                    // Sync Memory
+                    if (dbType === 'pending') {
+                        const memoryRow = window.currentApplications.find(r => r.applicationId === rowId);
+                        if (memoryRow) memoryRow[fieldKey] = newValue;
+                    } else {
+                        const memFinal = window.finalStudentsData.find(r => r.studentId === rowId);
+                        if (memFinal) memFinal[fieldKey] = newValue;
+                    }
+                } else throw new Error(result.message);
+            } catch (err) {
+                showToast('Failed to save edit', 'error'); restoreCell(tdElement, tdElement.getAttribute('data-value'), rowId, fieldKey, dbType, studentClass);
+            }
+        };
+
+        function restoreCell(tdElement, value, rowId, fieldKey, dbType, studentClass) {
+            tdElement.classList.remove('is-editing'); tdElement.classList.add('cursor-pointer');
+            tdElement.setAttribute('data-value', escapeHtml(value));
+            tdElement.innerHTML = `<div class="flex items-center gap-3 justify-between"><span class="cell-text">${escapeHtml(value)}</span><i data-lucide="pencil" class="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-blue-500"></i></div>`;
+            lucide.createIcons({ root: tdElement });
+        }
+
+        // ==========================================
+        // 5. PENDING APPLICATIONS TAB LOGIC
+        // ==========================================
         function setPendingFilter(status, btnElement) {
             currentAppFilter = status;
             document.querySelectorAll('.app-filter-btn').forEach(btn => {
@@ -535,77 +549,90 @@
         function filterPendingTable() {
             const query = document.getElementById('searchPending').value.toLowerCase();
             const filteredData = window.currentApplications.filter(app => {
-                const currentStatus = app.status || 'Pending'; // Safety fallback for older records
+                const currentStatus = app.status || 'Pending'; // Fallback
                 const matchesStatus = currentAppFilter === 'All' || currentStatus === currentAppFilter;
-                const matchesSearch = app.studentName.toLowerCase().includes(query) || app.applicationId.toLowerCase().includes(query);
+                const matchesSearch = String(app.studentName).toLowerCase().includes(query) || String(app.applicationId).toLowerCase().includes(query);
                 return matchesStatus && matchesSearch;
             });
             renderTable(filteredData);
         }
 
         async function fetchData() {
-            const tbody = document.getElementById('tableBody');
-            const refreshBtn = document.getElementById('refreshBtn');
-
-            refreshBtn.disabled = true;
-            refreshBtn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin text-blue-500"></i> Loading...`;
-            lucide.createIcons({ root: refreshBtn });
-
+            const tbody = document.getElementById('tableBody'); const refreshBtn = document.getElementById('refreshBtn');
+            refreshBtn.disabled = true; refreshBtn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 spin text-blue-500"></i>`; lucide.createIcons({ root: refreshBtn });
             try {
-                // Always fetch from the PENDING script for this tab
-                const response = await fetch(PENDING_SCRIPT_URL);
-                const result = await response.json();
-
-                if (result.status === 'success') {
-                    window.currentApplications = result.data;
-                    filterPendingTable(); // <--- REPLACE renderTable(result.data) with this
-                    showToast('Applications loaded successfully', 'success');
-                } else {
-                    throw new Error(result.message);
-                }
+                const response = await fetch(PENDING_SCRIPT_URL); const result = await response.json();
+                if (result.status === 'success') { window.currentApplications = result.data; filterPendingTable(); showToast('Applications loaded successfully', 'success'); }
+                else throw new Error(result.message);
             } catch (error) {
-                console.error("Fetch Error:", error);
-                showToast('Failed to connect to database', 'error');
-                tbody.innerHTML = `<tr><td colspan="12" class="px-4 py-8 text-center text-red-500 font-medium">Error loading data. Please check your network.</td></tr>`;
+                showToast('Failed to connect to database', 'error'); tbody.innerHTML = `<tr><td colspan="12" class="px-4 py-8 text-center text-red-500 font-medium">Error loading data. Please check your network.</td></tr>`;
             } finally {
-                refreshBtn.disabled = false;
-                refreshBtn.innerHTML = `<i data-lucide="refresh-cw" class="w-4 h-4"></i> Refresh List`;
-                lucide.createIcons({ root: refreshBtn });
+                refreshBtn.disabled = false; refreshBtn.innerHTML = `<i data-lucide="refresh-cw" class="w-4 h-4" id="refreshIcon"></i>`; lucide.createIcons({ root: refreshBtn });
             }
         }
 
-        async function fetchFinalStudents() {
-            const tbody = document.getElementById('studentsTableBody');
-            const btn = document.getElementById('refreshBtnStudents');
-            btn.disabled = true;
-            btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i>`;
-            lucide.createIcons({ root: btn });
-
-            try {
-                const res = await fetch(FINAL_SCRIPT_URL);
-                const result = await res.json();
-                if (result.status === 'success') {
-                    window.finalStudentsData = result.data;
-                    filterStudentsTable();
-                    showToast('Student database loaded', 'success');
-                } else throw new Error(result.message);
-            } catch (error) {
-                showToast('Failed to load students', 'error');
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = `<i data-lucide="refresh-cw" class="w-4 h-4"></i>`;
-                lucide.createIcons({ root: btn });
+        function renderTable(dataArray) {
+            const tbody = document.getElementById('tableBody'); tbody.innerHTML = '';
+            if (!dataArray || dataArray.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="12" class="px-4 py-12 text-center text-slate-500 dark:text-slate-400"><i data-lucide="inbox" class="w-8 h-8 mb-2 mx-auto opacity-50"></i>No records found for this filter.</td></tr>`;
+                lucide.createIcons(); return;
             }
+
+            dataArray.forEach((row) => {
+                let cleanTs = String(row.timestamp);
+                if (cleanTs.includes('T')) { const dt = new Date(cleanTs); cleanTs = `${("0" + dt.getDate()).slice(-2)}/${("0" + (dt.getMonth() + 1)).slice(-2)}/${dt.getFullYear()} <span class="text-slate-400 text-xs ml-1">${dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>`; }
+
+                let cleanDob = String(row.dob);
+                if (cleanDob.includes('T')) { const dDob = new Date(cleanDob); cleanDob = `${("0" + dDob.getDate()).slice(-2)}/${("0" + (dDob.getMonth() + 1)).slice(-2)}/${dDob.getFullYear()}`; }
+
+                let actionHtml = '';
+                if (row.status === 'Pending' || !row.status) {
+                    actionHtml = `
+                        <div class="flex items-center justify-center gap-2">
+                            <button onclick="handleAction('${row.applicationId}', 'approve')" class="p-1.5 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-500 hover:text-white transition-all"><i data-lucide="check" class="w-4 h-4"></i></button>
+                            <button onclick="handleAction('${row.applicationId}', 'reject')" class="p-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-500 hover:text-white transition-all"><i data-lucide="x" class="w-4 h-4"></i></button>
+                        </div>`;
+                } else if (row.status === 'Approved') { actionHtml = `<span class="px-2.5 py-1 text-xs font-bold rounded-md bg-emerald-100 text-emerald-700">Approved</span>`; }
+                else { actionHtml = `<span class="px-2.5 py-1 text-xs font-bold rounded-md bg-red-100 text-red-700">Rejected</span>`; }
+
+                const tr = document.createElement('tr'); tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/20 transition-colors";
+                tr.innerHTML = `
+                    <td class="px-4 py-3 whitespace-nowrap text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-900">${cleanTs}</td>
+                    <td class="px-4 py-3 whitespace-nowrap font-medium text-blue-600 dark:text-blue-400 bg-white dark:bg-slate-900 sticky left-0 z-10 shadow-[4px_0_10px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-700">${row.applicationId}</td>
+                    ${editableCell(row.studentId, 'studentId', row.applicationId)}
+                    ${editableCell(row.studentName, 'studentName', row.applicationId)}
+                    ${editableCell(row.studentClass, 'studentClass', row.applicationId)}
+                    ${editableCell(row.section, 'section', row.applicationId)}
+                    ${editableCell(row.rollNo, 'rollNo', row.applicationId)}
+                    ${editableCell(cleanDob, 'dob', row.applicationId)}
+                    ${editableCell(row.fatherName, 'fatherName', row.applicationId)}
+                    ${editableCell(row.phone, 'phone', row.applicationId)}
+                    ${editableCell(row.email, 'email', row.applicationId)}
+                    <td class="px-4 py-3 whitespace-nowrap text-center sticky right-0 z-10 bg-white dark:bg-slate-900 shadow-[-4px_0_10px_rgba(0,0,0,0.04)] border-l border-slate-200 dark:border-slate-800">${actionHtml}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+            lucide.createIcons();
+        }
+
+        // ==========================================
+        // 6. FINAL STUDENTS TAB LOGIC
+        // ==========================================
+        async function fetchFinalStudents() {
+            const tbody = document.getElementById('studentsTableBody'); const btn = document.getElementById('refreshBtnStudents');
+            btn.disabled = true; btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 spin"></i>`; lucide.createIcons({ root: btn });
+            try {
+                const res = await fetch(FINAL_SCRIPT_URL); const result = await res.json();
+                if (result.status === 'success') { window.finalStudentsData = result.data; filterStudentsTable(); showToast('Student database loaded', 'success'); }
+                else throw new Error(result.message);
+            } catch (error) { showToast('Failed to load students', 'error'); }
+            finally { btn.disabled = false; btn.innerHTML = `<i data-lucide="refresh-cw" class="w-4 h-4"></i>`; lucide.createIcons({ root: btn }); }
         }
 
         function applyClassFilter(classLevel, btnElement) {
             currentClassFilter = classLevel;
-            document.querySelectorAll('.class-filter-btn').forEach(btn => {
-                btn.classList.remove('bg-blue-600', 'text-white');
-                btn.classList.add('bg-white', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300');
-            });
-            btnElement.classList.add('bg-blue-600', 'text-white');
-            btnElement.classList.remove('bg-white', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300');
+            document.querySelectorAll('.class-filter-btn').forEach(btn => { btn.classList.remove('bg-blue-600', 'text-white', 'filter-active'); btn.classList.add('bg-white', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300'); });
+            btnElement.classList.add('bg-blue-600', 'text-white', 'filter-active'); btnElement.classList.remove('bg-white', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300');
             filterStudentsTable();
         }
 
@@ -613,17 +640,69 @@
             const query = document.getElementById('searchStudent').value.toLowerCase();
             const filteredData = window.finalStudentsData.filter(student => {
                 const matchesClass = currentClassFilter === 'All' || String(student.studentClass) === currentClassFilter;
-                const matchesSearch = student.studentName.toLowerCase().includes(query) || student.studentId.toLowerCase().includes(query);
+                const matchesSearch = String(student.studentName).toLowerCase().includes(query) || String(student.studentId).toLowerCase().includes(query);
                 return matchesClass && matchesSearch;
             });
             renderFinalTable(filteredData);
         }
 
-        function renderFinalTable(dataArray) {
-            const tbody = document.getElementById('studentsTableBody');
-            tbody.innerHTML = '';
-            document.getElementById('selectAll').checked = false;
+        function toggleSelectAll(source) {
+            document.querySelectorAll('.student-checkbox').forEach(cb => cb.checked = source.checked);
             toggleBulkButtons();
+        }
+
+        function toggleBulkButtons() {
+            const anyChecked = document.querySelectorAll('.student-checkbox:checked').length > 0;
+            document.querySelectorAll('.bulk-btn').forEach(btn => anyChecked ? btn.classList.remove('hidden') : btn.classList.add('hidden'));
+        }
+
+        function bulkAction(status) {
+            const checkedBoxes = document.querySelectorAll('.student-checkbox:checked');
+            if (checkedBoxes.length === 0) return;
+            if (!confirm(`Are you sure you want to change Admit Status to "${status}" for ${checkedBoxes.length} students?`)) return;
+
+            checkedBoxes.forEach(cb => {
+                const tr = cb.closest('tr');
+                const sId = tr.getAttribute('data-sid');
+                const sClass = tr.getAttribute('data-sclass');
+
+                // Force update UI locally instantly
+                tr.querySelector('[data-field="admitStatus"] .cell-text').innerText = status;
+
+                // Send background fetch
+                fetch(FINAL_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: 'update_cell', studentId: sId, studentClass: sClass, field: 'admitStatus', value: status })
+                });
+            });
+            showToast(`Bulk updated to ${status}`, 'success');
+            document.getElementById('selectAll').checked = false; toggleSelectAll(document.getElementById('selectAll'));
+        }
+
+        function exportData() {
+            if (window.finalStudentsData.length === 0) return showToast("No data to export", "error");
+            let csvContent = "data:text/csv;charset=utf-8,Date,Application ID,Student ID,Name,Class,Section,Roll No,DOB,Father's Name,Phone,Email,Admit Status,HY Serial,FY Serial\n";
+
+            const query = document.getElementById('searchStudent').value.toLowerCase();
+            const exportList = window.finalStudentsData.filter(st => {
+                const matchesClass = currentClassFilter === 'All' || String(st.studentClass) === currentClassFilter;
+                const matchesSearch = String(st.studentName).toLowerCase().includes(query) || String(st.studentId).toLowerCase().includes(query);
+                return matchesClass && matchesSearch;
+            });
+
+            exportList.forEach(row => {
+                let d = [row.timestamp, row.applicationId, row.studentId, row.studentName, row.studentClass, row.section, row.rollNo, row.dob, row.fatherName, row.phone, row.email, row.admitStatus || 'Not Release', row.hySerial || '-', row.fySerial || '-'];
+                csvContent += d.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",") + "\n";
+            });
+
+            const link = document.createElement("a"); link.setAttribute("href", encodeURI(csvContent)); link.setAttribute("download", `Students_${currentClassFilter}.csv`);
+            document.body.appendChild(link); link.click(); document.body.removeChild(link);
+        }
+
+        function renderFinalTable(dataArray) {
+            const tbody = document.getElementById('studentsTableBody'); tbody.innerHTML = '';
+            document.getElementById('selectAll').checked = false; toggleBulkButtons();
 
             if (!dataArray || dataArray.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="15" class="px-4 py-12 text-center text-slate-500">No verified students found.</td></tr>`;
@@ -631,24 +710,16 @@
             }
 
             dataArray.forEach(row => {
-                const dbType = 'final'; 
-                const uniqueKey = row.studentId; 
-                
-                // Fix Date string parsing to standard format if needed
-                let cleanDob = row.dob;
-                if(cleanDob.includes('T')) cleanDob = new Date(cleanDob).toLocaleDateString('en-GB');
+                const dbType = 'final'; const uniqueKey = row.studentId;
+                let cleanTs = String(row.timestamp); if (cleanTs.includes('T')) { const dt = new Date(cleanTs); cleanTs = `${("0" + dt.getDate()).slice(-2)}/${("0" + (dt.getMonth() + 1)).slice(-2)}/${dt.getFullYear()}`; }
+                let cleanDob = String(row.dob); if (cleanDob.includes('T')) { const dDob = new Date(cleanDob); cleanDob = `${("0" + dDob.getDate()).slice(-2)}/${("0" + (dDob.getMonth() + 1)).slice(-2)}/${dDob.getFullYear()}`; }
 
-                let cleanTimestamp = row.timestamp;
-                if(cleanTimestamp.includes('T')) cleanTimestamp = new Date(cleanTimestamp).toLocaleDateString('en-GB');
-
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/20 transition-colors group/row";
-                tr.setAttribute('data-sid', row.studentId);
-                tr.setAttribute('data-sclass', row.studentClass);
+                const tr = document.createElement('tr'); tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/20";
+                tr.setAttribute('data-sid', row.studentId); tr.setAttribute('data-sclass', row.studentClass);
 
                 tr.innerHTML = `
                     <td class="px-4 py-3 text-center"><input type="checkbox" onchange="toggleBulkButtons()" class="student-checkbox rounded text-blue-600 focus:ring-blue-500"></td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-500">${cleanTimestamp}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-slate-500">${cleanTs}</td>
                     <td class="px-4 py-3 whitespace-nowrap font-medium text-blue-600 bg-white dark:bg-slate-900 sticky left-0 z-10 shadow-[4px_0_10px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-700">${row.applicationId}</td>
                     <td class="px-4 py-3 whitespace-nowrap font-bold text-slate-700">${row.studentId}</td>
                     ${editableCell(row.studentName, 'studentName', uniqueKey, dbType, row.studentClass)}
@@ -668,316 +739,64 @@
             lucide.createIcons();
         }
 
-        function escapeHtml(text) {
-            if (!text) return '';
-            return text.toString().replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        }
-
-        function editableCell(value, fieldKey, rowId, dbType = 'pending', studentClass = '') {
-            const safeValue = escapeHtml(value);
-            return `
-        <td data-field="${fieldKey}" class="px-4 py-3 whitespace-nowrap text-slate-600 dark:text-slate-300 relative group cursor-pointer hover:bg-blue-50 dark:hover:bg-slate-800 transition-colors border-r border-transparent hover:border-blue-200 dark:hover:border-slate-700"
-            onclick="enableEdit(this, '${rowId}', '${fieldKey}', '${dbType}', '${studentClass}')" data-value="${safeValue}">
-            <div class="flex items-center gap-3 justify-between">
-                <span class="cell-text">${safeValue}</span>
-                <i data-lucide="pencil" class="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-blue-500"></i>
-            </div>
-        </td>
-            `;
-        }
-
-        function exportData() {
-            if (window.finalStudentsData.length === 0) return showToast("No data to export", "error");
-            
-            let csvContent = "data:text/csv;charset=utf-8,";
-            csvContent += "Date,Application ID,Student ID,Name,Class,Section,Roll No,DOB,Father's Name,Phone,Email,Admit Status,HY Serial,FY Serial\n";
-            
-            window.finalStudentsData.forEach(row => {
-                let rowData = [
-                    row.timestamp, row.applicationId, row.studentId, row.studentName,
-                    row.studentClass, row.section, row.rollNo, row.dob, row.fatherName,
-                    row.phone, row.email, row.admitStatus || 'Not Release', row.hySerial || '-', row.fySerial || '-'
-                ];
-                let escapedData = rowData.map(d => `"${String(d).replace(/"/g, '""')}"`);
-                csvContent += escapedData.join(",") + "\n";
-            });
-            
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", `MVM_Students_${currentClassFilter}.csv`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        function renderTable(dataArray) {
-            const tbody = document.getElementById('tableBody');
-
-            // 🔴 BUG FIX 1: ALWAYS clear the table so Search and Filters actually work!
-            tbody.innerHTML = '';
-
-            if (!dataArray || dataArray.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="12" class="px-4 py-12 text-center text-slate-500 dark:text-slate-400"><i data-lucide="inbox" class="w-8 h-8 mb-2 opacity-50 mx-auto"></i>No records found for this filter.</td></tr>`;
-                lucide.createIcons();
-                return;
-            }
-
-            dataArray.forEach((row) => {
-                const rowId = `row-${row.applicationId}`;
-
-                const dateObj = new Date(row.timestamp);
-                const timeDay = String(dateObj.getDate()).padStart(2, '0');
-                const timeMonth = String(dateObj.getMonth() + 1).padStart(2, '0');
-                const timeYear = dateObj.getFullYear();
-                const formattedDate = `${timeDay}/${timeMonth}/${timeYear} <span class="text-slate-400 text-xs ml-1">${dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>`;
-
-                const dobObj = new Date(row.dob);
-                const dobDay = String(dobObj.getDate()).padStart(2, '0');
-                const dobMonth = String(dobObj.getMonth() + 1).padStart(2, '0');
-                const dobYear = dobObj.getFullYear();
-                const formattedDOB = `${dobDay}/${dobMonth}/${dobYear}`;
-
-                const tr = document.createElement('tr');
-                tr.id = rowId;
-                tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/20 transition-colors group/row";
-
-                // History Status Badges Logic
-                let actionHtml = '';
-                if (row.status === 'Pending') {
-                    actionHtml = `
-                        <div class="flex items-center justify-center gap-2">
-                            <button onclick="handleAction('${row.applicationId}', 'approve')" class="p-1.5 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-500 hover:text-white dark:bg-emerald-500/10 dark:hover:bg-emerald-500 dark:hover:text-white transition-all border border-emerald-200 dark:border-emerald-500/20" title="Approve">
-                                <i data-lucide="check" class="w-4 h-4"></i>
-                            </button>
-                            <button onclick="handleAction('${row.applicationId}', 'reject')" class="p-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-500 hover:text-white dark:bg-red-500/10 dark:hover:bg-red-500 dark:hover:text-white transition-all border border-red-200 dark:border-red-500/20" title="Reject">
-                                <i data-lucide="x" class="w-4 h-4"></i>
-                            </button>
-                        </div>
-                    `;
-                } else if (row.status === 'Approved') {
-                    actionHtml = `<span class="px-2.5 py-1 text-xs font-bold rounded-md bg-emerald-100 text-emerald-700 border border-emerald-200">Approved</span>`;
-                } else {
-                    actionHtml = `<span class="px-2.5 py-1 text-xs font-bold rounded-md bg-red-100 text-red-700 border border-red-200">Rejected</span>`;
-                }
-
-                tr.innerHTML = `
-            <td class="px-4 py-3 whitespace-nowrap text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-900">${formattedDate}</td>
-            <td class="px-4 py-3 whitespace-nowrap font-medium text-blue-600 dark:text-blue-400 bg-white dark:bg-slate-900">${row.applicationId}</td>
-            ${editableCell(row.studentId, 'studentId', row.applicationId)}
-            ${editableCell(row.studentName, 'studentName', row.applicationId)}
-            ${editableCell(row.studentClass, 'studentClass', row.applicationId)}
-            ${editableCell(row.section, 'section', row.applicationId)}
-            ${editableCell(row.rollNo, 'rollNo', row.applicationId)}
-            ${editableCell(formattedDOB, 'dob', row.applicationId)}
-            ${editableCell(row.fatherName, 'fatherName', row.applicationId)}
-            ${editableCell(row.phone, 'phone', row.applicationId)}
-            ${editableCell(row.email, 'email', row.applicationId)}
-            <td class="px-4 py-3 whitespace-nowrap text-center sticky right-0 z-10 bg-white dark:bg-slate-900 group-hover/row:bg-slate-50 dark:group-hover/row:bg-slate-800 shadow-[-4px_0_10px_rgba(0,0,0,0.04)] border-l border-slate-200 dark:border-slate-800">
-                ${actionHtml}
-            </td>
-        `;
-                tbody.appendChild(tr);
-            });
-
-            lucide.createIcons();
-        }
-
-        window.enableEdit = function (tdElement, rowId, fieldKey, dbType, studentClass) {
-            if (tdElement.classList.contains('is-editing')) return;
-            tdElement.classList.add('is-editing');
-            tdElement.classList.remove('cursor-pointer');
-
-            const currentValue = tdElement.getAttribute('data-value');
-            const upperCaseFields = ['studentId', 'studentName', 'section', 'fatherName'];
-            const textTransformClass = upperCaseFields.includes(fieldKey) ? 'uppercase' : '';
-
-            tdElement.innerHTML = `
-        <div class="flex items-center gap-1 min-w-[140px]" onclick="event.stopPropagation()">
-            <input type="text" value="${currentValue}" class="w-full px-2 py-1 text-sm border border-blue-400 dark:border-blue-500 rounded bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 shadow-inner ${textTransformClass}">
-            <button onclick="saveEdit(this, '${rowId}', '${fieldKey}', '${dbType}', '${studentClass}')" class="p-1.5 text-emerald-600 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 rounded transition-colors" title="Save">
-                <i data-lucide="check" class="w-4 h-4 stroke-[3]"></i>
-            </button>
-            <button onclick="cancelEdit(this, '${escapeHtml(currentValue)}', '${rowId}', '${fieldKey}', '${dbType}', '${studentClass}')" class="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors" title="Cancel">
-                <i data-lucide="x" class="w-4 h-4 stroke-[3]"></i>
-            </button>
-        </div>
-            `;
-            lucide.createIcons({ root: tdElement });
-            const input = tdElement.querySelector('input');
-            input.focus();
-            input.setSelectionRange(input.value.length, input.value.length);
-        };
-
-        window.cancelEdit = function (buttonElement, originalValue, rowId, fieldKey, dbType, studentClass) {
-            const tdElement = buttonElement.closest('td');
-            restoreCell(tdElement, originalValue, rowId, fieldKey, dbType, studentClass);
-        };
-
-        window.saveEdit = async function (buttonElement, rowId, fieldKey, dbType, studentClass) {
-            const tdElement = buttonElement.closest('td');
-            const input = tdElement.querySelector('input');
-            let newValue = input.value.trim();
-
-            if (['studentId', 'studentName', 'section', 'fatherName'].includes(fieldKey)) {
-                newValue = newValue.toUpperCase();
-            }
-
-            input.disabled = true;
-            buttonElement.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 spin"></i>`;
-            lucide.createIcons({ root: tdElement });
-
-            const targetUrl = dbType === 'pending' ? PENDING_SCRIPT_URL : FINAL_SCRIPT_URL;
-            const payload = { action: 'update_cell', field: fieldKey, value: newValue };
-
-            if (dbType === 'pending') payload.appId = rowId;
-            if (dbType === 'final') { payload.studentId = rowId; payload.studentClass = studentClass; }
-
-            try {
-                const response = await fetch(targetUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify(payload)
-                });
-                const result = await response.json();
-
-                if (result.status === 'success') {
-                    showToast(`Updated successfully`, 'success');
-                    restoreCell(tdElement, newValue, rowId, fieldKey, dbType, studentClass);
-
-                    if (dbType === 'pending') {
-                        const memoryRow = window.currentApplications.find(r => r.applicationId === rowId);
-                        if (memoryRow) memoryRow[fieldKey] = newValue;
-                    }
-                } else throw new Error(result.message);
-            } catch (err) {
-                showToast('Failed to save edit', 'error');
-                restoreCell(tdElement, tdElement.getAttribute('data-value'), rowId, fieldKey, dbType, studentClass);
-            }
-        };
-
-        function restoreCell(tdElement, value, rowId, fieldKey, dbType, studentClass) {
-            tdElement.classList.remove('is-editing');
-            tdElement.classList.add('cursor-pointer');
-            tdElement.setAttribute('data-value', escapeHtml(value));
-            tdElement.innerHTML = `
-        <div class="flex items-center gap-3 justify-between">
-            <span class="cell-text">${escapeHtml(value)}</span>
-            <i data-lucide="pencil" class="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-blue-500"></i>
-        </div>
-            `;
-            lucide.createIcons({ root: tdElement });
-        }
-
         // ==========================================
-        // 3. APPROVAL & REJECTION LOGIC
+        // 7. APPROVAL / REJECTION MODAL LOGIC
         // ==========================================
-        let pendingAction = null;
-        let pendingAppId = null;
+        let pendingAction = null; let pendingAppId = null;
 
         function handleAction(appId, type) {
-            pendingAction = type;
-            pendingAppId = appId;
-
-            const modal = document.getElementById('confirmModal');
-            const iconBox = document.getElementById('confirmIconBox');
-            const icon = document.getElementById('confirmIcon');
-            const title = document.getElementById('confirmTitle');
-            const msg = document.getElementById('confirmMessage');
-            const btn = document.getElementById('confirmExecuteBtn');
-
+            pendingAction = type; pendingAppId = appId;
             document.getElementById('confirmAppId').innerText = appId;
-            modal.classList.remove('hidden');
+            document.getElementById('confirmIconBox').className = type === 'approve' ? "w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 bg-emerald-100 text-emerald-600" : "w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 bg-red-100 text-red-600";
+            document.getElementById('confirmIcon').setAttribute('data-lucide', type === 'approve' ? 'check-circle' : 'alert-octagon');
+            document.getElementById('confirmTitle').innerText = type === 'approve' ? "Approve Application" : "Reject Application";
+            document.getElementById('confirmMessage').innerText = type === 'approve' ? "Are you sure you want to approve this application? An email with credentials will be sent to the student." : "Are you sure you want to reject this application? A rejection email will be sent.";
 
-            requestAnimationFrame(() => {
-                modal.classList.remove('opacity-0');
-                modal.querySelector('div').classList.remove('scale-95');
-            });
+            const btn = document.getElementById('confirmExecuteBtn');
+            btn.className = type === 'approve' ? "px-5 py-2.5 rounded-xl font-medium text-white shadow-sm transition-colors flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700" : "px-5 py-2.5 rounded-xl font-medium text-white shadow-sm transition-colors flex items-center gap-2 bg-red-600 hover:bg-red-700";
+            btn.innerHTML = type === 'approve' ? `Approve Student` : `Reject Application`;
 
-            if (type === 'approve') {
-                iconBox.className = "w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600";
-                icon.setAttribute('data-lucide', 'check-circle');
-                title.innerText = "Approve Application";
-                msg.innerText = "Are you sure you want to approve this application? An email with credentials will be sent to the student.";
-                btn.className = "px-5 py-2.5 rounded-xl font-medium text-white shadow-sm transition-colors flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700";
-                btn.innerHTML = `Approve Student`;
-            } else {
-                iconBox.className = "w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 bg-red-100 dark:bg-red-900/30 text-red-600";
-                icon.setAttribute('data-lucide', 'alert-octagon');
-                title.innerText = "Reject Application";
-                msg.innerText = "Are you sure you want to reject this application? A rejection email will be sent to the student.";
-                btn.className = "px-5 py-2.5 rounded-xl font-medium text-white shadow-sm transition-colors flex items-center gap-2 bg-red-600 hover:bg-red-700";
-                btn.innerHTML = `Reject Application`;
-            }
+            const modal = document.getElementById('confirmModal'); modal.classList.remove('hidden');
+            requestAnimationFrame(() => { modal.classList.remove('opacity-0'); modal.querySelector('div').classList.remove('scale-95'); });
             lucide.createIcons({ root: modal });
         }
 
         function closeConfirmModal() {
-            const modal = document.getElementById('confirmModal');
-            modal.classList.add('opacity-0');
-            modal.querySelector('div').classList.add('scale-95');
+            const modal = document.getElementById('confirmModal'); modal.classList.add('opacity-0'); modal.querySelector('div').classList.add('scale-95');
             setTimeout(() => { modal.classList.add('hidden'); }, 300);
         }
 
-        // The button that executes the modal action
         document.getElementById('confirmExecuteBtn').addEventListener('click', async function () {
-            const btn = this;
-            const originalText = btn.innerHTML;
-            btn.disabled = true;
-            btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 spin"></i> Processing...`;
-            lucide.createIcons({ root: btn });
+            const btn = this; const originalText = btn.innerHTML;
+            btn.disabled = true; btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 spin"></i> Processing...`; lucide.createIcons({ root: btn });
 
             try {
                 if (pendingAction === 'approve') {
-                    // Make a clean copy of the data so we don't corrupt the memory array
                     const originalData = window.currentApplications.find(row => row.applicationId === pendingAppId);
                     if (!originalData) throw new Error("Could not find student data.");
                     const studentData = { ...originalData, action: 'approve_student' };
 
-                    // Send to FINAL Script to save and email
-                    const finalRes = await fetch(FINAL_SCRIPT_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                        body: JSON.stringify(studentData)
-                    });
+                    const finalRes = await fetch(FINAL_SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(studentData) });
                     const finalResult = await finalRes.json();
-                    if (finalResult.status !== 'success') throw new Error("Failed saving to Final DB: " + finalResult.message);
+                    if (finalResult.status !== 'success') throw new Error(finalResult.message);
 
-                    // If successful, tell PENDING Script to update history status
-                    await fetch(PENDING_SCRIPT_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                        body: JSON.stringify({ action: 'delete_pending', appId: pendingAppId })
-                    });
+                    await fetch(PENDING_SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'delete_pending', appId: pendingAppId }) });
 
                 } else if (pendingAction === 'reject') {
-                    // Send rejection to PENDING Script
-                    const rejectRes = await fetch(PENDING_SCRIPT_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                        body: JSON.stringify({ action: 'reject_application', appId: pendingAppId })
-                    });
+                    const rejectRes = await fetch(PENDING_SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'reject_application', appId: pendingAppId }) });
                     const rejectResult = await rejectRes.json();
                     if (rejectResult.status !== 'success') throw new Error(rejectResult.message);
                 }
 
                 showToast(`Application successfully ${pendingAction}d!`, 'success');
                 closeConfirmModal();
-                // Instant Background Refresh for both tabs!
-                fetchData(); // Instantly refresh the table to show the new History Badge
-                fetchFinalStudents(); 
-
-            } catch (err) {
-                console.error(err);
-                showToast(err.message || 'Failed to process application.', 'error');
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = originalText;
-                lucide.createIcons({ root: btn });
-            }
+                fetchData();
+                fetchFinalStudents();
+            } catch (err) { showToast(err.message || 'Failed to process application.', 'error'); }
+            finally { btn.disabled = false; btn.innerHTML = originalText; lucide.createIcons({ root: btn }); }
         });
 
-        // Auto-load data when the page opens
+        // INIT
         window.addEventListener('DOMContentLoaded', fetchData);
     </script>
 </body>
