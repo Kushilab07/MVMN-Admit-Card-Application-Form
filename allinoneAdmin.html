@@ -262,7 +262,7 @@
         // ==========================================
         const PENDING_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwrGuAch4Wu5cfJTQl1mVYXDdnlN7e5ep1Y7kLnGW6iFO9Q4F6WLagDAvxyahzwFdABAg/exec";
         const FINAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz7LtjkALnF8XiE-ivVyv4Ey4r3Eeabt9A1Nn7edTf6WoI_k7hd5duyJYIQKyU6q3hnGQ/exec";
-        
+
         // We will store the fetched array globally so we can access full row data on approve
         window.currentApplications = [];
 
@@ -325,10 +325,12 @@
             lucide.createIcons({ root: refreshBtn });
 
             try {
-                const response = await fetch(SCRIPT_URL);
+                // Always fetch from the PENDING script for this tab
+                const response = await fetch(PENDING_SCRIPT_URL);
                 const result = await response.json();
 
                 if (result.status === 'success') {
+                    window.currentApplications = result.data; // Save data globally
                     renderTable(result.data);
                     showToast('Applications loaded successfully', 'success');
                 } else {
@@ -340,7 +342,7 @@
                 tbody.innerHTML = `<tr><td colspan="12" class="px-4 py-8 text-center text-red-500 font-medium">Error loading data. Please check your network.</td></tr>`;
             } finally {
                 refreshBtn.disabled = false;
-                refreshBtn.innerHTML = `<i data-lucide="refresh-cw" class="w-4 h-4"></i> Refresh`;
+                refreshBtn.innerHTML = `<i data-lucide="refresh-cw" class="w-4 h-4"></i> Refresh List`;
                 lucide.createIcons({ root: refreshBtn });
             }
         }
@@ -479,7 +481,7 @@
             lucide.createIcons({ root: tdElement });
 
             try {
-                const response = await fetch(SCRIPT_URL, {
+                const response = await fetch(PENDING_SCRIPT_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify({
@@ -548,7 +550,9 @@
             lucide.createIcons({ root: tdElement });
         }
 
-        // Modal State Variables
+        // ==========================================
+        // 3. APPROVAL & REJECTION LOGIC
+        // ==========================================
         let pendingAction = null;
         let pendingAppId = null;
 
@@ -562,12 +566,10 @@
             const title = document.getElementById('confirmTitle');
             const msg = document.getElementById('confirmMessage');
             const btn = document.getElementById('confirmExecuteBtn');
-            const appIdText = document.getElementById('confirmAppId');
 
-            appIdText.innerText = appId;
+            document.getElementById('confirmAppId').innerText = appId;
             modal.classList.remove('hidden');
 
-            // Trigger animation frame for smooth fade in
             requestAnimationFrame(() => {
                 modal.classList.remove('opacity-0');
                 modal.querySelector('div').classList.remove('scale-95');
@@ -577,7 +579,7 @@
                 iconBox.className = "w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600";
                 icon.setAttribute('data-lucide', 'check-circle');
                 title.innerText = "Approve Application";
-                msg.innerText = "This will move the student to their designated Class sheet, generate their final record, and send them an email with their login credentials. This cannot be easily undone.";
+                msg.innerText = "This will move the student to the Final Database, assign them to their Class sheet, and email their login credentials.";
                 btn.className = "px-5 py-2.5 rounded-xl font-medium text-white shadow-sm transition-colors flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700";
                 btn.innerHTML = `Approve Student`;
             } else {
@@ -598,7 +600,7 @@
             setTimeout(() => { modal.classList.add('hidden'); }, 300);
         }
 
-        // Attach click event to the confirm button
+        // The button that executes the modal action
         document.getElementById('confirmExecuteBtn').addEventListener('click', async function () {
             const btn = this;
             const originalText = btn.innerHTML;
@@ -607,32 +609,56 @@
             lucide.createIcons({ root: btn });
 
             try {
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({
-                        action: 'process_application',
-                        appId: pendingAppId,
-                        decision: pendingAction
-                    })
-                });
-                const result = await response.json();
+                if (pendingAction === 'approve') {
+                    // 1. Find the student data from our global array
+                    const studentData = window.currentApplications.find(row => row.applicationId === pendingAppId);
+                    if (!studentData) throw new Error("Could not find student data in memory.");
 
-                if (result.status === 'success') {
-                    showToast(`Application successfully ${pendingAction}d!`, 'success');
-                    closeConfirmModal();
+                    // Add the correct action flag
+                    studentData.action = 'approve_student';
 
-                    // Remove the row from the HTML table smoothly
-                    const rowToRemove = document.getElementById(`row-${pendingAppId}`);
-                    if (rowToRemove) {
-                        rowToRemove.classList.add('opacity-0', 'scale-95');
-                        setTimeout(() => rowToRemove.remove(), 300);
-                    }
-                } else {
-                    throw new Error(result.message);
+                    // 2. Send to FINAL Script to save and email
+                    const finalRes = await fetch(FINAL_SCRIPT_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify(studentData)
+                    });
+                    const finalResult = await finalRes.json();
+                    if (finalResult.status !== 'success') throw new Error(finalResult.message);
+
+                    // 3. If successful, tell PENDING Script to delete the row
+                    await fetch(PENDING_SCRIPT_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify({ action: 'delete_pending', appId: pendingAppId })
+                    });
+
+                } else if (pendingAction === 'reject') {
+                    // Send rejection to PENDING Script (it handles email and deletion)
+                    const rejectRes = await fetch(PENDING_SCRIPT_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify({ action: 'reject_application', appId: pendingAppId })
+                    });
+                    const rejectResult = await rejectRes.json();
+                    if (rejectResult.status !== 'success') throw new Error(rejectResult.message);
                 }
+
+                // UI Cleanup on Success
+                showToast(`Application successfully ${pendingAction}d!`, 'success');
+                closeConfirmModal();
+
+                // Remove row from table smoothly
+                const rowToRemove = document.getElementById(`row-${pendingAppId}`);
+                if (rowToRemove) {
+                    rowToRemove.classList.add('opacity-0', 'scale-95');
+                    setTimeout(() => rowToRemove.remove(), 300);
+                }
+
             } catch (err) {
+                console.error(err);
                 showToast(`Failed to process application.`, 'error');
+            } finally {
                 btn.disabled = false;
                 btn.innerHTML = originalText;
                 lucide.createIcons({ root: btn });
