@@ -167,15 +167,16 @@
                 </div>
 
                 <div class="flex flex-col lg:flex-row items-center gap-3 w-full lg:w-auto">
-                    <div class="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl w-full lg:w-auto overflow-x-auto">
-                        <button onclick="setPendingFilter('Pending', this)"
-                            class="app-filter-btn px-4 py-1.5 text-sm font-medium rounded-lg bg-white dark:bg-slate-700 text-blue-600 shadow-sm transition-all">Pending</button>
-                        <button onclick="setPendingFilter('Approved', this)"
-                            class="app-filter-btn px-4 py-1.5 text-sm font-medium rounded-lg text-slate-500 hover:text-slate-900 transition-all">Approved</button>
-                        <button onclick="setPendingFilter('Rejected', this)"
-                            class="app-filter-btn px-4 py-1.5 text-sm font-medium rounded-lg text-slate-500 hover:text-slate-900 transition-all">Rejected</button>
+                    <div
+                        class="flex bg-slate-100 dark:bg-slate-800/80 p-1 rounded-xl w-full lg:w-auto overflow-x-auto border border-slate-200 dark:border-slate-700">
                         <button onclick="setPendingFilter('All', this)"
-                            class="app-filter-btn px-4 py-1.5 text-sm font-medium rounded-lg text-slate-500 hover:text-slate-900 transition-all">All</button>
+                            class="app-filter-btn px-4 py-1.5 text-sm font-medium rounded-lg border border-transparent text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500">All</button>
+                        <button onclick="setPendingFilter('Pending', this)"
+                            class="app-filter-btn px-4 py-1.5 text-sm font-medium rounded-lg bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 border border-slate-200 dark:border-slate-700 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500">Pending</button>
+                        <button onclick="setPendingFilter('Approved', this)"
+                            class="app-filter-btn px-4 py-1.5 text-sm font-medium rounded-lg border border-transparent text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500">Approved</button>
+                        <button onclick="setPendingFilter('Rejected', this)"
+                            class="app-filter-btn px-4 py-1.5 text-sm font-medium rounded-lg border border-transparent text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500">Rejected</button>
                     </div>
 
                     <div class="relative w-full lg:w-64">
@@ -226,7 +227,13 @@
                         </thead>
                         <tbody id="tableBody" class="divide-y divide-slate-200 dark:divide-slate-800 text-sm">
                             <tr>
-                                <td colspan="12" class="px-4 py-12 text-center text-slate-500">Loading applications...
+                                <td colspan="12" class="py-16 text-center">
+                                    <div class="flex flex-col items-center justify-center gap-3 opacity-70">
+                                        <i data-lucide="loader-2"
+                                            class="w-8 h-8 animate-spin text-blue-600 dark:text-blue-400"></i>
+                                        <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Fetching
+                                            applications...</span>
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>
@@ -268,6 +275,48 @@
                 </div>
             </div>
 
+            <!-- Students Table -->
+            <div class="flex items-center gap-2 mb-4 overflow-x-auto scrollbar-hide pb-2" id="classFilters">
+                <button onclick="applyClassFilter('All', this)"
+                    class="class-filter-btn filter-active bg-blue-600 dark:bg-blue-500 text-white px-4 py-1.5 rounded-full text-sm font-medium border border-blue-600 dark:border-blue-500 transition-colors whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">All</button>
+                <button onclick="applyClassFilter('1', this)"
+                    class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class
+                    1</button>
+                <button onclick="applyClassFilter('2', this)"
+                    class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class
+                    2</button>
+                <button onclick="applyClassFilter('3', this)"
+                    class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class
+                    3</button>
+                <button onclick="applyClassFilter('4', this)"
+                    class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class
+                    4</button>
+                <button onclick="applyClassFilter('5', this)"
+                    class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class
+                    5</button>
+                <button onclick="applyClassFilter('6', this)"
+                    class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class
+                    6</button>
+                <button onclick="applyClassFilter('7', this)"
+                    class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class
+                    7</button>
+                <button onclick="applyClassFilter('8', this)"
+                    class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class
+                    8</button>
+                <button onclick="applyClassFilter('9', this)"
+                    class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class
+                    9</button>
+                <button onclick="applyClassFilter('10', this)"
+                    class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class
+                    10</button>
+                <button onclick="applyClassFilter('11', this)"
+                    class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class
+                    11</button>
+                <button onclick="applyClassFilter('12', this)"
+                    class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class
+                    12</button>
+            </div>
+
             <div
                 class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm flex flex-col min-h-0 overflow-hidden transition-colors duration-300 relative">
                 <div class="flex-1 overflow-x-auto overflow-y-auto scrollbar-hide relative">
@@ -277,11 +326,11 @@
                                 class="border-b border-slate-200 dark:border-slate-800 text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold">
                                 <th class="px-4 py-3 w-10 text-center"><input type="checkbox" id="selectAll"
                                         onclick="toggleSelectAll(this)"
-                                        class="rounded text-blue-600 focus:ring-blue-500"></th>
+                                        class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-800">
+                                </th>
                                 <th class="px-4 py-3">Date & Time</th>
-                                <th
-                                    class="px-4 py-3 sticky left-0 z-20 bg-slate-50/95 dark:bg-slate-800/95 shadow-[4px_0_10px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-700">
-                                    Application ID</th>
+                                <th class="px-4 py-3 border-r border-slate-200 dark:border-slate-700">Application ID
+                                </th>
                                 <th class="px-4 py-3">Student ID</th>
                                 <th class="px-4 py-3">Name</th>
                                 <th class="px-4 py-3">Class</th>
@@ -303,6 +352,16 @@
                             </tr>
                         </thead>
                         <tbody id="studentsTableBody" class="divide-y divide-slate-200 dark:divide-slate-800 text-sm">
+                            <tr>
+                                <td colspan="15" class="py-16 text-center">
+                                    <div class="flex flex-col items-center justify-center gap-3 opacity-70">
+                                        <i data-lucide="loader-2"
+                                            class="w-8 h-8 animate-spin text-blue-600 dark:text-blue-400"></i>
+                                        <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Loading
+                                            student database...</span>
+                                    </div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -538,11 +597,9 @@
         function setPendingFilter(status, btnElement) {
             currentAppFilter = status;
             document.querySelectorAll('.app-filter-btn').forEach(btn => {
-                btn.classList.remove('bg-white', 'dark:bg-slate-700', 'text-blue-600', 'shadow-sm');
-                btn.classList.add('text-slate-500');
+                btn.className = "app-filter-btn px-4 py-1.5 text-sm font-medium rounded-lg border border-transparent text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500";
             });
-            btnElement.classList.add('bg-white', 'dark:bg-slate-700', 'text-blue-600', 'shadow-sm');
-            btnElement.classList.remove('text-slate-500');
+            btnElement.className = "app-filter-btn px-4 py-1.5 text-sm font-medium rounded-lg bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 border border-slate-200 dark:border-slate-700 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500";
             filterPendingTable();
         }
 
@@ -562,7 +619,7 @@
             refreshBtn.disabled = true; refreshBtn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 spin text-blue-500"></i>`; lucide.createIcons({ root: refreshBtn });
             try {
                 const response = await fetch(PENDING_SCRIPT_URL); const result = await response.json();
-                if (result.status === 'success') { window.currentApplications = result.data; filterPendingTable(); showToast('Applications loaded successfully', 'success'); }
+                if (result.status === 'success') { window.currentApplications = result.data; filterPendingTable(); showToast('Applications loaded successfully', 'success'); } 
                 else throw new Error(result.message);
             } catch (error) {
                 showToast('Failed to connect to database', 'error'); tbody.innerHTML = `<tr><td colspan="12" class="px-4 py-8 text-center text-red-500 font-medium">Error loading data. Please check your network.</td></tr>`;
@@ -574,31 +631,27 @@
         function renderTable(dataArray) {
             const tbody = document.getElementById('tableBody'); tbody.innerHTML = '';
             if (!dataArray || dataArray.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="12" class="px-4 py-12 text-center text-slate-500 dark:text-slate-400"><i data-lucide="inbox" class="w-8 h-8 mb-2 mx-auto opacity-50"></i>No records found for this filter.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="12" class="py-16 text-center"><div class="flex flex-col items-center justify-center gap-3 opacity-60"><i data-lucide="inbox" class="w-8 h-8 text-slate-400"></i><span class="text-sm font-medium text-slate-500 dark:text-slate-400">No records found.</span></div></td></tr>`;
                 lucide.createIcons(); return;
             }
 
             dataArray.forEach((row) => {
                 let cleanTs = String(row.timestamp);
-                if (cleanTs.includes('T')) { const dt = new Date(cleanTs); cleanTs = `${("0" + dt.getDate()).slice(-2)}/${("0" + (dt.getMonth() + 1)).slice(-2)}/${dt.getFullYear()} <span class="text-slate-400 text-xs ml-1">${dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>`; }
+                if(cleanTs.includes('T')) { const dt = new Date(cleanTs); cleanTs = `${("0"+dt.getDate()).slice(-2)}/${("0"+(dt.getMonth()+1)).slice(-2)}/${dt.getFullYear()} <span class="text-slate-400 text-xs ml-1">${dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>`; }
 
                 let cleanDob = String(row.dob);
-                if (cleanDob.includes('T')) { const dDob = new Date(cleanDob); cleanDob = `${("0" + dDob.getDate()).slice(-2)}/${("0" + (dDob.getMonth() + 1)).slice(-2)}/${dDob.getFullYear()}`; }
+                if(cleanDob.includes('T')) { const dDob = new Date(cleanDob); cleanDob = `${("0"+dDob.getDate()).slice(-2)}/${("0"+(dDob.getMonth()+1)).slice(-2)}/${dDob.getFullYear()}`; }
 
                 let actionHtml = '';
                 if (row.status === 'Pending' || !row.status) {
-                    actionHtml = `
-                        <div class="flex items-center justify-center gap-2">
-                            <button onclick="handleAction('${row.applicationId}', 'approve')" class="p-1.5 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-500 hover:text-white transition-all"><i data-lucide="check" class="w-4 h-4"></i></button>
-                            <button onclick="handleAction('${row.applicationId}', 'reject')" class="p-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-500 hover:text-white transition-all"><i data-lucide="x" class="w-4 h-4"></i></button>
-                        </div>`;
-                } else if (row.status === 'Approved') { actionHtml = `<span class="px-2.5 py-1 text-xs font-bold rounded-md bg-emerald-100 text-emerald-700">Approved</span>`; }
-                else { actionHtml = `<span class="px-2.5 py-1 text-xs font-bold rounded-md bg-red-100 text-red-700">Rejected</span>`; }
+                    actionHtml = `<div class="flex items-center justify-center gap-2"><button onclick="handleAction('${row.applicationId}', 'approve')" class="p-1.5 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-500 hover:text-white border border-emerald-200 transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500"><i data-lucide="check" class="w-4 h-4"></i></button><button onclick="handleAction('${row.applicationId}', 'reject')" class="p-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-500 hover:text-white border border-red-200 transition-all focus:outline-none focus:ring-2 focus:ring-red-500"><i data-lucide="x" class="w-4 h-4"></i></button></div>`;
+                } else if (row.status === 'Approved') { actionHtml = `<span class="px-2.5 py-1 text-xs font-bold rounded-md bg-emerald-100 text-emerald-700 border border-emerald-200">Approved</span>`; } 
+                else { actionHtml = `<span class="px-2.5 py-1 text-xs font-bold rounded-md bg-red-100 text-red-700 border border-red-200">Rejected</span>`; }
 
                 const tr = document.createElement('tr'); tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/20 transition-colors";
                 tr.innerHTML = `
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-900">${cleanTs}</td>
-                    <td class="px-4 py-3 whitespace-nowrap font-medium text-blue-600 dark:text-blue-400 bg-white dark:bg-slate-900 sticky left-0 z-10 shadow-[4px_0_10px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-700">${row.applicationId}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-slate-500 dark:text-slate-400">${cleanTs}</td>
+                    <td class="px-4 py-3 whitespace-nowrap font-medium text-slate-600 dark:text-slate-300">${row.applicationId}</td>
                     ${editableCell(row.studentId, 'studentId', row.applicationId)}
                     ${editableCell(row.studentName, 'studentName', row.applicationId)}
                     ${editableCell(row.studentClass, 'studentClass', row.applicationId)}
@@ -623,16 +676,18 @@
             btn.disabled = true; btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 spin"></i>`; lucide.createIcons({ root: btn });
             try {
                 const res = await fetch(FINAL_SCRIPT_URL); const result = await res.json();
-                if (result.status === 'success') { window.finalStudentsData = result.data; filterStudentsTable(); showToast('Student database loaded', 'success'); }
+                if (result.status === 'success') { window.finalStudentsData = result.data; filterStudentsTable(); showToast('Student database loaded', 'success'); } 
                 else throw new Error(result.message);
-            } catch (error) { showToast('Failed to load students', 'error'); }
+            } catch (error) { showToast('Failed to load students', 'error'); } 
             finally { btn.disabled = false; btn.innerHTML = `<i data-lucide="refresh-cw" class="w-4 h-4"></i>`; lucide.createIcons({ root: btn }); }
         }
 
         function applyClassFilter(classLevel, btnElement) {
             currentClassFilter = classLevel;
-            document.querySelectorAll('.class-filter-btn').forEach(btn => { btn.classList.remove('bg-blue-600', 'text-white', 'filter-active'); btn.classList.add('bg-white', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300'); });
-            btnElement.classList.add('bg-blue-600', 'text-white', 'filter-active'); btnElement.classList.remove('bg-white', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300');
+            document.querySelectorAll('.class-filter-btn').forEach(btn => { 
+                btn.className = "class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900";
+            });
+            btnElement.className = "class-filter-btn filter-active bg-blue-600 dark:bg-blue-500 text-white px-4 py-1.5 rounded-full text-sm font-medium border border-blue-600 dark:border-blue-500 transition-colors whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900";
             filterStudentsTable();
         }
 
@@ -703,25 +758,25 @@
         function renderFinalTable(dataArray) {
             const tbody = document.getElementById('studentsTableBody'); tbody.innerHTML = '';
             document.getElementById('selectAll').checked = false; toggleBulkButtons();
-
+            
             if (!dataArray || dataArray.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="15" class="px-4 py-12 text-center text-slate-500">No verified students found.</td></tr>`;
-                return;
+                tbody.innerHTML = `<tr><td colspan="15" class="py-16 text-center"><div class="flex flex-col items-center justify-center gap-3 opacity-60"><i data-lucide="users" class="w-8 h-8 text-slate-400"></i><span class="text-sm font-medium text-slate-500 dark:text-slate-400">No verified students found.</span></div></td></tr>`;
+                lucide.createIcons(); return;
             }
 
             dataArray.forEach(row => {
-                const dbType = 'final'; const uniqueKey = row.studentId;
-                let cleanTs = String(row.timestamp); if (cleanTs.includes('T')) { const dt = new Date(cleanTs); cleanTs = `${("0" + dt.getDate()).slice(-2)}/${("0" + (dt.getMonth() + 1)).slice(-2)}/${dt.getFullYear()}`; }
-                let cleanDob = String(row.dob); if (cleanDob.includes('T')) { const dDob = new Date(cleanDob); cleanDob = `${("0" + dDob.getDate()).slice(-2)}/${("0" + (dDob.getMonth() + 1)).slice(-2)}/${dDob.getFullYear()}`; }
+                const dbType = 'final'; const uniqueKey = row.studentId; 
+                let cleanTs = String(row.timestamp); if(cleanTs.includes('T')) { const dt = new Date(cleanTs); cleanTs = `${("0"+dt.getDate()).slice(-2)}/${("0"+(dt.getMonth()+1)).slice(-2)}/${dt.getFullYear()}`; }
+                let cleanDob = String(row.dob); if(cleanDob.includes('T')) { const dDob = new Date(cleanDob); cleanDob = `${("0"+dDob.getDate()).slice(-2)}/${("0"+(dDob.getMonth()+1)).slice(-2)}/${dDob.getFullYear()}`; }
 
-                const tr = document.createElement('tr'); tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/20";
+                const tr = document.createElement('tr'); tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/20 transition-colors";
                 tr.setAttribute('data-sid', row.studentId); tr.setAttribute('data-sclass', row.studentClass);
-
+                
                 tr.innerHTML = `
-                    <td class="px-4 py-3 text-center"><input type="checkbox" onchange="toggleBulkButtons()" class="student-checkbox rounded text-blue-600 focus:ring-blue-500"></td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-500">${cleanTs}</td>
-                    <td class="px-4 py-3 whitespace-nowrap font-medium text-blue-600 bg-white dark:bg-slate-900 sticky left-0 z-10 shadow-[4px_0_10px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-700">${row.applicationId}</td>
-                    <td class="px-4 py-3 whitespace-nowrap font-bold text-slate-700">${row.studentId}</td>
+                    <td class="px-4 py-3 text-center"><input type="checkbox" onchange="toggleBulkButtons()" class="student-checkbox rounded border-slate-300 dark:border-slate-600 dark:bg-slate-800 text-blue-600 focus:ring-blue-500"></td>
+                    <td class="px-4 py-3 whitespace-nowrap text-slate-500 dark:text-slate-400">${cleanTs}</td>
+                    <td class="px-4 py-3 whitespace-nowrap font-medium text-slate-600 dark:text-slate-300 border-r border-slate-200 dark:border-slate-700">${row.applicationId}</td>
+                    <td class="px-4 py-3 whitespace-nowrap font-bold text-blue-600 dark:text-blue-300">${row.studentId}</td>
                     ${editableCell(row.studentName, 'studentName', uniqueKey, dbType, row.studentClass)}
                     ${editableCell(row.studentClass, 'studentClass', uniqueKey, dbType, row.studentClass)}
                     ${editableCell(row.section, 'section', uniqueKey, dbType, row.studentClass)}
