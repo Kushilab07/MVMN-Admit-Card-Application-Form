@@ -95,6 +95,10 @@
                 <i data-lucide="layout-dashboard" class="w-5 h-5 group-hover:text-blue-600 transition-colors"></i> <span
                     class="hidden xl:block">Dashboard</span>
             </a>
+            <a href="#" onclick="switchTab('students')" id="navStudents" class="flex items-center lg:justify-start justify-center gap-3 px-3 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors font-medium text-sm group">
+                <i data-lucide="users" class="w-5 h-5 group-hover:text-blue-600 transition-colors"></i> 
+                <span class="hidden lg:block">Students</span>
+            </a>
             <a href="#"
                 class="flex items-center xl:justify-start justify-center gap-3 px-3 py-3 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 font-medium text-sm transition-colors">
                 <i data-lucide="file-text" class="w-5 h-5"></i> <span class="hidden xl:block">Applications</span>
@@ -134,7 +138,7 @@
             </div>
         </header>
 
-        <div class="flex-1 flex flex-col p-8 overflow-hidden">
+        <div id="pendingView" class="flex-1 flex flex-col p-8 overflow-hidden">
             <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-6 gap-4 flex-shrink-0">
                 <div>
                     <h2 class="text-xl font-bold text-slate-900 dark:text-white">Applications Manager</h2>
@@ -205,6 +209,67 @@
                                 <td colspan="12" class="px-4 py-12 text-center text-slate-500">Loading applications...
                                 </td>
                             </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="studentsView" class="flex-1 flex flex-col p-8 overflow-hidden hidden">
+            
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-6 gap-4 flex-shrink-0">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900 dark:text-white">Verified Students Database</h2>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Manage final records, admit status, and serial numbers.</p>
+                </div>
+                
+                <div class="flex items-center gap-3 w-full lg:w-auto">
+                    <div class="relative w-full lg:w-64">
+                        <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                        <input type="text" id="searchStudent" placeholder="Search ID or Name..." onkeyup="filterStudentsTable()" 
+                               class="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <button onclick="fetchFinalStudents()" id="refreshBtnStudents" class="flex items-center gap-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 text-slate-700 dark:text-slate-300 px-4 py-2 rounded-xl text-sm font-medium transition-all shadow-sm whitespace-nowrap">
+                        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 mb-4 overflow-x-auto scrollbar-hide pb-2" id="classFilters">
+                <button onclick="applyClassFilter('All', this)" class="class-filter-btn filter-active px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap">All</button>
+                <button onclick="applyClassFilter('1', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-100">Class 1</button>
+                <button onclick="applyClassFilter('2', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-100">Class 2</button>
+                <button onclick="applyClassFilter('3', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-100">Class 3</button>
+                <button onclick="applyClassFilter('4', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-100">Class 4</button>
+                <button onclick="applyClassFilter('5', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-100">Class 5</button>
+                <button onclick="applyClassFilter('6', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-100">Class 6</button>
+                <button onclick="applyClassFilter('7', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-100">Class 7</button>
+                <button onclick="applyClassFilter('8', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-100">Class 8</button>
+                <button onclick="applyClassFilter('9', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-100">Class 9</button>
+                <button onclick="applyClassFilter('10', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-100">Class 10</button>
+                <button onclick="applyClassFilter('11', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-100">Class 11</button>
+                <button onclick="applyClassFilter('12', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-100">Class 12</button>
+            </div>
+
+            <div class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm flex flex-col min-h-0 overflow-hidden transition-colors duration-300 relative">
+                <div class="flex-1 overflow-x-auto overflow-y-auto scrollbar-hide relative">
+                    <table class="w-full text-left border-collapse min-w-max" id="studentsTableElement">
+                        <thead class="sticky top-0 z-20 bg-slate-50/95 dark:bg-slate-800/95 backdrop-blur shadow-sm">
+                            <tr class="border-b border-slate-200 dark:border-slate-800 text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold">
+                                <th class="px-4 py-3">Student ID</th>
+                                <th class="px-4 py-3">Name</th>
+                                <th class="px-4 py-3">Class</th>
+                                <th class="px-4 py-3">Section</th>
+                                <th class="px-4 py-3">Roll</th>
+                                <th class="px-4 py-3">DOB</th>
+                                <th class="px-4 py-3">Father's Name</th>
+                                <th class="px-4 py-3">Phone</th>
+                                <th class="px-4 py-3 border-x border-slate-200 dark:border-slate-800 bg-amber-50/50 dark:bg-amber-900/10 text-amber-700 dark:text-amber-500">Admit Status</th>
+                                <th class="px-4 py-3 bg-blue-50/50 dark:bg-blue-900/10 text-blue-700 dark:text-blue-400">Serial No.</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentsTableBody" class="divide-y divide-slate-200 dark:divide-slate-800 text-sm">
+                            <tr><td colspan="10" class="px-4 py-12 text-center text-slate-500">Loading student database...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -287,6 +352,8 @@
 
         // We will store the fetched array globally so we can access full row data on approve
         window.currentApplications = [];
+        window.finalStudentsData = [];
+        let currentClassFilter = 'All';
 
         lucide.createIcons();
 
@@ -301,6 +368,29 @@
                 localStorage.theme = 'dark';
             }
         });
+
+        function switchTab(tabName) {
+            document.getElementById('pendingView').classList.add('hidden');
+            document.getElementById('studentsView').classList.add('hidden');
+            
+            document.getElementById('navPending').classList.remove('bg-blue-50', 'dark:bg-blue-900/20', 'text-blue-700', 'dark:text-blue-400');
+            document.getElementById('navPending').classList.add('text-slate-600', 'dark:text-slate-400');
+            
+            document.getElementById('navStudents').classList.remove('bg-blue-50', 'dark:bg-blue-900/20', 'text-blue-700', 'dark:text-blue-400');
+            document.getElementById('navStudents').classList.add('text-slate-600', 'dark:text-slate-400');
+
+            if (tabName === 'pending') {
+                document.getElementById('pendingView').classList.remove('hidden');
+                document.getElementById('navPending').classList.remove('text-slate-600');
+                document.getElementById('navPending').classList.add('bg-blue-50', 'dark:bg-blue-900/20', 'text-blue-700', 'dark:text-blue-400');
+                fetchData();
+            } else if (tabName === 'students') {
+                document.getElementById('studentsView').classList.remove('hidden');
+                document.getElementById('navStudents').classList.remove('text-slate-600');
+                document.getElementById('navStudents').classList.add('bg-blue-50', 'dark:bg-blue-900/20', 'text-blue-700', 'dark:text-blue-400');
+                fetchFinalStudents();
+            }
+        }
 
         function showToast(message, type = 'info') {
             const container = document.getElementById('toast-container');
@@ -392,6 +482,77 @@
             }
         }
 
+        async function fetchFinalStudents() {
+            const tbody = document.getElementById('studentsTableBody');
+            const btn = document.getElementById('refreshBtnStudents');
+            btn.disabled = true; 
+            btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i>`;
+            lucide.createIcons({ root: btn });
+
+            try {
+                const res = await fetch(FINAL_SCRIPT_URL);
+                const result = await res.json();
+                if (result.status === 'success') {
+                    window.finalStudentsData = result.data;
+                    filterStudentsTable();
+                    showToast('Student database loaded', 'success');
+                } else throw new Error(result.message);
+            } catch (error) {
+                showToast('Failed to load students', 'error');
+            } finally {
+                btn.disabled = false; 
+                btn.innerHTML = `<i data-lucide="refresh-cw" class="w-4 h-4"></i>`;
+                lucide.createIcons({ root: btn });
+            }
+        }
+
+        function applyClassFilter(classLevel, btnElement) {
+            currentClassFilter = classLevel;
+            document.querySelectorAll('.class-filter-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'text-white');
+                btn.classList.add('bg-white', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300');
+            });
+            btnElement.classList.add('bg-blue-600', 'text-white');
+            btnElement.classList.remove('bg-white', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300');
+            filterStudentsTable();
+        }
+
+        function filterStudentsTable() {
+            const query = document.getElementById('searchStudent').value.toLowerCase();
+            const filteredData = window.finalStudentsData.filter(student => {
+                const matchesClass = currentClassFilter === 'All' || String(student.studentClass) === currentClassFilter;
+                const matchesSearch = student.studentName.toLowerCase().includes(query) || student.studentId.toLowerCase().includes(query);
+                return matchesClass && matchesSearch;
+            });
+            renderFinalTable(filteredData);
+        }
+
+        function renderFinalTable(dataArray) {
+            const tbody = document.getElementById('studentsTableBody');
+            tbody.innerHTML = '';
+            if (!dataArray || dataArray.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="px-4 py-12 text-center text-slate-500">No verified students found.</td></tr>`;
+                return;
+            }
+
+            dataArray.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/20 transition-colors group/row";
+                tr.innerHTML = `
+                    <td class="px-4 py-3 whitespace-nowrap font-medium text-blue-600 dark:text-blue-400">${row.studentId}</td>
+                    <td class="px-4 py-3">${escapeHtml(row.studentName)}</td>
+                    <td class="px-4 py-3">${escapeHtml(row.studentClass)}</td>
+                    <td class="px-4 py-3">${escapeHtml(row.section)}</td>
+                    <td class="px-4 py-3">${escapeHtml(row.rollNo)}</td>
+                    <td class="px-4 py-3">${escapeHtml(row.dob)}</td>
+                    <td class="px-4 py-3">${escapeHtml(row.fatherName)}</td>
+                    <td class="px-4 py-3">${escapeHtml(row.phone)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+            lucide.createIcons();
+        }
+
         function escapeHtml(text) {
             if (!text) return '';
             return text.toString().replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -413,23 +574,17 @@
         function renderTable(dataArray) {
             const tbody = document.getElementById('tableBody');
 
+            // 🔴 BUG FIX 1: ALWAYS clear the table so Search and Filters actually work!
+            tbody.innerHTML = '';
+
             if (!dataArray || dataArray.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="12" class="px-4 py-12 text-center text-slate-500 dark:text-slate-400"><i data-lucide="inbox" class="w-8 h-8 mb-2 opacity-50 mx-auto"></i>No pending applications found.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="12" class="px-4 py-12 text-center text-slate-500 dark:text-slate-400"><i data-lucide="inbox" class="w-8 h-8 mb-2 opacity-50 mx-auto"></i>No records found for this filter.</td></tr>`;
                 lucide.createIcons();
                 return;
             }
 
-            // Remove placeholders if real data is incoming
-            if (tbody.innerHTML.includes('Loading applications...') || tbody.innerHTML.includes('No pending applications')) {
-                tbody.innerHTML = '';
-            }
-
-            // 🔴 CHANGED: We removed the .reverse() so it stays Oldest -> Newest
             dataArray.forEach((row) => {
                 const rowId = `row-${row.applicationId}`;
-
-                // NON-DESTRUCTIVE CHECK: If this row already exists in the HTML, SKIP IT! 
-                if (document.getElementById(rowId)) return;
 
                 const dateObj = new Date(row.timestamp);
                 const timeDay = String(dateObj.getDate()).padStart(2, '0');
@@ -447,7 +602,7 @@
                 tr.id = rowId;
                 tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/20 transition-colors group/row";
 
-                // --- NEW STATUS LOGIC ---
+                // History Status Badges Logic
                 let actionHtml = '';
                 if (row.status === 'Pending') {
                     actionHtml = `
@@ -461,9 +616,9 @@
                         </div>
                     `;
                 } else if (row.status === 'Approved') {
-                    actionHtml = `<span class="px-2 py-1 text-xs font-semibold rounded-md bg-emerald-100 text-emerald-700">Approved</span>`;
+                    actionHtml = `<span class="px-2.5 py-1 text-xs font-bold rounded-md bg-emerald-100 text-emerald-700 border border-emerald-200">Approved</span>`;
                 } else {
-                    actionHtml = `<span class="px-2 py-1 text-xs font-semibold rounded-md bg-red-100 text-red-700">Rejected</span>`;
+                    actionHtml = `<span class="px-2.5 py-1 text-xs font-bold rounded-md bg-red-100 text-red-700 border border-red-200">Rejected</span>`;
                 }
 
                 tr.innerHTML = `
@@ -478,12 +633,10 @@
             ${editableCell(row.fatherName, 'fatherName', row.applicationId)}
             ${editableCell(row.phone, 'phone', row.applicationId)}
             ${editableCell(row.email, 'email', row.applicationId)}
-            
             <td class="px-4 py-3 whitespace-nowrap text-center sticky right-0 z-10 bg-white dark:bg-slate-900 group-hover/row:bg-slate-50 dark:group-hover/row:bg-slate-800 shadow-[-4px_0_10px_rgba(0,0,0,0.04)] border-l border-slate-200 dark:border-slate-800">
                 ${actionHtml}
             </td>
         `;
-                // 🔴 CHANGED: Simply append to the end of the table
                 tbody.appendChild(tr);
             });
 
@@ -554,6 +707,10 @@
                     showToast(`Updated successfully`, 'success');
                     restoreCell(tdElement, newValue, appId, fieldKey);
 
+                    // 🔴 BUG FIX 2: Update the memory array so the Approved button sends the fixed data!
+                    const memoryRow = window.currentApplications.find(r => r.applicationId === appId);
+                    if (memoryRow) memoryRow[fieldKey] = newValue;
+
                     if (['studentClass', 'section', 'rollNo'].includes(fieldKey)) {
                         const tr = tdElement.closest('tr');
                         const classVal = String(tr.querySelector('[data-field="studentClass"]').getAttribute('data-value')).padStart(2, '0');
@@ -570,8 +727,9 @@
                         if (newStudentId !== currentStudentId) {
                             restoreCell(studentIdTd, newStudentId, appId, 'studentId');
                             showToast(`Student ID auto-updated to ${newStudentId}`, 'info');
+                            if (memoryRow) memoryRow['studentId'] = newStudentId; // Sync memory here too
 
-                            fetch(SCRIPT_URL, {
+                            fetch(PENDING_SCRIPT_URL, {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                                 body: JSON.stringify({
