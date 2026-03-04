@@ -99,7 +99,7 @@
                 <i data-lucide="users" class="w-5 h-5 group-hover:text-blue-600 transition-colors"></i> 
                 <span class="hidden lg:block">Students</span>
             </a>
-            <a href="#"
+            <a href="#" onclick="switchTab('pending')" id="navPending"
                 class="flex items-center xl:justify-start justify-center gap-3 px-3 py-3 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 font-medium text-sm transition-colors">
                 <i data-lucide="file-text" class="w-5 h-5"></i> <span class="hidden xl:block">Applications</span>
             </a>
@@ -444,7 +444,8 @@
         function filterPendingTable() {
             const query = document.getElementById('searchPending').value.toLowerCase();
             const filteredData = window.currentApplications.filter(app => {
-                const matchesStatus = currentAppFilter === 'All' || app.status === currentAppFilter;
+                const currentStatus = app.status || 'Pending'; // Safety fallback for older records
+                const matchesStatus = currentAppFilter === 'All' || currentStatus === currentAppFilter;
                 const matchesSearch = app.studentName.toLowerCase().includes(query) || app.applicationId.toLowerCase().includes(query);
                 return matchesStatus && matchesSearch;
             });
@@ -558,11 +559,11 @@
             return text.toString().replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
         }
 
-        function editableCell(value, fieldKey, appId) {
+        function editableCell(value, fieldKey, rowId, dbType = 'pending', studentClass = '') {
             const safeValue = escapeHtml(value);
             return `
         <td data-field="${fieldKey}" class="px-4 py-3 whitespace-nowrap text-slate-600 dark:text-slate-300 relative group cursor-pointer hover:bg-blue-50 dark:hover:bg-slate-800 transition-colors border-r border-transparent hover:border-blue-200 dark:hover:border-slate-700"
-            onclick="enableEdit(this, '${appId}', '${fieldKey}')" data-value="${safeValue}">
+            onclick="enableEdit(this, '${rowId}', '${fieldKey}', '${dbType}', '${studentClass}')" data-value="${safeValue}">
             <div class="flex items-center gap-3 justify-between">
                 <span class="cell-text">${safeValue}</span>
                 <i data-lucide="pencil" class="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-blue-500"></i>
@@ -643,9 +644,8 @@
             lucide.createIcons();
         }
 
-        function enableEdit(tdElement, appId, fieldKey) {
+        window.enableEdit = function(tdElement, rowId, fieldKey, dbType, studentClass) {
             if (tdElement.classList.contains('is-editing')) return;
-
             tdElement.classList.add('is-editing');
             tdElement.classList.remove('cursor-pointer');
 
@@ -656,33 +656,31 @@
             tdElement.innerHTML = `
         <div class="flex items-center gap-1 min-w-[140px]" onclick="event.stopPropagation()">
             <input type="text" value="${currentValue}" class="w-full px-2 py-1 text-sm border border-blue-400 dark:border-blue-500 rounded bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 shadow-inner ${textTransformClass}">
-            <button onclick="saveEdit(this, '${appId}', '${fieldKey}')" class="p-1.5 text-emerald-600 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 rounded transition-colors" title="Save">
+            <button onclick="saveEdit(this, '${rowId}', '${fieldKey}', '${dbType}', '${studentClass}')" class="p-1.5 text-emerald-600 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 rounded transition-colors" title="Save">
                 <i data-lucide="check" class="w-4 h-4 stroke-[3]"></i>
             </button>
-            <button onclick="cancelEdit(this, '${escapeHtml(currentValue)}', '${appId}', '${fieldKey}')" class="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors" title="Cancel">
+            <button onclick="cancelEdit(this, '${escapeHtml(currentValue)}', '${rowId}', '${fieldKey}', '${dbType}', '${studentClass}')" class="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors" title="Cancel">
                 <i data-lucide="x" class="w-4 h-4 stroke-[3]"></i>
             </button>
         </div>
             `;
             lucide.createIcons({ root: tdElement });
-
             const input = tdElement.querySelector('input');
             input.focus();
             input.setSelectionRange(input.value.length, input.value.length);
-        }
+        };
 
-        function cancelEdit(buttonElement, originalValue, appId, fieldKey) {
+        window.cancelEdit = function(buttonElement, originalValue, rowId, fieldKey, dbType, studentClass) {
             const tdElement = buttonElement.closest('td');
-            restoreCell(tdElement, originalValue, appId, fieldKey);
-        }
+            restoreCell(tdElement, originalValue, rowId, fieldKey, dbType, studentClass);
+        };
 
-        async function saveEdit(buttonElement, appId, fieldKey) {
+        window.saveEdit = async function(buttonElement, rowId, fieldKey, dbType, studentClass) {
             const tdElement = buttonElement.closest('td');
             const input = tdElement.querySelector('input');
             let newValue = input.value.trim();
 
-            const upperCaseFields = ['studentId', 'studentName', 'section', 'fatherName'];
-            if (upperCaseFields.includes(fieldKey)) {
+            if (['studentId', 'studentName', 'section', 'fatherName'].includes(fieldKey)) {
                 newValue = newValue.toUpperCase();
             }
 
@@ -690,72 +688,39 @@
             buttonElement.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 spin"></i>`;
             lucide.createIcons({ root: tdElement });
 
+            const targetUrl = dbType === 'pending' ? PENDING_SCRIPT_URL : FINAL_SCRIPT_URL;
+            const payload = { action: 'update_cell', field: fieldKey, value: newValue };
+            
+            if(dbType === 'pending') payload.appId = rowId;
+            if(dbType === 'final') { payload.studentId = rowId; payload.studentClass = studentClass; }
+
             try {
-                const response = await fetch(PENDING_SCRIPT_URL, {
+                const response = await fetch(targetUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({
-                        action: 'update_cell',
-                        appId: appId,
-                        field: fieldKey,
-                        value: newValue
-                    })
+                    body: JSON.stringify(payload)
                 });
                 const result = await response.json();
 
                 if (result.status === 'success') {
                     showToast(`Updated successfully`, 'success');
-                    restoreCell(tdElement, newValue, appId, fieldKey);
+                    restoreCell(tdElement, newValue, rowId, fieldKey, dbType, studentClass);
 
-                    // 🔴 BUG FIX 2: Update the memory array so the Approved button sends the fixed data!
-                    const memoryRow = window.currentApplications.find(r => r.applicationId === appId);
-                    if (memoryRow) memoryRow[fieldKey] = newValue;
-
-                    if (['studentClass', 'section', 'rollNo'].includes(fieldKey)) {
-                        const tr = tdElement.closest('tr');
-                        const classVal = String(tr.querySelector('[data-field="studentClass"]').getAttribute('data-value')).padStart(2, '0');
-                        const rollVal = String(tr.querySelector('[data-field="rollNo"]').getAttribute('data-value')).padStart(2, '0');
-                        const sectionVal = String(tr.querySelector('[data-field="section"]').getAttribute('data-value')).toUpperCase();
-
-                        const sectionCode = sectionVal === 'MAHA' ? 'M' : sectionVal === 'RISHI' ? 'R' : 'N';
-                        const yearShort = new Date().getFullYear().toString().slice(-2);
-
-                        const newStudentId = `MVMN${classVal}${rollVal}${sectionCode}${yearShort}`;
-                        const studentIdTd = tr.querySelector('[data-field="studentId"]');
-                        const currentStudentId = studentIdTd.getAttribute('data-value');
-
-                        if (newStudentId !== currentStudentId) {
-                            restoreCell(studentIdTd, newStudentId, appId, 'studentId');
-                            showToast(`Student ID auto-updated to ${newStudentId}`, 'info');
-                            if (memoryRow) memoryRow['studentId'] = newStudentId; // Sync memory here too
-
-                            fetch(PENDING_SCRIPT_URL, {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                                body: JSON.stringify({
-                                    action: 'update_cell',
-                                    appId: appId,
-                                    field: 'studentId',
-                                    value: newStudentId
-                                })
-                            }).catch(err => console.error('Failed to save auto-generated Student ID', err));
-                        }
+                    if (dbType === 'pending') {
+                        const memoryRow = window.currentApplications.find(r => r.applicationId === rowId);
+                        if (memoryRow) memoryRow[fieldKey] = newValue;
                     }
-
-                } else {
-                    throw new Error(result.message);
-                }
+                } else throw new Error(result.message);
             } catch (err) {
                 showToast('Failed to save edit', 'error');
-                restoreCell(tdElement, tdElement.getAttribute('data-value'), appId, fieldKey);
+                restoreCell(tdElement, tdElement.getAttribute('data-value'), rowId, fieldKey, dbType, studentClass);
             }
-        }
+        };
 
-        function restoreCell(tdElement, value, appId, fieldKey) {
+        function restoreCell(tdElement, value, rowId, fieldKey, dbType, studentClass) {
             tdElement.classList.remove('is-editing');
             tdElement.classList.add('cursor-pointer');
             tdElement.setAttribute('data-value', escapeHtml(value));
-
             tdElement.innerHTML = `
         <div class="flex items-center gap-3 justify-between">
             <span class="cell-text">${escapeHtml(value)}</span>
