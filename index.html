@@ -691,7 +691,7 @@
     </script>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx21DZq-OwWl4wng_QiGBBc3mRNv0eugE4W7vk5D7Mq3JCremg5BFNXAqvecTiCV6RLfA/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyTrz6aoG5zlexc6yO0S-BCcbuzQsKNa5AGBZhQu2Ib13YoXRzyMM5L5DX3E6SebVxSfw/exec";
 
         const FORM_CONFIG = {
             START_TIME: "2025-01-01T08:00:00",
@@ -775,7 +775,7 @@
                     if (data.status === 'success') {
                         // --- SUCCESS FLOW ---
                         // Display ONLY the newly generated Application ID
-                        document.getElementById('displayAppId').innerHTML = `APP ID: ${data.applicationId}`;
+                        document.getElementById('displayAppId').innerHTML = `Application ID: ${data.applicationId}`;
                         document.getElementById('successPage').style.display = 'flex';
 
                         // --- NEW: PING FIREBASE ADMIN NOTIFICATION ---
@@ -793,7 +793,7 @@
                             ${data.message}
                         </p>
                         <div id="displayAppId" style="border-color: #fad2d2; background: #fff0f0; color: var(--accent-red);">
-                            APP ID: ${data.applicationId}
+                            Application ID: ${data.applicationId}
                         </div>
                         <button onclick="location.reload()" class="action-btn" style="margin-top: 20px;">Return to Form</button>
                     `;
