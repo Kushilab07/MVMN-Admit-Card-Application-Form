@@ -85,7 +85,7 @@
             <div
                 class="flex items-center gap-2 text-blue-600 dark:text-blue-500 font-bold tracking-tight text-sm lg:text-base">
                 <i data-lucide="graduation-cap" class="w-6 h-6"></i>
-                <span class="hidden xl:block">MVM Admin</span>
+                <span class="hidden xl:block">MVMN</span>
             </div>
         </div>
 
@@ -117,7 +117,7 @@
 
         <header
             class="h-16 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center px-8 flex-shrink-0 transition-colors duration-300">
-            <h1 class="font-semibold text-lg text-slate-800 dark:text-white">Live Verification</h1>
+            <h1 class="font-semibold text-lg text-slate-800 dark:text-white">Exam Management System</h1>
             <div class="flex items-center gap-5">
                 <div class="relative">
                     <button id="bellBtn" onclick="toggleNotifications()"
@@ -138,14 +138,13 @@
                             class="max-h-64 overflow-y-auto custom-scrollbar divide-y divide-slate-100 dark:divide-slate-700">
                             <div class="p-4 text-center text-sm text-slate-500">No new notifications</div>
                         </div>
-                        <div
-                            class="p-2 border-t border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
-                            <button onclick="loadNewData()"
-                                class="w-full py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">Load
-                                New Data</button>
-                        </div>
                     </div>
                 </div>
+
+                <button id="newDataAlert" onclick="loadNewData()" class="hidden items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-full shadow-md font-medium text-sm transition-transform transform hover:-translate-y-0.5">
+                    <i data-lucide="arrow-up" class="w-4 h-4"></i>
+                    <span id="newDataText">1 New Application</span>
+                </button>
 
                 <button id="theme-toggle"
                     class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all border border-slate-200 dark:border-slate-700 focus:outline-none">
@@ -161,9 +160,8 @@
         <div id="pendingView" class="flex-1 flex flex-col p-8 overflow-hidden">
             <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-6 gap-4 flex-shrink-0">
                 <div>
-                    <h2 class="text-xl font-bold text-slate-900 dark:text-white">Applications Manager</h2>
-                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1 hover-instruction">Review, search, and
-                        manage history.</p>
+                    <h2 class="text-xl font-bold text-slate-900 dark:text-white">Application Manager</h2>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1 hover-instruction">Edit Records, Approve Student Applications or Reject and Delete</p>
                 </div>
 
                 <div class="flex flex-col lg:flex-row items-center gap-3 w-full lg:w-auto">
@@ -198,27 +196,33 @@
 
             <div
                 class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm flex flex-col min-h-0 overflow-hidden transition-colors duration-300 relative">
-                <div id="newDataAlert"
+                <!-- <div id="newDataAlert"
                     class="hidden flex justify-center w-full absolute top-8 left-0 z-40 pointer-events-none">
                     <button onclick="loadNewData()"
                         class="pointer-events-auto flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-full shadow-lg font-medium text-sm transition-transform transform translate-y-0 hover:-translate-y-1">
                         <i data-lucide="arrow-up" class="w-4 h-4"></i>
                         <span id="newDataText">1 New Application</span>
                     </button>
-                </div>
+                </div> -->
                 <div class="flex-1 overflow-x-auto overflow-y-auto scrollbar-hide relative">
                     <table class="w-full text-left border-collapse min-w-max">
                         <thead class="sticky top-0 z-20 bg-slate-50/95 dark:bg-slate-800/95 backdrop-blur shadow-sm">
                             <tr
                                 class="border-b border-slate-200 dark:border-slate-800 text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold">
-                                <th class="px-4 py-3">Date & Time</th>
+                                <th class="px-4 py-3">
+                                    <div>Date & Time</div>
+                                    <div class="text-[10px] font-normal text-slate-400 normal-case mt-0.5 tracking-normal">MM/DD/YYYY</div>
+                                </th>
                                 <th class="px-4 py-3">Application ID</th>
                                 <th class="px-4 py-3">Student ID</th>
                                 <th class="px-4 py-3">Student Name</th>
                                 <th class="px-4 py-3">Class</th>
                                 <th class="px-4 py-3">Section</th>
                                 <th class="px-4 py-3">Roll No</th>
-                                <th class="px-4 py-3">Date of Birth</th>
+                                <th class="px-4 py-3">
+                                    <div>Date of Birth</div>
+                                    <div class="text-[10px] font-normal text-slate-400 normal-case mt-0.5 tracking-normal">DD/MM/YYYY</div>
+                                </th>
                                 <th class="px-4 py-3">Father's Name</th>
                                 <th class="px-4 py-3">Phone Number</th>
                                 <th class="px-4 py-3 border-r border-slate-200 dark:border-slate-800">Email ID</th>
@@ -248,9 +252,8 @@
 
             <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-6 gap-4 flex-shrink-0">
                 <div>
-                    <h2 class="text-xl font-bold text-slate-900 dark:text-white">Verified Students Database</h2>
-                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Manage final records, admit status, and
-                        serial numbers.</p>
+                    <h2 class="text-xl font-bold text-slate-900 dark:text-white">Manage Students</h2>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Add Students, Edit Records & Admit Status, Export and Delete</p>
                 </div>
 
                 <div class="flex items-center gap-3 w-full lg:w-auto flex-wrap">
@@ -367,7 +370,10 @@
                                         onclick="toggleSelectAll(this)"
                                         class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-800">
                                 </th>
-                                <th class="px-4 py-3">Date & Time</th>
+                                <th class="px-4 py-3">
+                                    <div>Date & Time</div>
+                                    <div class="text-[10px] font-normal text-slate-400 normal-case mt-0.5 tracking-normal">MM/DD/YYYY</div>
+                                </th>
                                 <th class="px-4 py-3 border-r border-slate-200 dark:border-slate-700">Application ID
                                 </th>
                                 <th class="px-4 py-3">Student ID</th>
@@ -375,7 +381,10 @@
                                 <th class="px-4 py-3">Class</th>
                                 <th class="px-4 py-3">Section</th>
                                 <th class="px-4 py-3">Roll</th>
-                                <th class="px-4 py-3">DOB</th>
+                                <th class="px-4 py-3">
+                                    <div>DOB</div>
+                                    <div class="text-[10px] font-normal text-slate-400 normal-case mt-0.5 tracking-normal">DD/MM/YYYY</div>
+                                </th>
                                 <th class="px-4 py-3">Father's Name</th>
                                 <th class="px-4 py-3">Phone</th>
                                 <th class="px-4 py-3 border-r border-slate-200 dark:border-slate-800">Email ID</th>
@@ -536,8 +545,8 @@
         // ==========================================
         // 1. CONFIGURATION & GLOBALS
         // ==========================================
-        const PENDING_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx21DZq-OwWl4wng_QiGBBc3mRNv0eugE4W7vk5D7Mq3JCremg5BFNXAqvecTiCV6RLfA/exec";
-        const FINAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw3yn-oFkTZHXkialU_SIGkH0rJZdu5FaXmaANYzf3Cd5CCwPrHSlCSGnD12LZ9orLhMA/exec";
+        const PENDING_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyTrz6aoG5zlexc6yO0S-BCcbuzQsKNa5AGBZhQu2Ib13YoXRzyMM5L5DX3E6SebVxSfw/exec";
+        const FINAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby5AMrUdHJx1r1TMbZ8CNNsp6QA22doRT_BxNdFIeEvx5DAeHRtbrMtuHb3fVFXLSWddA/exec";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBBkITpfUjxFUFvgQhjnXedrIX4GhfCSCo",
@@ -585,10 +594,21 @@
 
         function updateBadge() {
             const badge = document.getElementById('notificationBadge');
+            const alertBtn = document.getElementById('newDataAlert');
+            const alertText = document.getElementById('newDataText');
+            
             if (unreadCount > 0) {
                 badge.innerText = unreadCount;
                 badge.classList.remove('hidden');
-            } else { badge.classList.add('hidden'); }
+                
+                alertText.innerText = `${unreadCount} New App${unreadCount > 1 ? 's' : ''}`;
+                alertBtn.classList.remove('hidden');
+                alertBtn.classList.add('flex');
+            } else { 
+                badge.classList.add('hidden'); 
+                alertBtn.classList.add('hidden');
+                alertBtn.classList.remove('flex');
+            }
         }
 
         notificationsRef.on('child_added', (snapshot) => {
@@ -602,15 +622,23 @@
             if (notifications.length === 1) list.innerHTML = ''; // Clear empty message
 
             const item = document.createElement('div');
-            item.className = "p-3 bg-blue-50 dark:bg-blue-900/20 border-b border-slate-100 dark:border-slate-700 cursor-pointer";
+            item.className = "p-3 bg-blue-50 dark:bg-blue-900/20 border-b border-slate-100 dark:border-slate-700 cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors";
+            item.onclick = loadNewData; // Triggers the load when clicking the notification item
             item.innerHTML = `<p class="text-sm font-semibold text-slate-800 dark:text-slate-200">${data.studentName}</p><p class="text-xs text-slate-500">${data.appId}</p>`;
             list.prepend(item);
         });
 
         function loadNewData() {
-            toggleNotifications();
+            // Force panel to close
+            document.getElementById('notificationPanel').classList.add('hidden');
             markAllRead();
-            fetchData();
+            
+            // Switch to Pending Applications tab if not already there, otherwise just fetch
+            if (document.getElementById('pendingView').classList.contains('hidden')) {
+                switchTab('pending');
+            } else {
+                fetchData();
+            }
         }
 
         // ==========================================
@@ -698,8 +726,8 @@
 
             const targetUrl = dbType === 'pending' ? PENDING_SCRIPT_URL : FINAL_SCRIPT_URL;
             const payload = { action: 'update_cell', field: fieldKey, value: newValue };
-            if (dbType === 'pending') payload.appId = rowId;
-            if (dbType === 'final') { payload.studentId = rowId; payload.studentClass = studentClass; }
+            if (dbType === 'pending') payload.appId = String(rowId).trim();
+            if (dbType === 'final') { payload.studentId = String(rowId).trim(); payload.studentClass = studentClass; }
 
             try {
                 const response = await fetch(targetUrl, { method: 'POST', body: JSON.stringify(payload) });
@@ -715,9 +743,16 @@
                         const memFinal = window.finalStudentsData.find(r => r.studentId === rowId);
                         if (memFinal) memFinal[fieldKey] = newValue;
                     }
-                } else throw new Error(result.message);
+                    
+                    // Force a refresh if structural data changes so IDs and Sheets sort correctly
+                    if (['studentClass', 'section', 'rollNo', 'studentId'].includes(fieldKey)) {
+                        setTimeout(() => { if (dbType === 'pending') fetchData(); else fetchFinalStudents(); }, 600);
+                    }
+                } else throw new Error(result.message || "Unknown server error");
             } catch (err) {
-                showToast('Failed to save edit', 'error'); restoreCell(tdElement, tdElement.getAttribute('data-value'), rowId, fieldKey, dbType, studentClass);
+                // Show the exact backend failure message for easy debugging
+                showToast(`Error: ${err.message}`, 'error'); 
+                restoreCell(tdElement, tdElement.getAttribute('data-value'), rowId, fieldKey, dbType, studentClass);
             }
         };
 
@@ -788,13 +823,31 @@
             }
 
             dataArray.forEach((row) => {
-                let cleanTs = String(row.timestamp);
-                const dt = new Date(cleanTs);
-                if (!isNaN(dt.getTime())) { cleanTs = `${("0" + dt.getDate()).slice(-2)}/${("0" + (dt.getMonth() + 1)).slice(-2)}/${dt.getFullYear()} <span class="text-slate-400 text-xs ml-1">${dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>`; }
+                // --- STRICT DD/MM/YYYY FORMATTING FOR TIMESTAMP ---
+                let rawTs = String(row.timestamp).replace(/^'/, '').trim();
+                let cleanTs = rawTs;
+                if (rawTs.includes('T')) {
+                    const dt = new Date(rawTs);
+                    if (!isNaN(dt.getTime())) { cleanTs = `${("0"+dt.getDate()).slice(-2)}/${("0"+(dt.getMonth()+1)).slice(-2)}/${dt.getFullYear()} <span class="text-slate-400 text-xs ml-1">${dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>`; }
+                } else if (rawTs.includes('/')) {
+                    // It is already correctly formatted from backend, just wrap the time part
+                    let parts = rawTs.split(' ');
+                    cleanTs = parts[0];
+                    if (parts.length > 1) cleanTs += ` <span class="text-slate-400 text-xs ml-1">${parts.slice(1).join(' ')}</span>`;
+                }
 
-                let cleanDob = String(row.dob);
-                const dDob = new Date(cleanDob);
-                if (!isNaN(dDob.getTime())) { cleanDob = `${("0" + dDob.getDate()).slice(-2)}/${("0" + (dDob.getMonth() + 1)).slice(-2)}/${dDob.getFullYear()}`; }
+                // --- STRICT DD/MM/YYYY FORMATTING FOR DOB ---
+                let rawDob = String(row.dob).replace(/^'/, '').trim().split(' ')[0];
+                let cleanDob = rawDob;
+                if (rawDob.includes('T')) {
+                    const dt = new Date(rawDob);
+                    if (!isNaN(dt.getTime())) { cleanDob = `${("0"+dt.getDate()).slice(-2)}/${("0"+(dt.getMonth()+1)).slice(-2)}/${dt.getFullYear()}`; }
+                } else if (rawDob.includes('-')) {
+                    let p = rawDob.split('-'); cleanDob = p[0].length === 4 ? `${p[2]}/${p[1]}/${p[0]}` : `${("0"+p[0]).slice(-2)}/${("0"+p[1]).slice(-2)}/${p[2]}`;
+                } else if (rawDob.includes('/')) {
+                    // It is already correctly formatted from backend, just ensure zero-padding
+                    let p = rawDob.split('/'); cleanDob = `${("0"+p[0]).slice(-2)}/${("0"+p[1]).slice(-2)}/${p[2]}`;
+                }
 
                 let actionHtml = '';
                 if (row.status === 'Pending' || !row.status) {
@@ -937,13 +990,29 @@
             dataArray.forEach(row => {
                 const dbType = 'final'; const uniqueKey = row.studentId; 
                 
-                let cleanTs = String(row.timestamp); 
-                const dt = new Date(cleanTs);
-                if(!isNaN(dt.getTime())) { cleanTs = `${("0"+dt.getDate()).slice(-2)}/${("0"+(dt.getMonth()+1)).slice(-2)}/${dt.getFullYear()} <span class="text-slate-400 text-xs ml-1">${dt.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</span>`; }
-                
-                let cleanDob = String(row.dob); 
-                const dDob = new Date(cleanDob);
-                if(!isNaN(dDob.getTime())) { cleanDob = `${("0"+dDob.getDate()).slice(-2)}/${("0"+(dDob.getMonth()+1)).slice(-2)}/${dDob.getFullYear()}`; }
+                // --- STRICT DD/MM/YYYY FORMATTING FOR TIMESTAMP ---
+                let rawTs = String(row.timestamp).replace(/^'/, '').trim();
+                let cleanTs = rawTs;
+                let tsDate = new Date(rawTs);
+                if (!isNaN(tsDate.getTime()) && (rawTs.includes('T') || parseInt(rawTs.split('/')[0]) <= 12)) {
+                    cleanTs = `${("0" + tsDate.getDate()).slice(-2)}/${("0" + (tsDate.getMonth() + 1)).slice(-2)}/${tsDate.getFullYear()} <span class="text-slate-400 text-xs ml-1">${tsDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>`;
+                } else if (rawTs.includes('/')) {
+                    let parts = rawTs.split(' '); let p = parts[0].split('/');
+                    cleanTs = `${("0"+p[0]).slice(-2)}/${("0"+p[1]).slice(-2)}/${p[2]}`;
+                    if (parts.length > 1) cleanTs += ` <span class="text-slate-400 text-xs ml-1">${parts.slice(1).join(' ')}</span>`;
+                }
+
+                // --- STRICT DD/MM/YYYY FORMATTING FOR DOB ---
+                let rawDob = String(row.dob).replace(/^'/, '').trim().split(' ')[0];
+                let cleanDob = rawDob;
+                let dobDate = new Date(rawDob);
+                if (!isNaN(dobDate.getTime()) && (rawDob.includes('T') || parseInt(rawDob.split('/')[0]) <= 12)) {
+                    cleanDob = `${("0" + dobDate.getDate()).slice(-2)}/${("0" + (dobDate.getMonth() + 1)).slice(-2)}/${dobDate.getFullYear()}`;
+                } else if (rawDob.includes('-')) {
+                    let p = rawDob.split('-'); cleanDob = p[0].length === 4 ? `${p[2]}/${p[1]}/${p[0]}` : `${("0"+p[0]).slice(-2)}/${("0"+p[1]).slice(-2)}/${p[2]}`;
+                } else if (rawDob.includes('/')) {
+                    let p = rawDob.split('/'); cleanDob = `${("0"+p[0]).slice(-2)}/${("0"+p[1]).slice(-2)}/${p[2]}`;
+                }
 
                 const badge = String(row.applicationId).startsWith('ADMIN-') ? `<span class="ml-2 px-1.5 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-700 border border-purple-200 inline-block align-middle">By Admin</span>` : '';
                 
@@ -957,7 +1026,7 @@
                     <td class="px-4 py-3 text-center"><input type="checkbox" onchange="toggleBulkButtons()" class="student-checkbox rounded border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500"></td>
                     <td class="px-4 py-3 whitespace-nowrap text-slate-500 dark:text-slate-400">${cleanTs}</td>
                     <td class="px-4 py-3 whitespace-nowrap font-medium text-slate-600 dark:text-slate-300 border-r border-slate-200 dark:border-slate-700">${row.applicationId}</td>
-                    <td class="px-4 py-3 whitespace-nowrap font-bold text-blue-600 dark:text-blue-300">${row.studentId}</td>
+                    ${editableCell(row.studentId, 'studentId', uniqueKey, dbType, row.studentClass)}
                     ${editableCell(row.studentName, 'studentName', uniqueKey, dbType, row.studentClass)}
                     ${editableCell(row.studentClass, 'studentClass', uniqueKey, dbType, row.studentClass)}
                     ${editableCell(row.section, 'section', uniqueKey, dbType, row.studentClass)}
