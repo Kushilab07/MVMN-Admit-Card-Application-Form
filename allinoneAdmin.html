@@ -444,93 +444,142 @@
         <div id="settingsView" class="flex-1 flex flex-col p-8 overflow-y-auto custom-scrollbar hidden">
             <div class="mb-6 flex-shrink-0">
                 <h2 class="text-xl font-bold text-slate-900 dark:text-white">System Settings</h2>
-                <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Master Control Room: Manage portal
-                    configurations, links, and global variables.</p>
+                <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Master Control Room: Manage portal configurations, links, and global variables.</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div onclick="openModal('routineModal')"
-                    class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 cursor-pointer hover:border-blue-500 dark:hover:border-blue-500 hover:shadow-md transition-all group">
-                    <div
-                        class="w-12 h-12 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                        <i data-lucide="calendar-clock" class="w-6 h-6 text-blue-600 dark:text-blue-400"></i>
-                    </div>
-                    <h3 class="text-lg font-bold text-slate-800 dark:text-slate-200 mb-1">Exam Routines</h3>
-                    <p class="text-sm text-slate-500 dark:text-slate-400">Create, edit, or delete exam dates & subjects.</p>
-                </div>
-
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                
                 <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
-                    <div class="flex items-center gap-3 mb-4">
+                    <div class="flex items-center gap-3 mb-6">
                         <div class="w-10 h-10 rounded-full bg-purple-50 dark:bg-purple-900/30 flex items-center justify-center">
                             <i data-lucide="settings-2" class="w-5 h-5 text-purple-600 dark:text-purple-400"></i>
                         </div>
                         <h3 class="text-lg font-bold text-slate-800 dark:text-slate-200">Global Exam State</h3>
                     </div>
-                    
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Active Examination</label>
-                    <select id="sysActiveExam" onchange="saveSystemConfig()" class="w-full p-2.5 text-sm border border-slate-200 rounded-lg dark:bg-slate-800 dark:border-slate-700 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none mb-3">
-                        <option value="HY">Half-Yearly Examination</option>
-                        <option value="FY">Final Year Examination</option>
-                    </select>
-        
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Academic Session</label>
-                    <input type="text" id="sysExamSession" onchange="saveSystemConfig()" placeholder="e.g. 2025-2026" class="w-full p-2.5 text-sm border border-slate-200 rounded-lg dark:bg-slate-800 dark:border-slate-700 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none mb-2">
-                    
-                    <!-- <p class="text-[11px] text-slate-500 leading-tight">Controls which Serial Number, Routine, and Title are printed on Admit Cards globally.</p> -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Active Examination</label>
+                            <select id="sysActiveExam" onchange="saveSystemConfig()" class="w-full p-2.5 text-sm border border-slate-200 rounded-lg dark:bg-slate-800 dark:border-slate-700 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none">
+                                <option value="HY">Half-Yearly Examination</option>
+                                <option value="FY">Final Year Examination</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Academic Session</label>
+                            <input type="text" id="sysExamSession" onchange="saveSystemConfig()" placeholder="e.g. 2025-2026" class="w-full p-2.5 text-sm border border-slate-200 rounded-lg dark:bg-slate-800 dark:border-slate-700 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none">
+                        </div>
+                    </div>
+                    <div class="mt-6 border-t border-slate-100 dark:border-slate-800 pt-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg p-2 transition-colors flex items-center justify-between" onclick="openModal('routineModal')">
+                        <div>
+                            <p class="font-bold text-slate-800 dark:text-slate-200 text-sm">Exam Routines Setup</p>
+                            <p class="text-xs text-slate-500">Create, edit, or delete exam dates & subjects.</p>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400"></i>
+                    </div>
                 </div>
 
-                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center gap-3 mb-4">
-                            <div class="w-10 h-10 rounded-full bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center">
-                                <i data-lucide="globe" class="w-5 h-5 text-emerald-600 dark:text-emerald-400"></i>
-                            </div>
-                            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-200">Online Application Portal</h3>
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-full bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center">
+                            <i data-lucide="globe" class="w-5 h-5 text-emerald-600 dark:text-emerald-400"></i>
                         </div>
-                        
-                        <div class="flex items-center justify-between mb-4 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl border border-slate-100 dark:border-slate-800">
-                            <span id="appStatusText" class="text-sm font-bold text-red-600">PORTAL IS CLOSED</span>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" id="appPortalToggle" class="sr-only peer" onchange="handleToggle('app')">
-                                <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500 shadow-inner"></div>
-                            </label>
-                        </div>
+                        <h3 class="text-lg font-bold text-slate-800 dark:text-slate-200">Application Portal</h3>
+                    </div>
+                    
+                    <div class="flex items-center justify-between bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-800 mb-4">
+                        <span id="appStatusBadge" class="px-2.5 py-1 text-xs font-bold rounded-md bg-red-100 text-red-700 border border-red-200">PORTAL CLOSED</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="appPortalToggle" class="sr-only peer" onchange="triggerPortalModal('app')">
+                            <div class="w-14 h-7 bg-red-500 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-emerald-500 shadow-inner"></div>
+                        </label>
+                    </div>
 
-                        <div id="appLinkContainer" class="hidden mb-2">
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">URL</label>
-                            <div class="flex">
-                                <input type="text" id="appPortalLink" readonly class="w-full p-2 text-[11px] border border-r-0 border-slate-200 rounded-l-lg bg-white dark:bg-slate-900 dark:border-slate-700 dark:text-slate-300">
-                                <button onclick="copyLink('appPortalLink')" class="px-3 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-r-lg transition-colors"><i data-lucide="copy" class="w-4 h-4"></i></button>
-                            </div>
+                    <div id="appTimerDisplay" class="text-xs font-bold text-slate-500 mb-4 hidden flex items-center gap-1">
+                        <i data-lucide="clock" class="w-3.5 h-3.5 text-orange-500"></i> Auto-Closes: <span id="appTimerText" class="text-orange-600"></span>
+                    </div>
+
+                    <div id="appLinkContainer" class="hidden">
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Secure Public Link</label>
+                        <div class="flex">
+                            <input type="text" id="sysPortalLink" readonly class="w-full p-2.5 text-xs border border-r-0 border-slate-200 rounded-l-lg bg-white dark:bg-slate-950 dark:border-slate-700 dark:text-slate-300 focus:outline-none">
+                            <button onclick="copyLink('sysPortalLink')" class="px-4 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-r-lg font-bold transition-colors"><i data-lucide="copy" class="w-4 h-4"></i></button>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center gap-3 mb-4">
-                            <div class="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center">
-                                <i data-lucide="download-cloud" class="w-5 h-5 text-blue-600 dark:text-blue-400"></i>
-                            </div>
-                            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-200">Admit Download Portal</h3>
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center">
+                            <i data-lucide="download-cloud" class="w-5 h-5 text-blue-600 dark:text-blue-400"></i>
                         </div>
+                        <h3 class="text-lg font-bold text-slate-800 dark:text-slate-200">Admit Download Portal</h3>
+                    </div>
+                    
+                    <div class="flex items-center justify-between bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-800 mb-4">
+                        <span id="admitStatusBadge" class="px-2.5 py-1 text-xs font-bold rounded-md bg-red-100 text-red-700 border border-red-200">PORTAL CLOSED</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="admitPortalToggle" class="sr-only peer" onchange="triggerPortalModal('admit')">
+                            <div class="w-14 h-7 bg-red-500 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-emerald-500 shadow-inner"></div>
+                        </label>
+                    </div>
 
-                        <div class="flex items-center justify-between mb-4 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl border border-slate-100 dark:border-slate-800">
-                            <span id="admitStatusText" class="text-sm font-bold text-red-600">PORTAL IS CLOSED</span>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" id="admitPortalToggle" class="sr-only peer" onchange="handleToggle('admit')">
-                                <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500 shadow-inner"></div>
-                            </label>
-                        </div>
+                    <div id="admitTimerDisplay" class="text-xs font-bold text-slate-500 mb-4 hidden flex items-center gap-1">
+                        <i data-lucide="clock" class="w-3.5 h-3.5 text-orange-500"></i> Auto-Closes: <span id="admitTimerText" class="text-orange-600"></span>
+                    </div>
 
-                        <div id="admitLinkContainer" class="hidden mb-2">
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">URL</label>
-                            <div class="flex">
-                                <input type="text" id="admitPortalLink" readonly class="w-full p-2 text-[11px] border border-r-0 border-slate-200 rounded-l-lg bg-white dark:bg-slate-900 dark:border-slate-700 dark:text-slate-300">
-                                <button onclick="copyLink('admitPortalLink')" class="px-3 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-r-lg transition-colors"><i data-lucide="copy" class="w-4 h-4"></i></button>
-                            </div>
+                    <div id="admitLinkContainer" class="hidden">
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Secure Download Link</label>
+                        <div class="flex">
+                            <input type="text" id="sysAdmitPortalLink" readonly class="w-full p-2.5 text-xs border border-r-0 border-slate-200 rounded-l-lg bg-white dark:bg-slate-950 dark:border-slate-700 dark:text-slate-300 focus:outline-none">
+                            <button onclick="copyLink('sysAdmitPortalLink')" class="px-4 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-r-lg font-bold transition-colors"><i data-lucide="copy" class="w-4 h-4"></i></button>
                         </div>
                     </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="portalConfigModal" class="fixed inset-0 z-[9999] hidden bg-slate-900/50 backdrop-blur-sm flex items-center justify-center opacity-0 transition-opacity duration-300">
+            <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-xl max-w-md w-full p-6 transform scale-95 transition-transform duration-300">
+                <div class="flex items-center gap-3 border-b border-slate-100 dark:border-slate-800 pb-3 mb-4">
+                    <i id="configModalIcon" data-lucide="power" class="w-6 h-6 text-emerald-600"></i>
+                    <h3 class="text-lg font-bold text-slate-900 dark:text-white" id="configModalTitle">Portal Configuration</h3>
+                </div>
+                
+                <p id="configModalDesc" class="text-sm text-slate-600 dark:text-slate-400 mb-4"></p>
+                
+                <div id="configModalInputs" class="hidden">
+                    <div id="classConfigSection" class="hidden mb-4">
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Allowed Classes</label>
+                        <div class="grid grid-cols-4 gap-2 mb-2">
+                            <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check" value="1"> 1</label>
+                            <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check" value="2"> 2</label>
+                            <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check" value="3"> 3</label>
+                            <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check" value="4"> 4</label>
+                            <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check" value="5"> 5</label>
+                            <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check" value="6"> 6</label>
+                            <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check" value="7"> 7</label>
+                            <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check" value="8"> 8</label>
+                            <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check" value="9"> 9</label>
+                            <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check" value="10"> 10</label>
+                            <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check" value="11"> 11</label>
+                            <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check" value="12"> 12</label>
+                        </div>
+                        <div class="p-2 bg-amber-50 border border-amber-200 text-amber-700 text-xs rounded">
+                            <strong>Warning:</strong> Opening applications for multiple classes at once may cause high database traffic.
+                        </div>
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Auto-Close Timer (Optional)</label>
+                        <input type="datetime-local" id="autoCloseTime" class="w-full p-2.5 border border-slate-200 rounded-lg text-sm dark:bg-slate-800 dark:border-slate-700 dark:text-white">
+                        <p class="text-[10px] text-slate-400 mt-1">Portal will automatically switch OFF at this exact time.</p>
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-3 mt-6">
+                    <button onclick="cancelPortalToggle()" class="px-5 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">Cancel</button>
+                    <button id="confirmPortalBtn" class="px-5 py-2.5 text-sm bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-medium shadow-sm transition-colors flex items-center gap-2">Confirm</button>
                 </div>
             </div>
         </div>
@@ -600,43 +649,6 @@
                         </div>
                     </div>
                 </form>
-            </div>
-        </div>
-
-        <div id="portalConfigModal" class="fixed inset-0 z-[9999] hidden bg-slate-900/50 backdrop-blur-sm flex items-center justify-center opacity-0 transition-opacity duration-300">
-            <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-xl max-w-md w-full p-6 transform scale-95 transition-transform duration-300">
-                <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2" id="configModalTitle">Activate Portal</h3>
-                
-                <div id="classConfigSection" class="hidden mb-4">
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Allowed Classes</label>
-                    <div class="grid grid-cols-4 gap-2 mb-2">
-                        <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check" value="1"> 1</label>
-                        <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check" value="2"> 2</label>
-                        <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check" value="3"> 3</label>
-                        <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check" value="4"> 4</label>
-                        <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check" value="5"> 5</label>
-                        <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check" value="6"> 6</label>
-                        <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check" value="7"> 7</label>
-                        <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check" value="8"> 8</label>
-                        <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check" value="9"> 9</label>
-                        <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check" value="10"> 10</label>
-                        <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check" value="11"> 11</label>
-                        <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check" value="12"> 12</label>
-                    </div>
-                    <div class="p-2 bg-amber-50 border border-amber-200 text-amber-700 text-xs rounded">
-                        <strong>Warning:</strong> Opening applications for multiple classes at once may cause high database traffic.
-                    </div>
-                </div>
-
-                <div class="mb-5">
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Auto-Close Timer (Optional)</label>
-                    <input type="datetime-local" id="autoCloseTime" class="w-full p-2 border border-slate-200 rounded-lg text-sm dark:bg-slate-800 dark:border-slate-700 dark:text-white">
-                </div>
-
-                <div class="flex justify-end gap-3">
-                    <button onclick="cancelToggle()" class="px-4 py-2 text-sm text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">Cancel</button>
-                    <button id="confirmPortalBtn" class="px-5 py-2 text-sm bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium shadow-sm">Confirm</button>
-                </div>
             </div>
         </div>
 
@@ -790,7 +802,7 @@
         // 1. CONFIGURATION & GLOBALS
         // ==========================================
         const PENDING_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby6k0EClmq3WueP-0SwCuce3-z6W-PZW1pjRk3lzaIHe_xwG64qnKMWW2pDw2lAa9NW1A/exec";
-        const FINAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwLmpI21DZ2iBdXgg8RAeDiVGOi-ntQUhE-qx285TAcMlOEgBNVQnzDUI4cC_WgVufpvA/exec";
+        const FINAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwKvJk7JCIatnRsmG920YnldUZ8FZ1Dv2qFnK9eunhnDjhWXeImHptj4SH0JsYLWf_iiQ/exec";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBBkITpfUjxFUFvgQhjnXedrIX4GhfCSCo",
@@ -1152,6 +1164,7 @@
         // SETTINGS: UNIFIED PORTAL CONTROL LOGIC
         // ==========================================
         let activeConfigTarget = null;
+        let activeConfigAction = null; // 'ON' or 'OFF'
         let memAppToken = ''; let memAdmitToken = '';
         let memAppClasses = ''; let memAppClose = ''; let memAdmitClose = '';
 
@@ -1170,43 +1183,70 @@
                     memAppClose = conf.App_Auto_Close || '';
                     memAdmitClose = conf.Admit_Auto_Close || '';
 
-                    updateToggleUI('app', conf.Portal_Status || 'OFF', memAppToken);
-                    updateToggleUI('admit', conf.Admit_Portal_Status || 'OFF', memAdmitToken);
+                    updateToggleUI('app', conf.Portal_Status || 'OFF', memAppToken, memAppClose);
+                    updateToggleUI('admit', conf.Admit_Portal_Status || 'OFF', memAdmitToken, memAdmitClose);
                 }
-            } catch (e) { console.error(e); }
+            } catch (e) { console.error("Config load failed", e); }
         }
 
-        function updateToggleUI(type, status, token) {
+        function formatDateTime(msStr) {
+            if(!msStr) return '';
+            const d = new Date(parseInt(msStr));
+            return d.toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
+        }
+
+        function updateToggleUI(type, status, token, autoCloseMs) {
             const toggle = document.getElementById(`${type}PortalToggle`);
-            const text = document.getElementById(`${type}StatusText`);
-            const container = document.getElementById(`${type}LinkContainer`);
-            const input = document.getElementById(`${type}PortalLink`);
+            const badge = document.getElementById(`${type}StatusBadge`);
+            const container = document.getElementById(type === 'app' ? 'appLinkContainer' : 'admitLinkContainer');
+            const input = document.getElementById(type === 'app' ? 'sysPortalLink' : 'sysAdmitPortalLink');
+            const timerContainer = document.getElementById(`${type}TimerDisplay`);
+            const timerText = document.getElementById(`${type}TimerText`);
 
             if (status === 'ON') {
                 toggle.checked = true;
-                text.innerText = "● PORTAL IS ACTIVE";
-                text.className = "text-sm font-bold text-emerald-600";
+                badge.innerText = "PORTAL ACTIVE";
+                badge.className = "px-2.5 py-1 text-xs font-bold rounded-md bg-emerald-100 text-emerald-700 border border-emerald-200";
                 container.classList.remove('hidden');
                 
                 const base = type === 'app' ? 'https://kushilab07.github.io/MVMN-Admit-Card-Application-Form/' : 'https://kushilab07.github.io/MVMN-Admit-Card-Application-Form/admitDownloadForStudent.html';
                 input.value = `${base}?token=${token}`;
+
+                if (autoCloseMs) {
+                    timerContainer.classList.remove('hidden');
+                    timerText.innerText = formatDateTime(autoCloseMs);
+                } else {
+                    timerContainer.classList.add('hidden');
+                }
             } else {
                 toggle.checked = false;
-                text.innerText = "● PORTAL IS CLOSED";
-                text.className = "text-sm font-bold text-red-600";
+                badge.innerText = "PORTAL CLOSED";
+                badge.className = "px-2.5 py-1 text-xs font-bold rounded-md bg-red-100 text-red-700 border border-red-200";
                 container.classList.add('hidden');
+                timerContainer.classList.add('hidden');
                 input.value = '';
             }
         }
 
-        function handleToggle(type) {
+        function triggerPortalModal(type) {
             const toggle = document.getElementById(`${type}PortalToggle`);
-            if (toggle.checked) {
-                // Turning ON - Show the activation config modal
-                activeConfigTarget = type;
-                document.getElementById('configModalTitle').innerText = `Activate ${type === 'app' ? 'Application' : 'Admit'} Portal`;
-                document.getElementById('autoCloseTime').value = '';
+            activeConfigTarget = type;
+            activeConfigAction = toggle.checked ? 'ON' : 'OFF';
+            
+            const modalTitle = document.getElementById('configModalTitle');
+            const modalIcon = document.getElementById('configModalIcon');
+            const modalDesc = document.getElementById('configModalDesc');
+            const inputsSec = document.getElementById('configModalInputs');
+            const btn = document.getElementById('confirmPortalBtn');
+
+            if (activeConfigAction === 'ON') {
+                modalTitle.innerText = `Activate ${type === 'app' ? 'Application' : 'Admit'} Portal`;
+                modalIcon.setAttribute('data-lucide', 'power');
+                modalIcon.className = "w-6 h-6 text-emerald-600";
+                modalDesc.innerText = "Configure the settings below before generating the secure live link.";
+                inputsSec.classList.remove('hidden');
                 
+                document.getElementById('autoCloseTime').value = '';
                 if (type === 'app') {
                     document.getElementById('classConfigSection').classList.remove('hidden');
                     document.querySelectorAll('.cls-check').forEach(cb => cb.checked = false);
@@ -1214,70 +1254,94 @@
                     document.getElementById('classConfigSection').classList.add('hidden');
                 }
                 
-                document.getElementById('confirmPortalBtn').onclick = confirmActivation;
-                openModal('portalConfigModal');
+                btn.className = "px-5 py-2.5 text-sm bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-medium shadow-sm transition-colors flex items-center gap-2";
+                btn.innerHTML = "Activate Link";
             } else {
-                // Turning OFF - Custom Confirmation Modal instead of boring browser alert
-                toggle.checked = true; // Keep visually ON until they confirm
+                modalTitle.innerText = `Close ${type === 'app' ? 'Application' : 'Admit'} Portal`;
+                modalIcon.setAttribute('data-lucide', 'power-off');
+                modalIcon.className = "w-6 h-6 text-red-600";
+                modalDesc.innerText = "Are you sure you want to CLOSE this portal? The current secure link will be permanently destroyed and access will be blocked immediately.";
+                inputsSec.classList.add('hidden');
                 
-                document.getElementById('confirmIconBox').className = "w-12 h-12 rounded-full flex items-center justify-center bg-red-100 text-red-600";
-                document.getElementById('confirmIcon').setAttribute('data-lucide', 'power-off');
-                lucide.createIcons({ root: document.getElementById('confirmIconBox') });
-                
-                document.getElementById('confirmTitle').innerText = "Close Portal";
-                document.getElementById('confirmAppId').innerText = type === 'app' ? "Online Application Portal" : "Admit Download Portal";
-                document.getElementById('confirmMessage').innerText = "Are you sure you want to CLOSE this portal? Secure links will be destroyed immediately and access will be blocked.";
-                
-                const btn = document.getElementById('confirmExecuteBtn');
-                btn.className = "px-5 py-2.5 rounded-xl font-medium text-white shadow-sm flex items-center gap-2 bg-red-600 hover:bg-red-700 transition-colors";
-                btn.innerHTML = "Close Portal";
-                
-                btn.onclick = function() {
-                    executePortalSave(type, 'OFF');
-                    closeModal('confirmModal');
-                };
-                
-                openModal('confirmModal');
+                btn.className = "px-5 py-2.5 text-sm bg-red-600 hover:bg-red-700 text-white rounded-xl font-medium shadow-sm transition-colors flex items-center gap-2";
+                btn.innerHTML = "Confirm Close";
             }
+            
+            lucide.createIcons({ root: document.getElementById('portalConfigModal') });
+            document.getElementById('confirmPortalBtn').onclick = executePortalSave;
+            openModal('portalConfigModal');
         }
 
-        function cancelToggle() {
+        function cancelPortalToggle() {
             closeModal('portalConfigModal');
-            document.getElementById(`${activeConfigTarget}PortalToggle`).checked = false; // Revert toggle visually
+            // Revert visually
+            document.getElementById(`${activeConfigTarget}PortalToggle`).checked = (activeConfigAction === 'OFF'); 
         }
 
-        function confirmActivation() {
+        async function executePortalSave() {
+            const btn = document.getElementById('confirmPortalBtn');
+            const origHtml = btn.innerHTML;
+            btn.disabled = true; btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 spin"></i> Processing...`; lucide.createIcons({ root: btn });
+
             let autoCloseMs = '';
-            const dateVal = document.getElementById('autoCloseTime').value;
-            if (dateVal) {
-                autoCloseMs = new Date(dateVal).getTime().toString();
-            }
+            if (activeConfigAction === 'ON') {
+                const dateVal = document.getElementById('autoCloseTime').value;
+                if (dateVal) autoCloseMs = new Date(dateVal).getTime().toString();
 
-            if (activeConfigTarget === 'app') {
-                let selectedClasses = [];
-                document.querySelectorAll('.cls-check:checked').forEach(cb => selectedClasses.push(cb.value));
-                if (selectedClasses.length === 0) return alert("Please select at least one class.");
-                memAppClasses = selectedClasses.join(',');
-                memAppClose = autoCloseMs;
+                if (activeConfigTarget === 'app') {
+                    let selectedClasses = [];
+                    document.querySelectorAll('.cls-check:checked').forEach(cb => selectedClasses.push(cb.value));
+                    if (selectedClasses.length === 0) {
+                        btn.disabled = false; btn.innerHTML = origHtml;
+                        return alert("Please select at least one class.");
+                    }
+                    memAppClasses = selectedClasses.join(',');
+                    memAppClose = autoCloseMs;
+                } else {
+                    memAdmitClose = autoCloseMs;
+                }
             } else {
-                memAdmitClose = autoCloseMs;
+                // If OFF, clear memory
+                if (activeConfigTarget === 'app') { memAppClasses = ''; memAppClose = ''; } 
+                else { memAdmitClose = ''; }
             }
 
-            closeModal('portalConfigModal');
-            executePortalSave(activeConfigTarget, 'ON');
-        }
-
-        function executePortalSave(type, targetStatus) {
             let newToken = '';
-            if (targetStatus === 'ON') {
-                newToken = type === 'app' ? 'x' + Math.random().toString(36).substr(2, 9) + Date.now().toString(36) : 'd' + Math.random().toString(36).substr(2, 9) + Date.now().toString(36);
+            if (activeConfigAction === 'ON') {
+                newToken = activeConfigTarget === 'app' ? 'x' + Math.random().toString(36).substr(2, 9) + Date.now().toString(36) : 'd' + Math.random().toString(36).substr(2, 9) + Date.now().toString(36);
             }
-            if (type === 'app') memAppToken = newToken; else memAdmitToken = newToken;
+            
+            if (activeConfigTarget === 'app') memAppToken = newToken; else memAdmitToken = newToken;
 
-            updateToggleUI(type, targetStatus, newToken);
-            saveSystemConfig();
+            // Trigger Save API
+            const payload = {
+                action: 'save_system_config', token: ADMIN_SECRET,
+                configs: [
+                    { key: 'Active_Exam_Type', value: document.getElementById('sysActiveExam').value },
+                    { key: 'Exam_Session', value: document.getElementById('sysExamSession').value },
+                    { key: 'Portal_Status', value: document.getElementById('appPortalToggle').checked ? 'ON' : 'OFF' },
+                    { key: 'Portal_Token', value: memAppToken },
+                    { key: 'App_Classes', value: memAppClasses },
+                    { key: 'App_Auto_Close', value: memAppClose },
+                    { key: 'Admit_Portal_Status', value: document.getElementById('admitPortalToggle').checked ? 'ON' : 'OFF' },
+                    { key: 'Admit_Portal_Token', value: memAdmitToken },
+                    { key: 'Admit_Auto_Close', value: memAdmitClose }
+                ]
+            };
+            try { 
+                await fetch(FINAL_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) }); 
+                showToast('Portal Settings Updated', 'success'); 
+                updateToggleUI(activeConfigTarget, activeConfigAction, newToken, autoCloseMs);
+                closeModal('portalConfigModal');
+            } 
+            catch (err) { 
+                showToast(`Update Failed`, 'error'); 
+                cancelPortalToggle();
+            } finally {
+                btn.disabled = false; btn.innerHTML = origHtml;
+            }
         }
-
+        
         function copyLink(id) {
             document.getElementById(id).select(); document.execCommand("copy"); showToast('Link Copied!', 'success');
         }
