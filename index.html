@@ -504,12 +504,38 @@
         }
 
         #initLoader {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(244, 247, 249, 0.95); backdrop-filter: blur(5px);
-            z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(244, 247, 249, 0.95);
+            backdrop-filter: blur(5px);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
-        .spinner { width: 50px; height: 50px; border: 5px solid #d1d9e0; border-top: 5px solid var(--primary-blue); border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #d1d9e0;
+            border-top: 5px solid var(--primary-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
     </style>
 </head>
 
@@ -520,7 +546,8 @@
     </div>
 
     <div class="page-container">
-        <div id="statusPage" style="display:none;"> <div class="status-card">
+        <div id="statusPage" style="display:none;">
+            <div class="status-card">
                 <h2 style="color: var(--accent-red); margin-top: 0;">Portal Closed</h2>
                 <p>The secure link is invalid, expired, or the online application window is currently closed.</p>
             </div>
@@ -559,8 +586,9 @@
                             <label>STUDENT'S FULL NAME</label>
                             <input type="text" id="student_name" name="student_name" placeholder="Full Name" required>
                         </div>
-                        <div class="form-container" id="formContainer" style="display:none;"> <select id="class" name="class" required>
-                            <option value="">-- SELECT --</option>
+                        <div class="form-container" id="formContainer" style="display:none;"> <select id="class"
+                                name="class" required>
+                                <option value="">-- SELECT --</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -677,7 +705,7 @@
         const db = firebase.database();
 
         // 2. Expose the global push function
-        window.notifyAdmin = function(appId, studentName) {
+        window.notifyAdmin = function (appId, studentName) {
             db.ref('notifications').push({
                 appId: appId,
                 studentName: studentName,
@@ -690,7 +718,7 @@
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby6k0EClmq3WueP-0SwCuce3-z6W-PZW1pjRk3lzaIHe_xwG64qnKMWW2pDw2lAa9NW1A/exec";
         // ADD FINAL SCRIPT URL SO WE CAN READ THE MASTER CONFIG
-        const FINAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwLmpI21DZ2iBdXgg8RAeDiVGOi-ntQUhE-qx285TAcMlOEgBNVQnzDUI4cC_WgVufpvA/exec";
+        const FINAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwKvJk7JCIatnRsmG920YnldUZ8FZ1Dv2qFnK9eunhnDjhWXeImHptj4SH0JsYLWf_iiQ/exec";
 
         const urlParams = new URLSearchParams(window.location.search);
         const pageToken = urlParams.get('token');
@@ -700,11 +728,13 @@
             try {
                 const res = await fetch(FINAL_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'get_public_config', appToken: pageToken }) });
                 const result = await res.json();
-                
+
                 if (result.status === 'success' && result.isAppOpen) {
-                    // Populate Allowed Classes
+                    // Populate Allowed Classes from Admin Settings
                     const classSelect = document.getElementById('class');
+                    classSelect.innerHTML = '<option value="">-- SELECT --</option>'; // Reset
                     const allowedClasses = result.appClasses ? result.appClasses.split(',') : [];
+
                     allowedClasses.forEach(cls => {
                         let opt = document.createElement('option');
                         opt.value = cls; opt.innerText = "Class " + cls;
@@ -717,7 +747,7 @@
                 } else {
                     lockPortal();
                 }
-            } catch(e) { lockPortal(); }
+            } catch (e) { lockPortal(); }
         }
 
         function lockPortal() {
@@ -746,16 +776,12 @@
 
         previewBtn.addEventListener('click', () => {
             if (form.checkValidity()) {
-                generatedStudentId = generateStudentId(); // Keep this so it still saves to the database
+                generatedStudentId = generateStudentId();
                 let previewHTML = '<table>';
                 const formData = new FormData(form);
-
                 for (let [key, value] of formData.entries()) {
                     if (key !== 'declaration_agree') {
-                        // Force uppercase for the Student and Father names in the preview
-                        if (key === 'student_name' || key === 'father_name') {
-                            value = value.toUpperCase();
-                        }
+                        if (key === 'student_name' || key === 'father_name') { value = value.toUpperCase(); }
                         previewHTML += `<tr><td>${key.replace(/_/g, ' ').toUpperCase()}</td><td>${value}</td></tr>`;
                     }
                 }
@@ -781,7 +807,6 @@
 
             fetch(SCRIPT_URL, {
                 method: 'POST',
-                // Removed mode: 'no-cors' so we can read the server response
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify(dataObject)
             })
@@ -789,46 +814,23 @@
                 .then(data => {
                     document.getElementById('loader').style.display = 'none';
                     document.getElementById('formContainer').style.display = 'none';
-
                     if (data.status === 'success') {
-                        // --- SUCCESS FLOW ---
-                        // Display ONLY the newly generated Application ID
                         document.getElementById('displayAppId').innerHTML = `Application ID: ${data.applicationId}`;
                         document.getElementById('successPage').style.display = 'flex';
-
-                        // --- NEW: PING FIREBASE ADMIN NOTIFICATION ---
-                        if (window.notifyAdmin) {
-                            window.notifyAdmin(data.applicationId, dataObject.student_name);
-                        }
-
+                        if (window.notifyAdmin) { window.notifyAdmin(data.applicationId, dataObject.student_name); }
                     } else if (data.status === 'exists') {
-                        // --- DUPLICATE FLOW ---
-                        // Show a warning and display their existing Application ID
                         const successContent = document.querySelector('.success-page-content');
-                        successContent.innerHTML = `
-                        <h2 style="color: var(--accent-red); margin:0; font-size: 1.8em; font-weight: 800;">Application Exists</h2>
-                        <p style="color: #444; font-size: 1.05em; line-height: 1.6; margin: 20px 0;">
-                            ${data.message}
-                        </p>
-                        <div id="displayAppId" style="border-color: #fad2d2; background: #fff0f0; color: var(--accent-red);">
-                            Application ID: ${data.applicationId}
-                        </div>
-                        <button onclick="location.reload()" class="action-btn" style="margin-top: 20px;">Return to Form</button>
-                    `;
+                        successContent.innerHTML = `<h2 style="color: var(--accent-red); margin:0; font-size: 1.8em; font-weight: 800;">Application Exists</h2><p style="color: #444; font-size: 1.05em; line-height: 1.6; margin: 20px 0;">${data.message}</p><div id="displayAppId" style="border-color: #fad2d2; background: #fff0f0; color: var(--accent-red);">Application ID: ${data.applicationId}</div><button onclick="location.reload()" class="action-btn" style="margin-top: 20px;">Return to Form</button>`;
                         document.getElementById('successPage').style.display = 'flex';
-
                     } else {
-                        // --- ERROR FLOW ---
                         alert('Server Error: ' + data.message);
                         document.getElementById('formContainer').style.display = 'block';
                     }
-
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 })
                 .catch(error => {
                     document.getElementById('loader').style.display = 'none';
                     alert('Submission failed. Please check your network connection.');
-                    console.error(error);
                 });
         });
     </script>
