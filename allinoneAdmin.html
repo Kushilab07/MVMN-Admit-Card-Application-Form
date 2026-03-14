@@ -223,7 +223,7 @@
                                     <div>Date & Time</div>
                                     <div
                                         class="text-[10px] font-normal text-slate-400 normal-case mt-0.5 tracking-normal">
-                                        MM/DD/YYYY</div>
+                                        DD/MM/YYYY</div>
                                 </th>
                                 <th class="px-4 py-3">Application ID</th>
                                 <th class="px-4 py-3">Student ID</th>
@@ -392,7 +392,7 @@
                                     <div>Date & Time</div>
                                     <div
                                         class="text-[10px] font-normal text-slate-400 normal-case mt-0.5 tracking-normal">
-                                        MM/DD/YYYY</div>
+                                        DD/MM/YYYY</div>
                                 </th>
                                 <th class="px-4 py-3 border-r border-slate-200 dark:border-slate-700">Application ID
                                 </th>
@@ -754,8 +754,8 @@
         // ==========================================
         // 1. CONFIGURATION & GLOBALS
         // ==========================================
-        const PENDING_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyTrz6aoG5zlexc6yO0S-BCcbuzQsKNa5AGBZhQu2Ib13YoXRzyMM5L5DX3E6SebVxSfw/exec";
-        const FINAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzllV2pWIX3P6JYR4xFBs9aPLYKxqx6C1ibhQ_RDRSuYOgEMiuNHICLOBaRD_17L1lFfg/exec";
+        const PENDING_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby6k0EClmq3WueP-0SwCuce3-z6W-PZW1pjRk3lzaIHe_xwG64qnKMWW2pDw2lAa9NW1A/exec";
+        const FINAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby6DuDmq0fQdWwf_4KoS3fNM4g22ok3lScPdGV0CuIXagFyT5-b7_Qs7H6qKU9xcFSkTQ/exec";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBBkITpfUjxFUFvgQhjnXedrIX4GhfCSCo",
@@ -1129,11 +1129,11 @@
                         updatePortalLinkUI(pStatus, conf.Portal_Token || '');
                     }
 
-                    // FIX: Fetch Admit Status AND update the UI link box
                     if(document.getElementById('sysAdmitPortalStatus')) {
                         const aStatus = conf.Admit_Portal_Status || 'OFF';
                         document.getElementById('sysAdmitPortalStatus').value = aStatus;
-                        updateAdmitPortalLinkUI(aStatus);
+                        // FIX: Added token load for Admit Portal
+                        updateAdmitPortalLinkUI(aStatus, conf.Admit_Portal_Token || '');
                     }
                 }
             } catch (e) { console.error("Config load failed", e); }
@@ -1163,21 +1163,25 @@
             saveSystemConfig(status, token);
         }
 
-        // NEW: Helper function to show/hide the Admit Portal link
-        function updateAdmitPortalLinkUI(status) {
+        // FIX: Update Admit Link UI to accept token
+        function updateAdmitPortalLinkUI(status, token) {
             const container = document.getElementById('admitPortalLinkContainer');
-            if (status === 'ON') {
+            const linkInput = document.getElementById('sysAdmitPortalLink');
+            if (status === 'ON' && token) {
                 container.classList.remove('hidden');
+                linkInput.value = `https://kushilab07.github.io/MVMN-Admit-Card-Application-Form/admitDownloadForStudent.html?token=${token}`;
             } else {
                 container.classList.add('hidden');
+                linkInput.value = '';
             }
         }
 
-        // NEW: Toggle function specifically for the Admit Download Portal
+        // FIX: Generate Token for Admit Portal
         function toggleAdmitPortalStatus() {
             const status = document.getElementById('sysAdmitPortalStatus').value;
-            updateAdmitPortalLinkUI(status); // Instantly show/hide the link
-            saveSystemConfig();              // Save the change to the database
+            const token = status === 'ON' ? 'd' + Math.random().toString(36).substr(2, 9) + Date.now().toString(36) : '';
+            updateAdmitPortalLinkUI(status, token);
+            saveSystemConfig(); 
         }
 
         // NEW: Copy function for the Admit link
@@ -1187,8 +1191,8 @@
             document.execCommand("copy");
             showToast('Admit Download Link Copied!', 'success');
         }
-
-        // 3. Save Configuration to Backend
+        
+        // FIX: Update save logic to scrape Admit Token
         async function saveSystemConfig(portalStatusOverride = null, portalTokenOverride = null) {
             const activeExam = document.getElementById('sysActiveExam').value;
             const examSession = document.getElementById('sysExamSession').value;
@@ -1203,6 +1207,13 @@
                 const linkVal = document.getElementById('sysPortalLink').value;
                 if(linkVal.includes('token=')) portalToken = linkVal.split('token=')[1];
             }
+
+            // NEW: Scrape Admit Token
+            let admitPortalToken = '';
+            if (document.getElementById('sysAdmitPortalStatus') && document.getElementById('sysAdmitPortalStatus').value === 'ON') {
+                const admitLinkVal = document.getElementById('sysAdmitPortalLink').value;
+                if(admitLinkVal.includes('token=')) admitPortalToken = admitLinkVal.split('token=')[1];
+            }
             
             const payload = {
                 action: 'save_system_config',
@@ -1211,8 +1222,9 @@
                     { key: 'Active_Exam_Type', value: activeExam },
                     { key: 'Exam_Session', value: examSession },
                     { key: 'Portal_Status', value: portalStatus },
+                    { key: 'Portal_Token', value: portalToken },
                     { key: 'Admit_Portal_Status', value: admitPortalStatus },
-                    { key: 'Portal_Token', value: portalToken } 
+                    { key: 'Admit_Portal_Token', value: admitPortalToken } // Saved to DB!
                 ]
             };
         
