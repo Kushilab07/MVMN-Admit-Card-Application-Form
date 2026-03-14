@@ -691,21 +691,33 @@
     </script>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyTrz6aoG5zlexc6yO0S-BCcbuzQsKNa5AGBZhQu2Ib13YoXRzyMM5L5DX3E6SebVxSfw/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby6k0EClmq3WueP-0SwCuce3-z6W-PZW1pjRk3lzaIHe_xwG64qnKMWW2pDw2lAa9NW1A/exec";
+        // ADD FINAL SCRIPT URL SO WE CAN READ THE MASTER CONFIG
+        const FINAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby6DuDmq0fQdWwf_4KoS3fNM4g22ok3lScPdGV0CuIXagFyT5-b7_Qs7H6qKU9xcFSkTQ/exec";
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const pageToken = urlParams.get('token');
 
         const FORM_CONFIG = {
             START_TIME: "2025-01-01T08:00:00",
             END_TIME: "2026-12-31T23:59:00"
         };
 
-        function checkFormAvailability() {
-            const now = new Date();
-            const start = new Date(FORM_CONFIG.START_TIME);
-            const end = new Date(FORM_CONFIG.END_TIME);
-            if (now < start || now > end) {
-                document.getElementById('formContainer').style.display = 'none';
-                document.getElementById('statusPage').style.display = 'block';
+        // NEW SECURE AVAILABILITY CHECK
+        async function checkFormAvailability() {
+            if (!pageToken) {
+                lockPortal(); return;
             }
+            try {
+                const res = await fetch(FINAL_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'get_public_config', appToken: pageToken }) });
+                const result = await res.json();
+                if (!result.isAppOpen) { lockPortal(); }
+            } catch(e) { lockPortal(); }
+        }
+
+        function lockPortal() {
+            document.getElementById('formContainer').style.display = 'none';
+            document.getElementById('statusPage').style.display = 'block';
         }
 
         checkFormAvailability();
@@ -756,10 +768,10 @@
             document.getElementById('loader').style.display = 'block';
             const formData = new FormData(form);
             const dataObject = Object.fromEntries(formData.entries());
-            // Convert names to UPPERCASE right before sending to the database
             dataObject.student_name = dataObject.student_name.toUpperCase();
             dataObject.father_name = dataObject.father_name.toUpperCase();
             dataObject.student_id = generatedStudentId;
+            dataObject.token = pageToken; // SECURE: Pass token to backend
 
             fetch(SCRIPT_URL, {
                 method: 'POST',
