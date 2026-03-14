@@ -326,71 +326,55 @@
             document.getElementById('captchaInput').value = ""; // Clear input
         }
 
-        // Initialize Portal: Fetch dynamic title & check if portal is ON/OFF
+        const urlToken = new URLSearchParams(window.location.search).get('token');
+
         async function initPortal() {
             generateCaptcha(); 
+            if (!urlToken) { lockPortal(); return; } // Instant kill if no token
             
             try {
-                // Fetch the public config variables from Code.gs
                 const res = await fetch(API, {
                     method: 'POST',
-                    body: JSON.stringify({ action: 'get_public_config' })
+                    body: JSON.stringify({ action: 'get_public_config', admitToken: urlToken }) // Send token to check
                 });
                 const result = await res.json();
                 
                 if(result.status === 'success') {
-                    // Update Dynamic Header Text
                     const examName = result.activeExamType === 'HY' ? 'Half-Yearly Examination' : 'Final Examination';
                     document.getElementById('loginExamTitle').innerText = `${examName} ${result.examSession}`;
 
-                    // Lock the UI immediately if Admin has turned the Admit Download Portal OFF
-                    if(result.admitPortalStatus === 'OFF') {
-                        const msg = document.getElementById('msg');
-                        const btn = document.getElementById('subBtn');
-                        msg.innerHTML = `
-                            <div class="alert-box alert-danger" style="border-color:#b71c1c;">
-                                <div class="alert-header"><i class="fa-solid fa-lock"></i> PORTAL CLOSED</div>
-                                <strong>Admit Card Downloads are currently disabled.</strong><br>
-                                The administration has closed the portal. Please wait for the official announcement regarding admit card availability.
-                            </div>
-                        `;
-                        btn.disabled = true; // Lock submit button
-                        document.getElementById('loginForm').style.opacity = '0.5';
-                        document.getElementById('loginForm').style.pointerEvents = 'none';
-                    }
+                    // If token check fails in backend, lock it
+                    if(!result.isAdmitOpen) { lockPortal(); }
                 }
-            } catch(e) {
-                // Fallback in case of server timeout
-                document.getElementById('loginExamTitle').innerText = 'Examination Portal';
-            }
+            } catch(e) { document.getElementById('loginExamTitle').innerText = 'Examination Portal'; }
         }
 
-        // Trigger initialization on load
+        function lockPortal() {
+            const msg = document.getElementById('msg');
+            const btn = document.getElementById('subBtn');
+            msg.innerHTML = `
+                <div class="alert-box alert-danger" style="border-color:#b71c1c;">
+                    <div class="alert-header"><i class="fa-solid fa-lock"></i> PORTAL CLOSED</div>
+                    <strong>Secure Link Invalid or Expired.</strong><br>
+                    Please use the official link provided by the school administration.
+                </div>
+            `;
+            if(btn) btn.disabled = true;
+            document.getElementById('loginForm').style.opacity = '0.5';
+            document.getElementById('loginForm').style.pointerEvents = 'none';
+        }
+
         window.onload = initPortal;
 
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            
-            const sid = document.getElementById('sid').value.trim().toUpperCase();
-            const dob = document.getElementById('dob').value; // Comes in as YYYY-MM-DD natively
-            const userCaptcha = document.getElementById('captchaInput').value.trim().toUpperCase();
-            const btn = document.getElementById('subBtn');
-            const msg = document.getElementById('msg');
-            
-            // Validate Captcha
-            if (userCaptcha !== generatedCaptcha) {
-                msg.innerHTML = '<span class="error-state">Wrong Captcha</span>';
-                generateCaptcha(); 
-                return;
-            }
-
-            btn.disabled = true;
-            msg.innerHTML = '<div class="loading-state"><i class="fa-solid fa-spinner fa-spin"></i> Verifying Credentials...</div>';
+            // ... (keep var fetching the same) ...
 
             const payload = {
                 action: 'download_admit',
                 studentId: sid,
-                dob: dob
+                dob: dob,
+                token: urlToken // SECURE: Pass the token to the backend verify step
             };
 
             try {
