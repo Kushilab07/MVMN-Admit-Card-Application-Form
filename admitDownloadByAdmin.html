@@ -612,7 +612,7 @@
             //}
         };
 
-        const API = 'https://script.google.com/macros/s/AKfycbyUHEpwc8ZWaga1uzkERZMyc1XrcA49ZeOimuhCSAbCWj0Z5U6iKZYoC7L89rSR5PBK/exec';
+        const API = 'https://script.google.com/macros/s/AKfycbzllV2pWIX3P6JYR4xFBs9aPLYKxqx6C1ibhQ_RDRSuYOgEMiuNHICLOBaRD_17L1lFfg/exec';
 
         // LOGIN LOGIC
         //document.getElementById('loginForm').addEventListener('submit', function (e) {
@@ -710,6 +710,10 @@
             const serialNumber = data['Serial Number'] || '';
             const barcodeID = `*${serialNumber}*`;
 
+            // NEW: Determine Exam Name and Session dynamically
+            const examNameStr = data['Exam Type'] === 'HY' ? 'HALF-YEARLY EXAMINATION' : 'FINAL EXAMINATION';
+            const sessionStr = data['Session'] || '2025-2026';
+
             let rows = '';
             for (let i = 1; i <= 10; i++) {
                 if (data[`Date ${i}`]) {
@@ -728,7 +732,7 @@
                             <h1>MAHARISHI VIDYA MANDIR,<br>NALBARI</h1>
                             <p class="sub-1">CBSE CURRICULUM • BATIRAM ROAD, NALBARI, PIN-781335</p>
                             <p class="admit-title">ADMIT CARD</p>
-                            <p class="exam-title">FINAL EXAMINATION 2025-2026</p>
+                            <p class="exam-title">${examNameStr} ${sessionStr}</p>
                         </div>
                         <img src="logo.png" class="logo-h">
                     </header>
