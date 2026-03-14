@@ -233,7 +233,7 @@
         .instructions-page {
             background: white;
             padding: 12mm;
-            min-height: 100vh;
+            min-height: 80vh;
             box-sizing: border-box;
             border: 3px solid var(--school-blue);
             position: relative;
@@ -423,8 +423,8 @@
         .footer-sigs {
             display: flex;
             justify-content: space-between;
-            margin-top: auto;
-            padding-top: 10px;
+            margin-top: 10px;
+            padding-top: 45px;
             position: relative;
             z-index: 1;
         }
@@ -461,23 +461,17 @@
         }
 
         /* PRINT STYLES - STRICTLY ORIGINAL */
-        /* PRINT STYLES - STRICTLY ORIGINAL */
         @media print {
-            @page {
-                margin: 8mm; /* Safe margins for all printers */
-            }
 
             * {
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
 
-            /* 1. Force the body to map to the exact size of the printed page */
-            html, body {
-                padding: 0 !important;
-                margin: 0 !important;
-                height: 100% !important; 
+            body {
+                padding: 0;
                 background: white;
+                margin: 0;
             }
 
             /* Hide Admin UI */
@@ -495,25 +489,12 @@
 
             .admit-card-page,
             .instructions-page {
-                border: 2px solid #000 !important;
-                
-                /* 2. MOBILE FIX: Use 100% instead of vh. */
-                height: 100% !important; 
-                min-height: 100% !important;
-                max-height: 100% !important;
-                
-                /* 3. The Magic Shield: Prevents the browser from slicing the border in half */
-                page-break-inside: avoid !important; 
-                break-inside: avoid !important;
-                
-                /* 4. Force a clean page break after each section */
-                page-break-after: always !important;
-                break-after: page !important;
-                
+                border: 1px solid #000 !important;
+                height: 80vh; /*!important; / * 2. Dynamically stretches the border to perfectly fit Legal, A4, or Letter */
+                page-break-after: always;
                 box-shadow: none;
                 margin: 0;
                 width: 100%;
-                box-sizing: border-box;
             }
         }
     </style>
