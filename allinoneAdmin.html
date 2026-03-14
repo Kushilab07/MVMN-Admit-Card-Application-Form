@@ -456,26 +456,27 @@
                         <i data-lucide="calendar-clock" class="w-6 h-6 text-blue-600 dark:text-blue-400"></i>
                     </div>
                     <h3 class="text-lg font-bold text-slate-800 dark:text-slate-200 mb-1">Exam Routines</h3>
-                    <p class="text-sm text-slate-500 dark:text-slate-400">Create, edit, or delete class timetables.</p>
+                    <p class="text-sm text-slate-500 dark:text-slate-400">Create, edit, or delete exam dates & subjects.</p>
                 </div>
 
-                <div
-                    class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
                     <div class="flex items-center gap-3 mb-4">
-                        <div
-                            class="w-10 h-10 rounded-full bg-purple-50 dark:bg-purple-900/30 flex items-center justify-center">
+                        <div class="w-10 h-10 rounded-full bg-purple-50 dark:bg-purple-900/30 flex items-center justify-center">
                             <i data-lucide="settings-2" class="w-5 h-5 text-purple-600 dark:text-purple-400"></i>
                         </div>
                         <h3 class="text-lg font-bold text-slate-800 dark:text-slate-200">Global Exam State</h3>
                     </div>
+                    
                     <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Active Examination</label>
-                    <select id="sysActiveExam" onchange="saveSystemConfig()"
-                        class="w-full p-2.5 text-sm border border-slate-200 rounded-lg dark:bg-slate-800 dark:border-slate-700 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none mb-2">
+                    <select id="sysActiveExam" onchange="saveSystemConfig()" class="w-full p-2.5 text-sm border border-slate-200 rounded-lg dark:bg-slate-800 dark:border-slate-700 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none mb-3">
                         <option value="HY">Half-Yearly Examination</option>
                         <option value="FY">Final Year Examination</option>
                     </select>
-                    <p class="text-[11px] text-slate-500 leading-tight">Controls which Serial Number and Routine are
-                        fetched globally for Admit Cards.</p>
+        
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Academic Session</label>
+                    <input type="text" id="sysExamSession" onchange="saveSystemConfig()" placeholder="e.g. 2025-2026" class="w-full p-2.5 text-sm border border-slate-200 rounded-lg dark:bg-slate-800 dark:border-slate-700 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none mb-2">
+                    
+                    <!-- <p class="text-[11px] text-slate-500 leading-tight">Controls which Serial Number, Routine, and Title are printed on Admit Cards globally.</p> -->
                 </div>
 
                 <div
@@ -485,13 +486,13 @@
                             class="w-10 h-10 rounded-full bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center">
                             <i data-lucide="globe" class="w-5 h-5 text-emerald-600 dark:text-emerald-400"></i>
                         </div>
-                        <h3 class="text-lg font-bold text-slate-800 dark:text-slate-200">Admissions Portal</h3>
+                        <h3 class="text-lg font-bold text-slate-800 dark:text-slate-200">Online Application Portal</h3>
                     </div>
                     <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Portal Status</label>
                     <select id="sysPortalStatus" onchange="togglePortalStatus()"
                         class="w-full p-2.5 text-sm border border-slate-200 rounded-lg dark:bg-slate-800 dark:border-slate-700 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none mb-3">
-                        <option value="OFF">OFF - Registrations Closed</option>
-                        <option value="ON">ON - Accepting Applications</option>
+                        <option value="OFF">OFF - Portal Closed</option>
+                        <option value="ON">ON - Portal is Active</option>
                     </select>
 
                     <div id="portalLinkContainer" class="hidden">
@@ -503,7 +504,34 @@
                                 class="px-3 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-r-lg dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-white transition-colors"><i
                                     data-lucide="copy" class="w-4 h-4"></i></button>
                         </div>
-                        <p class="text-[10px] text-emerald-600 mt-1 font-medium">Token active. Link is secure.</p>
+                        <!-- <p class="text-[10px] text-emerald-600 mt-1 font-medium">Token active. Link is secure.</p> -->
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center">
+                            <i data-lucide="download-cloud" class="w-5 h-5 text-blue-600 dark:text-blue-400"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-800 dark:text-slate-200">Admit Download Portal</h3>
+                    </div>
+                    
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Portal Status</label>
+                    <select id="sysAdmitPortalStatus" onchange="toggleAdmitPortalStatus()" class="w-full p-2.5 text-sm border border-slate-200 rounded-lg dark:bg-slate-800 dark:border-slate-700 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none mb-3">
+                        <option value="OFF">OFF - Portal Closed</option>
+                        <option value="ON">ON - Portal is Active</option>
+                    </select>
+                    <!-- <p class="text-[11px] text-slate-500 leading-tight mb-3">Controls whether students can log in to download their Admit Cards.</p> -->
+
+                    <div id="admitPortalLinkContainer" class="hidden">
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Public Download Link</label>
+                        <div class="flex">
+                            <input type="text" id="sysAdmitPortalLink" readonly value="https://kushilab07.github.io/MVMN-Admit-Card-Application-Form/admitDownloadForStudent.html"
+                                class="w-full p-2 text-xs border border-r-0 border-slate-200 rounded-l-lg bg-slate-50 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-300">
+                            <button onclick="copyAdmitPortalLink()"
+                                class="px-3 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-r-lg dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-white transition-colors"><i
+                                    data-lucide="copy" class="w-4 h-4"></i></button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -625,7 +653,7 @@
             </div>
         </div>
 
-        <div id="examTypeModal"
+        <!-- <div id="examTypeModal"
             class="fixed inset-0 z-[9999] hidden bg-slate-900/50 backdrop-blur-sm flex items-center justify-center opacity-0 transition-opacity duration-300">
             <div
                 class="bg-white dark:bg-slate-900 rounded-2xl shadow-xl max-w-sm w-full p-6 transform scale-95 transition-transform duration-300">
@@ -644,7 +672,7 @@
                         class="px-4 py-2 text-sm text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">Cancel</button>
                 </div>
             </div>
-        </div>
+        </div> -->
 
         <div id="addStudentModal"
             class="fixed inset-0 z-[9999] hidden bg-slate-900/50 backdrop-blur-sm flex items-center justify-center opacity-0 transition-opacity duration-300">
@@ -727,7 +755,7 @@
         // 1. CONFIGURATION & GLOBALS
         // ==========================================
         const PENDING_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyTrz6aoG5zlexc6yO0S-BCcbuzQsKNa5AGBZhQu2Ib13YoXRzyMM5L5DX3E6SebVxSfw/exec";
-        const FINAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyUHEpwc8ZWaga1uzkERZMyc1XrcA49ZeOimuhCSAbCWj0Z5U6iKZYoC7L89rSR5PBK/exec";
+        const FINAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzllV2pWIX3P6JYR4xFBs9aPLYKxqx6C1ibhQ_RDRSuYOgEMiuNHICLOBaRD_17L1lFfg/exec";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBBkITpfUjxFUFvgQhjnXedrIX4GhfCSCo",
@@ -1092,49 +1120,107 @@
                 const result = await res.json();
                 if (result.status === 'success') {
                     const conf = result.data;
-                    document.getElementById('sysActiveExam').value = conf.Active_Exam_Type || 'HY';
-                    document.getElementById('sysPortalStatus').value = conf.Portal_Status || 'OFF';
+                    document.getElementById('sysActiveExam').value = conf.Active_Exam_Type || 'FY';
+                    document.getElementById('sysExamSession').value = conf.Exam_Session || '2025-2026';
+                    
+                    if(document.getElementById('sysPortalStatus')) {
+                        const pStatus = conf.Portal_Status || 'OFF';
+                        document.getElementById('sysPortalStatus').value = pStatus;
+                        updatePortalLinkUI(pStatus, conf.Portal_Token || '');
+                    }
 
-                    if (conf.Portal_Status === 'ON' && conf.Portal_Token) {
-                        document.getElementById('portalLinkContainer').classList.remove('hidden');
-                        // Replace 'https://yourschool.com/apply' with your actual frontend form URL
-                        document.getElementById('sysPortalLink').value = `https://yourschool.com/apply?token=${conf.Portal_Token}`;
-                    } else {
-                        document.getElementById('portalLinkContainer').classList.add('hidden');
+                    // FIX: Fetch Admit Status AND update the UI link box
+                    if(document.getElementById('sysAdmitPortalStatus')) {
+                        const aStatus = conf.Admit_Portal_Status || 'OFF';
+                        document.getElementById('sysAdmitPortalStatus').value = aStatus;
+                        updateAdmitPortalLinkUI(aStatus);
                     }
                 }
             } catch (e) { console.error("Config load failed", e); }
+        }
+
+        // NEW FIX: Helper function to show/hide the link box
+        function updatePortalLinkUI(status, token) {
+            const container = document.getElementById('portalLinkContainer');
+            const linkInput = document.getElementById('sysPortalLink');
+            if (status === 'ON' && token) {
+                container.classList.remove('hidden');
+                // UPDATE THIS URL to point to your actual public application form URL
+                linkInput.value = `https://kushilab07.github.io/MVMN-Admit-Card-Application-Form/?token=${token}`;
+            } else {
+                container.classList.add('hidden');
+                linkInput.value = '';
+            }
         }
 
         // 2. Toggle Portal Status (Handles Token Generation)
         function togglePortalStatus() {
             const status = document.getElementById('sysPortalStatus').value;
             const token = status === 'ON' ? 'x' + Math.random().toString(36).substr(2, 9) + Date.now().toString(36) : '';
+            
+            // FIX: Instantly update UI when toggled
+            updatePortalLinkUI(status, token);
             saveSystemConfig(status, token);
+        }
+
+        // NEW: Helper function to show/hide the Admit Portal link
+        function updateAdmitPortalLinkUI(status) {
+            const container = document.getElementById('admitPortalLinkContainer');
+            if (status === 'ON') {
+                container.classList.remove('hidden');
+            } else {
+                container.classList.add('hidden');
+            }
+        }
+
+        // NEW: Toggle function specifically for the Admit Download Portal
+        function toggleAdmitPortalStatus() {
+            const status = document.getElementById('sysAdmitPortalStatus').value;
+            updateAdmitPortalLinkUI(status); // Instantly show/hide the link
+            saveSystemConfig();              // Save the change to the database
+        }
+
+        // NEW: Copy function for the Admit link
+        function copyAdmitPortalLink() {
+            const linkInput = document.getElementById('sysAdmitPortalLink');
+            linkInput.select();
+            document.execCommand("copy");
+            showToast('Admit Download Link Copied!', 'success');
         }
 
         // 3. Save Configuration to Backend
         async function saveSystemConfig(portalStatusOverride = null, portalTokenOverride = null) {
             const activeExam = document.getElementById('sysActiveExam').value;
-            const portalStatus = portalStatusOverride || document.getElementById('sysPortalStatus').value;
-            const portalToken = portalTokenOverride !== null ? portalTokenOverride : (document.getElementById('sysPortalStatus').value === 'ON' ? document.getElementById('sysPortalLink').value.split('token=')[1] : '');
-
+            const examSession = document.getElementById('sysExamSession').value;
+            const admitPortalStatus = document.getElementById('sysAdmitPortalStatus').value; 
+            
+            const portalStatus = portalStatusOverride || (document.getElementById('sysPortalStatus') ? document.getElementById('sysPortalStatus').value : 'OFF');
+            
+            let portalToken = '';
+            if (portalTokenOverride !== null) {
+                portalToken = portalTokenOverride;
+            } else if (document.getElementById('sysPortalStatus') && document.getElementById('sysPortalStatus').value === 'ON') {
+                const linkVal = document.getElementById('sysPortalLink').value;
+                if(linkVal.includes('token=')) portalToken = linkVal.split('token=')[1];
+            }
+            
             const payload = {
                 action: 'save_system_config',
                 token: ADMIN_SECRET,
                 configs: [
                     { key: 'Active_Exam_Type', value: activeExam },
+                    { key: 'Exam_Session', value: examSession },
                     { key: 'Portal_Status', value: portalStatus },
-                    { key: 'Portal_Token', value: portalToken }
+                    { key: 'Admit_Portal_Status', value: admitPortalStatus },
+                    { key: 'Portal_Token', value: portalToken } 
                 ]
             };
-
+        
             try {
                 const res = await fetch(FINAL_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
                 const result = await res.json();
-                if (result.status === 'success') {
+                if(result.status === 'success') {
                     showToast('System Configuration Saved Globally', 'success');
-                    fetchSystemConfig(); // Refresh UI
                 } else throw new Error(result.message);
             } catch (err) {
                 showToast(`Config Save Failed: ${err.message}`, 'error');
@@ -1466,14 +1552,15 @@
         function prepareDirectPrint(studentId) {
             const student = window.finalStudentsData.find(s => s.studentId === studentId);
             if (!student) return showToast("Student data not found.", "error");
-
-            // Grab the global active exam type from the settings DOM (Defaults to 'FY' if missing)
+        
+            // Grab the global active exam type & session from the settings DOM
             const activeExamEl = document.getElementById('sysActiveExam');
+            const sessionEl = document.getElementById('sysExamSession');
             const activeExam = activeExamEl ? activeExamEl.value : 'FY';
-
-            // Fetch the correct routine from memory
+            const examSession = sessionEl ? sessionEl.value : '2025-2026';
+            
             const routineRow = window.allRoutines[activeExam] ? window.allRoutines[activeExam][student.studentClass] : null;
-
+        
             // Map data EXACTLY as admitDownloadByAdmin.html expects it
             let printPayload = {
                 'Student Name': student.studentName,
@@ -1483,11 +1570,12 @@
                 'Section': student.section,
                 'Roll No': student.rollNo,
                 'Serial Number': activeExam === 'HY' ? student.hySerial : student.fySerial,
-                'Photo URL': student.photoUrl || '',
-                'Signature URL': student.signatureUrl || ''
+                'Photo URL': student.photoUrl || '', 
+                'Signature URL': student.signatureUrl || '',
+                'Exam Type': activeExam,      // Send to print page
+                'Session': examSession        // Send to print page
             };
-
-            // Attach the routine to the payload
+        
             if (routineRow) {
                 let colIndex = 1;
                 for (let i = 1; i <= 10; i++) {
@@ -1500,8 +1588,7 @@
                     colIndex += 2;
                 }
             }
-
-            // Save payload to local storage temporarily and open the print window
+        
             localStorage.setItem('directPrintData', JSON.stringify(printPayload));
             window.open('admitDownloadByAdmin.html?mode=direct', '_blank');
         }
