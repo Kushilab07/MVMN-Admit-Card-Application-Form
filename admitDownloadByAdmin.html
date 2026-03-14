@@ -469,9 +469,9 @@
         @media print {
 
             /* 1. This tells the printer to wipe out default browser margins/headers */
-            @page {
+            /*@page {
                 margin: 8mm;
-            }
+            }*/
 
             * {
                 -webkit-print-color-adjust: exact !important;
@@ -500,7 +500,7 @@
             .admit-card-page,
             .instructions-page {
                 border: 1px solid #000 !important;
-                height: 96vh !important; /* 2. Dynamically stretches the border to perfectly fit Legal, A4, or Letter */
+                height: 100vh; /*!important; / * 2. Dynamically stretches the border to perfectly fit Legal, A4, or Letter */
                 page-break-after: always;
                 box-shadow: none;
                 margin: 0;
@@ -513,7 +513,7 @@
 <body>
 
     <!-- 1. LOGIN SCREEN -->
-    <div class="login-overlay" id="loginScreen">
+    <!-- <div class="login-overlay" id="loginScreen">
         <div class="login-box">
             <img src="logo.png" style="width: 80px; margin-bottom: 10px;">
             <h2 style="margin: 5px 0 20px 0; color: var(--admin-dark);">ADMIN LOGIN</h2>
@@ -524,10 +524,10 @@
             </form>
             <div id="loginMsg" style="color: red; margin-top: 10px; font-size: 13px; font-weight: bold;"></div>
         </div>
-    </div>
+    </div> -->
 
     <!-- 2. ADMIN DASHBOARD -->
-    <div class="admin-container" id="adminDashboard" style="display: none;">
+    <!-- <div class="admin-container" id="adminDashboard" style="display: none;">
 
         <div class="dashboard-header">
             <div class="admin-title">
@@ -544,10 +544,10 @@
                     placeholder="Enter Student ID (e.g., MVM/2025/001) or Serial No.">
                 <button class="search-btn" id="searchBtn" onclick="searchStudent()">SEARCH</button>
             </div>
-        </div>
+        </div> -->
 
         <!-- Result & Actions -->
-        <div class="result-panel" id="resultArea">
+        <!-- <div class="result-panel" id="resultArea">
             <div class="result-header">
                 <div>
                     <h2 style="margin: 0; font-size: 18px;" id="resName">Student Name</h2>
@@ -563,7 +563,7 @@
                 </button>
             </div>
         </div>
-    </div>
+    </div> -->
 
     <!-- 3. ADMIT CARD RENDER AREA (STRICTLY ORIGINAL LAYOUT) -->
     <div class="page-container" id="admitCardRender">
@@ -582,8 +582,8 @@
             // -----------------------------------------------------------------
             if (urlParams.get('mode') === 'direct') {
                 // 1. Hide Admin Dashboards & Login completely
-                document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('adminDashboard').style.display = 'none';
+                //document.getElementById('loginScreen').style.display = 'none';
+                //document.getElementById('adminDashboard').style.display = 'none';
 
                 // 2. Fetch the bundled data passed from the main admin page
                 const rawData = localStorage.getItem('directPrintData');
@@ -611,101 +611,101 @@
             // -----------------------------------------------------------------
             // STANDARD SEARCH MODE (If accessed directly via ?search=ID)
             // -----------------------------------------------------------------
-            const searchId = urlParams.get('search');
-            const authCode = urlParams.get('auth');
+            //const searchId = urlParams.get('search');
+            //const authCode = urlParams.get('auth');
 
-            if (searchId && authCode === 'MVM_Secure_2026!') {
-                document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('adminDashboard').style.display = 'block';
-                document.getElementById('searchInput').value = searchId;
-                searchStudent(); // This triggers the DB fetch
-            }
+            //if (searchId && authCode === 'MVM_Secure_2026!') {
+            //    document.getElementById('loginScreen').style.display = 'none';
+            //    document.getElementById('adminDashboard').style.display = 'block';
+            //    document.getElementById('searchInput').value = searchId;
+            //    searchStudent(); // This triggers the DB fetch
+            //}
         };
 
         const API = 'https://script.google.com/macros/s/AKfycbyUHEpwc8ZWaga1uzkERZMyc1XrcA49ZeOimuhCSAbCWj0Z5U6iKZYoC7L89rSR5PBK/exec';
 
         // LOGIN LOGIC
-        document.getElementById('loginForm').addEventListener('submit', function (e) {
-            e.preventDefault();
-            const id = document.getElementById('adminId').value;
-            const pass = document.getElementById('adminPass').value;
-            const btn = document.getElementById('loginBtn');
-            const msg = document.getElementById('loginMsg');
+        //document.getElementById('loginForm').addEventListener('submit', function (e) {
+        //    e.preventDefault();
+        //    const id = document.getElementById('adminId').value;
+        //    const pass = document.getElementById('adminPass').value;
+        //    const btn = document.getElementById('loginBtn');
+        //    const msg = document.getElementById('loginMsg');
 
-            btn.innerHTML = 'Verifying...';
+        //    btn.innerHTML = 'Verifying...';
 
             // Hardcoded Check
-            if (id === 'admit@mvm.com' && pass === 'Mvm#2018') {
-                setTimeout(() => {
-                    document.getElementById('loginScreen').style.display = 'none';
-                    document.getElementById('adminDashboard').style.display = 'block';
-                }, 500);
-            } else {
-                setTimeout(() => {
-                    msg.innerText = "Invalid Admin Credentials";
-                    btn.innerHTML = 'SECURE LOGIN';
-                }, 500);
-            }
-        });
+        //    if (id === 'admit@mvm.com' && pass === 'Mvm#2018') {
+        //        setTimeout(() => {
+        //            document.getElementById('loginScreen').style.display = 'none';
+        //            document.getElementById('adminDashboard').style.display = 'block';
+        //        }, 500);
+        //    } else {
+        //        setTimeout(() => {
+        //            msg.innerText = "Invalid Admin Credentials";
+        //            btn.innerHTML = 'SECURE LOGIN';
+        //        }, 500);
+        //    }
+        //});
 
         // SEARCH LOGIC
-        async function searchStudent() {
-            const query = document.getElementById('searchInput').value.trim().toUpperCase();
-            const btn = document.getElementById('searchBtn');
-            const resPanel = document.getElementById('resultArea');
-            const renderArea = document.getElementById('admitCardRender');
+        //async function searchStudent() {
+        //    const query = document.getElementById('searchInput').value.trim().toUpperCase();
+        //    const btn = document.getElementById('searchBtn');
+        //    const resPanel = document.getElementById('resultArea');
+        //    const renderArea = document.getElementById('admitCardRender');
 
-            if (!query) return alert("Enter ID or Serial Number");
+        //    if (!query) return alert("Enter ID or Serial Number");
 
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
-            btn.disabled = true;
-            resPanel.style.display = 'none';
-            renderArea.style.display = 'none';
+        //    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+        //    btn.disabled = true;
+        //    resPanel.style.display = 'none';
+        //    renderArea.style.display = 'none';
 
-            try {
-                const res = await fetch(API);
-                const json = await res.json();
+        //    try {
+        //        const res = await fetch(API);
+        //        const json = await res.json();
 
                 // Find by ID OR Serial Number
-                const student = json.data.find(x =>
-                    String(x['Student ID']).toUpperCase() === query ||
-                    String(x['Serial Number']).toUpperCase() === query
-                );
+        //        const student = json.data.find(x =>
+        //            String(x['Student ID']).toUpperCase() === query ||
+        //            String(x['Serial Number']).toUpperCase() === query
+        //        );
 
-                if (student) {
-                    displayAdminResult(student);
-                    renderCard(student);
-                } else {
-                    alert("Student not found!");
-                }
-            } catch (err) {
-                alert("Database Error");
-            } finally {
-                btn.innerHTML = 'SEARCH';
-                btn.disabled = false;
-            }
-        }
+        //       if (student) {
+        //            displayAdminResult(student);
+         //           renderCard(student);
+        //        } else {
+        //            alert("Student not found!");
+        //        }
+        //    } catch (err) {
+        //        alert("Database Error");
+        //    } finally {
+        //        btn.innerHTML = 'SEARCH';
+        //        btn.disabled = false;
+        //    }
+        //}
 
         // DISPLAY ADMIN STATUS
-        function displayAdminResult(data) {
-            document.getElementById('resultArea').style.display = 'block';
-            document.getElementById('resName').innerText = data['Student Name'];
-            document.getElementById('resInfo').innerText = `ID: ${data['Student ID']} | Class: ${data['Class']}-${data['Section']}`;
+        //function displayAdminResult(data) {
+        //    document.getElementById('resultArea').style.display = 'block';
+        //    document.getElementById('resName').innerText = data['Student Name'];
+        //    document.getElementById('resInfo').innerText = `ID: ${data['Student ID']} | Class: ${data['Class']}-${data['Section']}`;
 
-            const status = String(data['Status'] || '').trim().toLowerCase();
-            const badge = document.getElementById('statusBadge');
+        //    const status = String(data['Status'] || '').trim().toLowerCase();
+        //    const badge = document.getElementById('statusBadge');
 
-            if (status === 'block') {
-                badge.className = 'status-tag tag-block';
-                badge.innerText = 'BLOCKED (DUES)';
-            } else if (status === 'not release') {
-                badge.className = 'status-tag tag-hold';
-                badge.innerText = 'NOT RELEASED';
-            } else {
-                badge.className = 'status-tag tag-active';
-                badge.innerText = 'ACTIVE';
-            }
-        }
+        //    if (status === 'block') {
+        //        badge.className = 'status-tag tag-block';
+        //        badge.innerText = 'BLOCKED (DUES)';
+        //    } else if (status === 'not release') {
+        //        badge.className = 'status-tag tag-hold';
+        //        badge.innerText = 'NOT RELEASED';
+        //    } else {
+        //        badge.className = 'status-tag tag-active';
+        //        badge.innerText = 'ACTIVE';
+        //    }
+        //}
 
         function formatDate(dStr) {
             if (!dStr) return '';
