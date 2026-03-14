@@ -253,11 +253,33 @@
             .page-container { display: block !important; width: 100%; margin: 0; }
             .admit-card-page, .instructions-page { border: 1px solid #000 !important; height: 296mm; page-break-after: always; box-shadow: none; }
         }
+
+        #initLoader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(233, 236, 239, 0.95); backdrop-filter: blur(5px);
+            z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .spinner { width: 50px; height: 50px; border: 5px solid #ccc; border-top: 5px solid var(--school-blue); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        /* Message Card for Closed Portal */
+        #closedMessageCard { display: none; background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; border-top: 5px solid var(--exam-red); max-width: 400px; width: 100%; }
+        #closedMessageCard h2 { color: var(--exam-red); margin-top: 0; }
     </style>
 </head>
 <body>
 
-    <div class="login-container" id="loginWrapper">
+    <div id="initLoader">
+        <div class="spinner"></div>
+        <h3 style="color: var(--school-blue); margin-top: 20px;">Verifying Secure Link...</h3>
+    </div>
+
+    <div id="closedMessageCard">
+        <h2><i class="fa-solid fa-lock"></i> PORTAL CLOSED</h2>
+        <p>The secure link is invalid, expired, or the admit card downloads are currently disabled by administration.</p>
+    </div>
+
+    <div class="login-container" id="loginWrapper" style="display:none;">
         <div class="login-box">
             
             <div class="login-header">
@@ -310,7 +332,7 @@
     </div>
 
     <script>
-        const API = 'https://script.google.com/macros/s/AKfycbzllV2pWIX3P6JYR4xFBs9aPLYKxqx6C1ibhQ_RDRSuYOgEMiuNHICLOBaRD_17L1lFfg/exec';
+        const API = 'https://script.google.com/macros/s/AKfycbwLmpI21DZ2iBdXgg8RAeDiVGOi-ntQUhE-qx285TAcMlOEgBNVQnzDUI4cC_WgVufpvA/exec';
         
         let generatedCaptcha = "";
 
@@ -330,51 +352,44 @@
 
         async function initPortal() {
             generateCaptcha(); 
-            if (!urlToken) { lockPortal(); return; } // Instant kill if no token
+            if (!urlToken) { lockPortal(); return; }
             
             try {
                 const res = await fetch(API, {
                     method: 'POST',
-                    body: JSON.stringify({ action: 'get_public_config', admitToken: urlToken }) // Send token to check
+                    body: JSON.stringify({ action: 'get_public_config', admitToken: urlToken })
                 });
                 const result = await res.json();
                 
-                if(result.status === 'success') {
+                if(result.status === 'success' && result.isAdmitOpen) {
                     const examName = result.activeExamType === 'HY' ? 'Half-Yearly Examination' : 'Final Examination';
                     document.getElementById('loginExamTitle').innerText = `${examName} ${result.examSession}`;
-
-                    // If token check fails in backend, lock it
-                    if(!result.isAdmitOpen) { lockPortal(); }
+                    
+                    // Show Login, Hide Loader
+                    document.getElementById('initLoader').style.display = 'none';
+                    document.getElementById('loginWrapper').style.display = 'block';
+                } else {
+                    lockPortal();
                 }
-            } catch(e) { document.getElementById('loginExamTitle').innerText = 'Examination Portal'; }
+            } catch(e) { lockPortal(); }
         }
 
         function lockPortal() {
-            const msg = document.getElementById('msg');
-            const btn = document.getElementById('subBtn');
-            msg.innerHTML = `
-                <div class="alert-box alert-danger" style="border-color:#b71c1c;">
-                    <div class="alert-header"><i class="fa-solid fa-lock"></i> PORTAL CLOSED</div>
-                    <strong>Secure Link Invalid or Expired.</strong><br>
-                    Please use the official link provided by the school administration.
-                </div>
-            `;
-            if(btn) btn.disabled = true;
-            document.getElementById('loginForm').style.opacity = '0.5';
-            document.getElementById('loginForm').style.pointerEvents = 'none';
+            document.getElementById('initLoader').style.display = 'none';
+            document.getElementById('loginWrapper').style.display = 'none';
+            document.getElementById('closedMessageCard').style.display = 'block';
         }
 
         window.onload = initPortal;
 
+        // UPDATE LOGIN SUBMIT:
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            // ... (keep var fetching the same) ...
-
+            // ... captcha logic ...
             const payload = {
                 action: 'download_admit',
                 studentId: sid,
                 dob: dob,
-                token: urlToken // SECURE: Pass the token to the backend verify step
+                token: urlToken // SECURE
             };
 
             try {
