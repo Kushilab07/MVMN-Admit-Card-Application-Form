@@ -8,7 +8,9 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;700;800&family=Roboto:wght@400;500;700&family=Libre+Barcode+39&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;700;800&family=Roboto:wght@400;500;700&family=Libre+Barcode+39&display=swap"
+        rel="stylesheet">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -70,64 +72,15 @@
                 transform: rotate(360deg);
             }
         }
-
-        /* --- STRICT ADMIT CARD PRINT STYLES --- */
-        :root {
-            --school-blue: #00008B;
-            --admit-green: #006400;
-            --exam-red: #990000;
-            --table-head: #00004d;
-        }
-        #admitCardRender { display: none; }
-        
-        @media print {
-            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            /* Hide Admin UI */
-            aside, main, #toast-container, [id$="Modal"] { display: none !important; }
-            body { padding: 0; background: white; margin: 0; font-family: 'Roboto', sans-serif; display: block; }
-            
-            #admitCardRender { display: block !important; width: 100%; margin: 0; }
-            .admit-card-page, .instructions-page { 
-                background: white; padding: 12mm; height: 100%; box-sizing: border-box; 
-                border: 3px solid var(--school-blue); position: relative; display: flex; 
-                flex-direction: column; overflow: hidden; z-index: 1; page-break-after: always; margin: 0;
-            }
-            .page-background-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url('logo.png'); background-repeat: no-repeat; background-position: center center; background-size: 400px; opacity: 0.10; z-index: -1; }
-            .header { display: flex; align-items: center; justify-content: space-between; border-bottom: 3px solid #000; padding-bottom: 10px; margin-bottom: 20px; position: relative; z-index: 5; background: white; }
-            .logo-h { width: 115px; height: 115px; object-fit: contain; filter: contrast(1.2) brightness(0.9); }
-            .header-text { text-align: center; flex: 1; }
-            .header-text h1 { margin: 0; color: var(--school-blue); font-size: 26px; font-family: 'Montserrat', sans-serif; font-weight: 800; line-height: 1.1; }
-            .header-text .sub-1 { font-size: 13px; font-weight: 700; margin: 5px 0; color: #000; }
-            .header-text .admit-title { color: var(--admit-green); font-size: 26px; font-weight: 800; margin: 5px 0; letter-spacing: 2px; }
-            .header-text .exam-title { color: var(--exam-red); font-size: 20px; font-weight: 700; margin: 0; text-transform: uppercase; }
-            .content-flex { display: flex; gap: 20px; margin-top: 15px; position: relative; z-index: 1; }
-            .details-area { flex: 1; }
-            .details-table { width: 100%; border-collapse: collapse; }
-            .details-table td { padding: 11px 5px; border-bottom: 1px solid #ccc; font-size: 16px; color: #000; }
-            .lbl { font-weight: 800; color: var(--school-blue); width: 160px; }
-            .val { font-weight: 800; } 
-            .photo-area { text-align: center; width: 160px; }
-            .photo-box { width: 150px; height: 180px; border: 2px solid #000; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #000; font-weight: bold; padding: 5px; text-align: center; background: #fff; }
-            .photo-box img { width: 100%; height: 100%; object-fit: cover; }
-            .issued-under-photo { font-size: 9px; font-weight: 900; color: #000; margin-top: 5px; }
-            .barcode-section { text-align: center; margin: 15px 0; position: relative; z-index: 1; }
-            .barcode-disp { font-family: 'Libre Barcode 39', cursive; font-size: 65px; color: #000; line-height: 1; height: 65px; white-space: nowrap; }
-            .exam-table { color: #000; width: 100%; border-collapse: collapse; margin-top: 10px; z-index: 1; }
-            .exam-table th { background: var(--table-head); color: white; padding: 12px; font-size: 13px; border: 1px solid #000; }
-            .exam-table td { border: 1px solid #000; padding: 10px; text-align: center; font-size: 13px; font-weight: 700; background: rgba(255,255,255,0.4); }
-            .footer-sigs { display: flex; justify-content: space-between; margin-top: auto; padding-top: 45px; position: relative; z-index: 1; }
-            .sig-item { text-align: center; width: 160px; color: #000; }
-            .sig-img { height: 60px; margin-bottom: 5px; object-fit: contain; }
-            .sig-line { border-top: 2px solid #000; padding-top: 5px; font-weight: bold; font-size: 14px; color: #000; }
-            .page-timestamp-footer { text-align: center; font-size: 11px; font-weight: bold; padding-top: 10px; color: #000; position: relative; z-index: 1; border-top: 1px solid #000; margin-top: 15px;}
-        }
     </style>
 </head>
 
 <body
     class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 transition-colors duration-300 h-screen flex overflow-hidden">
 
-    <div style="font-family: 'Libre Barcode 39', cursive; position: absolute; width: 0; height: 0; overflow: hidden; opacity: 0;">PRELOAD</div>
+    <div
+        style="font-family: 'Libre Barcode 39', cursive; position: absolute; width: 0; height: 0; overflow: hidden; opacity: 0;">
+        PRELOAD</div>
 
     <div id="toast-container"
         class="fixed top-6 right-6 z-[99999] flex flex-col gap-3 w-full max-w-sm pointer-events-none"></div>
@@ -194,7 +147,8 @@
                     </div>
                 </div>
 
-                <button id="newDataAlert" onclick="loadNewData()" class="hidden items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-full shadow-md font-medium text-sm transition-transform transform hover:-translate-y-0.5">
+                <button id="newDataAlert" onclick="loadNewData()"
+                    class="hidden items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-full shadow-md font-medium text-sm transition-transform transform hover:-translate-y-0.5">
                     <i data-lucide="arrow-up" class="w-4 h-4"></i>
                     <span id="newDataText">1 New Application</span>
                 </button>
@@ -214,7 +168,8 @@
             <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-6 gap-4 flex-shrink-0">
                 <div>
                     <h2 class="text-xl font-bold text-slate-900 dark:text-white">Application Manager</h2>
-                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1 hover-instruction">Edit Records, Approve Student Applications or Reject and Delete</p>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1 hover-instruction">Edit Records, Approve
+                        Student Applications or Reject and Delete</p>
                 </div>
 
                 <div class="flex flex-col lg:flex-row items-center gap-3 w-full lg:w-auto">
@@ -237,8 +192,10 @@
                             onkeyup="filterPendingTable()"
                             class="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
-                    
-                    <button onclick="openUniversalDeleteModal('pending')" class="flex items-center justify-center bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 p-2.5 rounded-xl transition-colors" title="Delete ALL Pending Applications"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+
+                    <button onclick="openUniversalDeleteModal('pending')"
+                        class="flex items-center justify-center bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 p-2.5 rounded-xl transition-colors"
+                        title="Delete ALL Pending Applications"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
 
                     <button onclick="fetchData()" id="refreshBtn"
                         class="flex items-center gap-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 text-slate-700 dark:text-slate-300 px-4 py-2 rounded-xl text-sm font-medium transition-all shadow-sm">
@@ -264,7 +221,9 @@
                                 class="border-b border-slate-200 dark:border-slate-800 text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold">
                                 <th class="px-4 py-3">
                                     <div>Date & Time</div>
-                                    <div class="text-[10px] font-normal text-slate-400 normal-case mt-0.5 tracking-normal">MM/DD/YYYY</div>
+                                    <div
+                                        class="text-[10px] font-normal text-slate-400 normal-case mt-0.5 tracking-normal">
+                                        MM/DD/YYYY</div>
                                 </th>
                                 <th class="px-4 py-3">Application ID</th>
                                 <th class="px-4 py-3">Student ID</th>
@@ -274,7 +233,9 @@
                                 <th class="px-4 py-3">Roll No</th>
                                 <th class="px-4 py-3">
                                     <div>Date of Birth</div>
-                                    <div class="text-[10px] font-normal text-slate-400 normal-case mt-0.5 tracking-normal">DD/MM/YYYY</div>
+                                    <div
+                                        class="text-[10px] font-normal text-slate-400 normal-case mt-0.5 tracking-normal">
+                                        DD/MM/YYYY</div>
                                 </th>
                                 <th class="px-4 py-3">Father's Name</th>
                                 <th class="px-4 py-3">Phone Number</th>
@@ -306,7 +267,8 @@
             <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-6 gap-4 flex-shrink-0">
                 <div>
                     <h2 class="text-xl font-bold text-slate-900 dark:text-white">Manage Students</h2>
-                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Add Students, Edit Records & Admit Status, Export and Delete</p>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Add Students, Edit Records & Admit
+                        Status, Export and Delete</p>
                 </div>
 
                 <div class="flex items-center gap-3 w-full lg:w-auto flex-wrap">
@@ -315,11 +277,13 @@
                         Admit</button>
                     <button onclick="bulkAction('Block')"
                         class="px-3 py-1.5 text-sm font-medium bg-red-50 text-red-700 border border-red-200 rounded-lg hover:bg-red-100 hidden bulk-btn">Block</button>
-                        <button onclick="exportData()"
+                    <button onclick="exportData()"
                         class="px-3 py-1.5 text-sm font-medium bg-slate-100 text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-200 flex items-center gap-1"><i
                             data-lucide="download" class="w-4 h-4"></i> Export</button>
 
-                    <button onclick="openModal('addStudentModal')" class="px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-xl shadow hover:bg-blue-700 flex items-center gap-1 transition-colors"><i data-lucide="plus" class="w-4 h-4"></i> Add Student</button>
+                    <button onclick="openModal('addStudentModal')"
+                        class="px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-xl shadow hover:bg-blue-700 flex items-center gap-1 transition-colors"><i
+                            data-lucide="plus" class="w-4 h-4"></i> Add Student</button>
 
                     <div class="relative">
                         <button onclick="document.getElementById('advFilterPanel').classList.toggle('hidden')"
@@ -419,13 +383,16 @@
                         <thead class="sticky top-0 z-30 bg-slate-50/95 dark:bg-slate-800/95 backdrop-blur shadow-sm">
                             <tr
                                 class="border-b border-slate-200 dark:border-slate-800 text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold">
-                                <th class="px-4 py-3 w-10 text-center sticky left-0 z-30 bg-slate-50 dark:bg-slate-900 shadow-[4px_0_10px_rgba(0,0,0,0.04)] border-r border-slate-200 dark:border-slate-800"><input type="checkbox" id="selectAll"
-                                        onclick="toggleSelectAll(this)"
+                                <th
+                                    class="px-4 py-3 w-10 text-center sticky left-0 z-30 bg-slate-50 dark:bg-slate-900 shadow-[4px_0_10px_rgba(0,0,0,0.04)] border-r border-slate-200 dark:border-slate-800">
+                                    <input type="checkbox" id="selectAll" onclick="toggleSelectAll(this)"
                                         class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-800">
                                 </th>
                                 <th class="px-4 py-3">
                                     <div>Date & Time</div>
-                                    <div class="text-[10px] font-normal text-slate-400 normal-case mt-0.5 tracking-normal">MM/DD/YYYY</div>
+                                    <div
+                                        class="text-[10px] font-normal text-slate-400 normal-case mt-0.5 tracking-normal">
+                                        MM/DD/YYYY</div>
                                 </th>
                                 <th class="px-4 py-3 border-r border-slate-200 dark:border-slate-700">Application ID
                                 </th>
@@ -436,7 +403,9 @@
                                 <th class="px-4 py-3">Roll</th>
                                 <th class="px-4 py-3">
                                     <div>DOB</div>
-                                    <div class="text-[10px] font-normal text-slate-400 normal-case mt-0.5 tracking-normal">DD/MM/YYYY</div>
+                                    <div
+                                        class="text-[10px] font-normal text-slate-400 normal-case mt-0.5 tracking-normal">
+                                        DD/MM/YYYY</div>
                                 </th>
                                 <th class="px-4 py-3">Father's Name</th>
                                 <th class="px-4 py-3">Phone</th>
@@ -475,58 +444,131 @@
         <div id="settingsView" class="flex-1 flex flex-col p-8 overflow-y-auto custom-scrollbar hidden">
             <div class="mb-6 flex-shrink-0">
                 <h2 class="text-xl font-bold text-slate-900 dark:text-white">System Settings</h2>
-                <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Manage portal configurations and global variables.</p>
+                <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Master Control Room: Manage portal
+                    configurations, links, and global variables.</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div onclick="openModal('routineModal')" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 cursor-pointer hover:border-blue-500 dark:hover:border-blue-500 hover:shadow-md transition-all group">
-                    <div class="w-12 h-12 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                <div onclick="openModal('routineModal')"
+                    class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 cursor-pointer hover:border-blue-500 dark:hover:border-blue-500 hover:shadow-md transition-all group">
+                    <div
+                        class="w-12 h-12 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                         <i data-lucide="calendar-clock" class="w-6 h-6 text-blue-600 dark:text-blue-400"></i>
                     </div>
                     <h3 class="text-lg font-bold text-slate-800 dark:text-slate-200 mb-1">Exam Routines</h3>
-                    <p class="text-sm text-slate-500 dark:text-slate-400">Create, edit, or delete class timetables for Admit Cards.</p>
+                    <p class="text-sm text-slate-500 dark:text-slate-400">Create, edit, or delete class timetables.</p>
+                </div>
+
+                <div
+                    class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div
+                            class="w-10 h-10 rounded-full bg-purple-50 dark:bg-purple-900/30 flex items-center justify-center">
+                            <i data-lucide="settings-2" class="w-5 h-5 text-purple-600 dark:text-purple-400"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-800 dark:text-slate-200">Global Exam State</h3>
+                    </div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Active Examination</label>
+                    <select id="sysActiveExam" onchange="saveSystemConfig()"
+                        class="w-full p-2.5 text-sm border border-slate-200 rounded-lg dark:bg-slate-800 dark:border-slate-700 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none mb-2">
+                        <option value="HY">Half-Yearly Examination</option>
+                        <option value="FY">Final Year Examination</option>
+                    </select>
+                    <p class="text-[11px] text-slate-500 leading-tight">Controls which Serial Number and Routine are
+                        fetched globally for Admit Cards.</p>
+                </div>
+
+                <div
+                    class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div
+                            class="w-10 h-10 rounded-full bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center">
+                            <i data-lucide="globe" class="w-5 h-5 text-emerald-600 dark:text-emerald-400"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-800 dark:text-slate-200">Admissions Portal</h3>
+                    </div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Portal Status</label>
+                    <select id="sysPortalStatus" onchange="togglePortalStatus()"
+                        class="w-full p-2.5 text-sm border border-slate-200 rounded-lg dark:bg-slate-800 dark:border-slate-700 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none mb-3">
+                        <option value="OFF">OFF - Registrations Closed</option>
+                        <option value="ON">ON - Accepting Applications</option>
+                    </select>
+
+                    <div id="portalLinkContainer" class="hidden">
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Secure Public Link</label>
+                        <div class="flex">
+                            <input type="text" id="sysPortalLink" readonly
+                                class="w-full p-2 text-xs border border-r-0 border-slate-200 rounded-l-lg bg-slate-50 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-300">
+                            <button onclick="copyPortalLink()"
+                                class="px-3 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-r-lg dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-white transition-colors"><i
+                                    data-lucide="copy" class="w-4 h-4"></i></button>
+                        </div>
+                        <p class="text-[10px] text-emerald-600 mt-1 font-medium">Token active. Link is secure.</p>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div id="routineModal" class="fixed inset-0 z-[9999] hidden bg-slate-900/50 backdrop-blur-sm flex items-center justify-center opacity-0 transition-opacity duration-300">
-            <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-xl max-w-3xl w-full p-6 transform scale-95 transition-transform duration-300 max-h-[90vh] overflow-y-auto custom-scrollbar">
-                <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-3 mb-5">
+        <div id="routineModal"
+            class="fixed inset-0 z-[9999] hidden bg-slate-900/50 backdrop-blur-sm flex items-center justify-center opacity-0 transition-opacity duration-300">
+            <div
+                class="bg-white dark:bg-slate-900 rounded-2xl shadow-xl max-w-3xl w-full p-6 transform scale-95 transition-transform duration-300 max-h-[90vh] overflow-y-auto custom-scrollbar">
+                <div
+                    class="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-3 mb-5">
                     <h3 class="text-lg font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
                         <i data-lucide="calendar-clock" class="w-5 h-5 text-blue-600"></i> Manage Exam Routine
                     </h3>
-                    <button onclick="closeModal('routineModal')" class="text-slate-400 hover:text-red-500 transition-colors"><i data-lucide="x" class="w-5 h-5"></i></button>
+                    <button onclick="closeModal('routineModal')"
+                        class="text-slate-400 hover:text-red-500 transition-colors"><i data-lucide="x"
+                            class="w-5 h-5"></i></button>
                 </div>
-                
+
                 <form id="routineForm" onsubmit="submitRoutine(event)">
-                    <div class="grid grid-cols-2 gap-4 mb-6 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
+                    <div
+                        class="grid grid-cols-2 gap-4 mb-6 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
                         <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Target Examination</label>
-                            <select id="routineExamType" onchange="populateRoutineForm()" class="w-full p-2.5 text-sm border rounded-lg dark:bg-slate-800 dark:border-slate-700 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none">
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Target
+                                Examination</label>
+                            <select id="routineExamType" onchange="populateRoutineForm()"
+                                class="w-full p-2.5 text-sm border rounded-lg dark:bg-slate-800 dark:border-slate-700 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none">
                                 <option value="HY">Half-Yearly Examination</option>
                                 <option value="FY">Final Year Examination</option>
                             </select>
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Target Class</label>
-                            <select id="routineClass" onchange="populateRoutineForm()" class="w-full p-2.5 text-sm border rounded-lg dark:bg-slate-800 dark:border-slate-700 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none">
-                                <option value="1">Class 1</option><option value="2">Class 2</option><option value="3">Class 3</option>
-                                <option value="4">Class 4</option><option value="5">Class 5</option><option value="6">Class 6</option>
-                                <option value="7">Class 7</option><option value="8">Class 8</option><option value="9">Class 9</option>
-                                <option value="10">Class 10</option><option value="11">Class 11</option><option value="12">Class 12</option>
+                            <select id="routineClass" onchange="populateRoutineForm()"
+                                class="w-full p-2.5 text-sm border rounded-lg dark:bg-slate-800 dark:border-slate-700 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none">
+                                <option value="1">Class 1</option>
+                                <option value="2">Class 2</option>
+                                <option value="3">Class 3</option>
+                                <option value="4">Class 4</option>
+                                <option value="5">Class 5</option>
+                                <option value="6">Class 6</option>
+                                <option value="7">Class 7</option>
+                                <option value="8">Class 8</option>
+                                <option value="9">Class 9</option>
+                                <option value="10">Class 10</option>
+                                <option value="11">Class 11</option>
+                                <option value="12">Class 12</option>
                             </select>
                         </div>
                     </div>
 
                     <div class="space-y-3" id="routineRowsContainer">
-                        </div>
+                    </div>
 
-                    <div class="mt-6 pt-5 border-t border-slate-200 dark:border-slate-800 flex justify-between items-center">
-                        <button type="button" onclick="deleteAllRoutines()" class="px-4 py-2 text-sm text-red-600 bg-red-50 hover:bg-red-100 rounded-lg font-medium transition-colors"><i data-lucide="trash-2" class="w-4 h-4 inline align-text-bottom"></i> Delete All</button>
-                        
+                    <div
+                        class="mt-6 pt-5 border-t border-slate-200 dark:border-slate-800 flex justify-between items-center">
+                        <button type="button" onclick="deleteAllRoutines()"
+                            class="px-4 py-2 text-sm text-red-600 bg-red-50 hover:bg-red-100 rounded-lg font-medium transition-colors"><i
+                                data-lucide="trash-2" class="w-4 h-4 inline align-text-bottom"></i> Delete All</button>
+
                         <div class="flex gap-3">
-                            <button type="button" onclick="deleteIndividualRoutine()" class="px-4 py-2.5 text-sm text-slate-600 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 rounded-xl font-medium transition-all">Delete</button>
-                            <button type="submit" id="saveRoutineBtn" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium flex items-center gap-2 transition-all shadow-sm">
+                            <button type="button" onclick="deleteIndividualRoutine()"
+                                class="px-4 py-2.5 text-sm text-slate-600 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 rounded-xl font-medium transition-all">Delete</button>
+                            <button type="submit" id="saveRoutineBtn"
+                                class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium flex items-center gap-2 transition-all shadow-sm">
                                 <i data-lucide="save" class="w-4 h-4"></i> Save Routine
                             </button>
                         </div>
@@ -578,30 +620,33 @@
                         class="py-2.5 border rounded-lg font-medium text-red-700 bg-red-50 border-red-200 hover:bg-red-100">Block</button>
                 </div>
                 <div class="mt-5 text-right"><button onclick="closeModal('admitModal')"
-                    class="px-4 py-2 text-sm text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">Cancel</button>
+                        class="px-4 py-2 text-sm text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">Cancel</button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div id="examTypeModal"
-        class="fixed inset-0 z-[9999] hidden bg-slate-900/50 backdrop-blur-sm flex items-center justify-center opacity-0 transition-opacity duration-300">
-        <div
-            class="bg-white dark:bg-slate-900 rounded-2xl shadow-xl max-w-sm w-full p-6 transform scale-95 transition-transform duration-300">
-            <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Download Admit Card</h3>
-            <p class="text-sm text-slate-500 mb-5">Select the examination type to generate the correct Admit Card and Serial Number.</p>
-            <div class="flex flex-col gap-3">
-                <button onclick="generateAndPrintAdmitCard('HY')"
-                    class="py-2.5 border rounded-lg font-medium text-blue-700 bg-blue-50 border-blue-200 hover:bg-blue-100 transition-colors">Half-Yearly Examination</button>
-                <button onclick="generateAndPrintAdmitCard('FY')"
-                    class="py-2.5 border rounded-lg font-medium text-purple-700 bg-purple-50 border-purple-200 hover:bg-purple-100 transition-colors">Final Year Examination</button>
-            </div>
-            <div class="mt-5 text-right"><button onclick="closeModal('examTypeModal')"
-                    class="px-4 py-2 text-sm text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">Cancel</button>
+        <div id="examTypeModal"
+            class="fixed inset-0 z-[9999] hidden bg-slate-900/50 backdrop-blur-sm flex items-center justify-center opacity-0 transition-opacity duration-300">
+            <div
+                class="bg-white dark:bg-slate-900 rounded-2xl shadow-xl max-w-sm w-full p-6 transform scale-95 transition-transform duration-300">
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Download Admit Card</h3>
+                <p class="text-sm text-slate-500 mb-5">Select the examination type to generate the correct Admit Card
+                    and Serial Number.</p>
+                <div class="flex flex-col gap-3">
+                    <button onclick="generateAndPrintAdmitCard('HY')"
+                        class="py-2.5 border rounded-lg font-medium text-blue-700 bg-blue-50 border-blue-200 hover:bg-blue-100 transition-colors">Half-Yearly
+                        Examination</button>
+                    <button onclick="generateAndPrintAdmitCard('FY')"
+                        class="py-2.5 border rounded-lg font-medium text-purple-700 bg-purple-50 border-purple-200 hover:bg-purple-100 transition-colors">Final
+                        Year Examination</button>
+                </div>
+                <div class="mt-5 text-right"><button onclick="closeModal('examTypeModal')"
+                        class="px-4 py-2 text-sm text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">Cancel</button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div id="addStudentModal"
+        <div id="addStudentModal"
             class="fixed inset-0 z-[9999] hidden bg-slate-900/50 backdrop-blur-sm flex items-center justify-center opacity-0 transition-opacity duration-300">
             <div
                 class="bg-white dark:bg-slate-900 rounded-2xl shadow-xl max-w-2xl w-full p-6 transform scale-95 transition-transform duration-300 max-h-[90vh] overflow-y-auto custom-scrollbar">
@@ -674,7 +719,7 @@
             </div>
         </div>
     </main>
-    
+
     <div id="admitCardRender"></div>
 
     <script>
@@ -682,7 +727,7 @@
         // 1. CONFIGURATION & GLOBALS
         // ==========================================
         const PENDING_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyTrz6aoG5zlexc6yO0S-BCcbuzQsKNa5AGBZhQu2Ib13YoXRzyMM5L5DX3E6SebVxSfw/exec";
-        const FINAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwwm7JnGRcpNk9Up22AFi_Bc8lwE0jQJmKau-nF--9tYZjXbs767Bhu7Lx99WP7jAAK7w/exec";
+        const FINAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyUHEpwc8ZWaga1uzkERZMyc1XrcA49ZeOimuhCSAbCWj0Z5U6iKZYoC7L89rSR5PBK/exec";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBBkITpfUjxFUFvgQhjnXedrIX4GhfCSCo",
@@ -697,7 +742,7 @@
         const db = firebase.database();
 
         // FIX: Added missing Admin Secret so the JS payload stops crashing!
-        const ADMIN_SECRET = "MVM_Secure_2026!"; 
+        const ADMIN_SECRET = "MVM_Secure_2026!";
 
         window.currentApplications = [];
         window.finalStudentsData = [];
@@ -707,7 +752,7 @@
 
         // Generate the 10 Routine Input Rows automatically
         let routineHTML = '';
-        for(let i=1; i<=10; i++) {
+        for (let i = 1; i <= 10; i++) {
             routineHTML += `
             <div class="grid grid-cols-[1fr_2fr] gap-4 items-center">
                 <input type="date" id="rDate${i}" onclick="try{this.showPicker();}catch(e){}" class="w-full p-2 text-sm border rounded-lg dark:bg-slate-800 dark:border-slate-700 dark:text-white cursor-pointer" placeholder="Select Date">
@@ -747,16 +792,16 @@
             const badge = document.getElementById('notificationBadge');
             const alertBtn = document.getElementById('newDataAlert');
             const alertText = document.getElementById('newDataText');
-            
+
             if (unreadCount > 0) {
                 badge.innerText = unreadCount;
                 badge.classList.remove('hidden');
-                
+
                 alertText.innerText = `${unreadCount} New App${unreadCount > 1 ? 's' : ''}`;
                 alertBtn.classList.remove('hidden');
                 alertBtn.classList.add('flex');
-            } else { 
-                badge.classList.add('hidden'); 
+            } else {
+                badge.classList.add('hidden');
                 alertBtn.classList.add('hidden');
                 alertBtn.classList.remove('flex');
             }
@@ -783,7 +828,7 @@
             // Force panel to close
             document.getElementById('notificationPanel').classList.add('hidden');
             markAllRead();
-            
+
             // Switch to Pending Applications tab if not already there, otherwise just fetch
             if (document.getElementById('pendingView').classList.contains('hidden')) {
                 switchTab('pending');
@@ -889,7 +934,7 @@
                         const memFinal = window.finalStudentsData.find(r => r.studentId === rowId);
                         if (memFinal) memFinal[fieldKey] = newValue;
                     }
-                    
+
                     // Force a refresh if structural data changes so IDs and Sheets sort correctly
                     if (['studentClass', 'section', 'rollNo', 'studentId'].includes(fieldKey)) {
                         setTimeout(() => { if (dbType === 'pending') fetchData(); else fetchFinalStudents(); }, 600);
@@ -897,7 +942,7 @@
                 } else throw new Error(result.message || "Unknown server error");
             } catch (err) {
                 // Show the exact backend failure message for easy debugging
-                showToast(`Error: ${err.message}`, 'error'); 
+                showToast(`Error: ${err.message}`, 'error');
                 restoreCell(tdElement, tdElement.getAttribute('data-value'), rowId, fieldKey, dbType, studentClass);
             }
         };
@@ -905,7 +950,7 @@
         function restoreCell(tdElement, value, rowId, fieldKey, dbType, studentClass) {
             tdElement.classList.remove('is-editing'); tdElement.classList.add('cursor-pointer');
             tdElement.setAttribute('data-value', escapeHtml(value));
-            
+
             let badgeHtml = '';
             if (fieldKey === 'studentName') {
                 const mem = dbType === 'final' ? window.finalStudentsData.find(r => r.studentId === rowId) : window.currentApplications.find(r => r.applicationId === rowId);
@@ -974,7 +1019,7 @@
                 let cleanTs = rawTs;
                 if (rawTs.includes('T')) {
                     const dt = new Date(rawTs);
-                    if (!isNaN(dt.getTime())) { cleanTs = `${("0"+dt.getDate()).slice(-2)}/${("0"+(dt.getMonth()+1)).slice(-2)}/${dt.getFullYear()} <span class="text-slate-400 text-xs ml-1">${dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>`; }
+                    if (!isNaN(dt.getTime())) { cleanTs = `${("0" + dt.getDate()).slice(-2)}/${("0" + (dt.getMonth() + 1)).slice(-2)}/${dt.getFullYear()} <span class="text-slate-400 text-xs ml-1">${dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>`; }
                 } else if (rawTs.includes('/')) {
                     // It is already correctly formatted from backend, just wrap the time part
                     let parts = rawTs.split(' ');
@@ -987,12 +1032,12 @@
                 let cleanDob = rawDob;
                 if (rawDob.includes('T')) {
                     const dt = new Date(rawDob);
-                    if (!isNaN(dt.getTime())) { cleanDob = `${("0"+dt.getDate()).slice(-2)}/${("0"+(dt.getMonth()+1)).slice(-2)}/${dt.getFullYear()}`; }
+                    if (!isNaN(dt.getTime())) { cleanDob = `${("0" + dt.getDate()).slice(-2)}/${("0" + (dt.getMonth() + 1)).slice(-2)}/${dt.getFullYear()}`; }
                 } else if (rawDob.includes('-')) {
-                    let p = rawDob.split('-'); cleanDob = p[0].length === 4 ? `${p[2]}/${p[1]}/${p[0]}` : `${("0"+p[0]).slice(-2)}/${("0"+p[1]).slice(-2)}/${p[2]}`;
+                    let p = rawDob.split('-'); cleanDob = p[0].length === 4 ? `${p[2]}/${p[1]}/${p[0]}` : `${("0" + p[0]).slice(-2)}/${("0" + p[1]).slice(-2)}/${p[2]}`;
                 } else if (rawDob.includes('/')) {
                     // It is already correctly formatted from backend, just ensure zero-padding
-                    let p = rawDob.split('/'); cleanDob = `${("0"+p[0]).slice(-2)}/${("0"+p[1]).slice(-2)}/${p[2]}`;
+                    let p = rawDob.split('/'); cleanDob = `${("0" + p[0]).slice(-2)}/${("0" + p[1]).slice(-2)}/${p[2]}`;
                 }
 
                 let actionHtml = '';
@@ -1029,15 +1074,78 @@
             btn.disabled = true; btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 spin"></i>`; lucide.createIcons({ root: btn });
             try {
                 const res = await fetch(`${FINAL_SCRIPT_URL}?token=${ADMIN_SECRET}`); const result = await res.json();
-                if (result.status === 'success') { 
-                    window.finalStudentsData = result.data; 
+                if (result.status === 'success') {
+                    window.finalStudentsData = result.data;
                     window.allRoutines = result.routines || { 'HY': {}, 'FY': {} }; // Capture the routines!
-                    filterStudentsTable(); 
-                    showToast('Student database loaded', 'success'); 
+                    filterStudentsTable();
+                    showToast('Student database loaded', 'success');
                 }
                 else throw new Error(result.message);
             } catch (error) { showToast('Failed to load students', 'error'); }
             finally { btn.disabled = false; btn.innerHTML = `<i data-lucide="refresh-cw" class="w-4 h-4"></i>`; lucide.createIcons({ root: btn }); }
+        }
+
+        // 1. Fetch Config on Load
+        async function fetchSystemConfig() {
+            try {
+                const res = await fetch(`${FINAL_SCRIPT_URL}?action=get_config&token=${ADMIN_SECRET}`);
+                const result = await res.json();
+                if (result.status === 'success') {
+                    const conf = result.data;
+                    document.getElementById('sysActiveExam').value = conf.Active_Exam_Type || 'HY';
+                    document.getElementById('sysPortalStatus').value = conf.Portal_Status || 'OFF';
+
+                    if (conf.Portal_Status === 'ON' && conf.Portal_Token) {
+                        document.getElementById('portalLinkContainer').classList.remove('hidden');
+                        // Replace 'https://yourschool.com/apply' with your actual frontend form URL
+                        document.getElementById('sysPortalLink').value = `https://yourschool.com/apply?token=${conf.Portal_Token}`;
+                    } else {
+                        document.getElementById('portalLinkContainer').classList.add('hidden');
+                    }
+                }
+            } catch (e) { console.error("Config load failed", e); }
+        }
+
+        // 2. Toggle Portal Status (Handles Token Generation)
+        function togglePortalStatus() {
+            const status = document.getElementById('sysPortalStatus').value;
+            const token = status === 'ON' ? 'x' + Math.random().toString(36).substr(2, 9) + Date.now().toString(36) : '';
+            saveSystemConfig(status, token);
+        }
+
+        // 3. Save Configuration to Backend
+        async function saveSystemConfig(portalStatusOverride = null, portalTokenOverride = null) {
+            const activeExam = document.getElementById('sysActiveExam').value;
+            const portalStatus = portalStatusOverride || document.getElementById('sysPortalStatus').value;
+            const portalToken = portalTokenOverride !== null ? portalTokenOverride : (document.getElementById('sysPortalStatus').value === 'ON' ? document.getElementById('sysPortalLink').value.split('token=')[1] : '');
+
+            const payload = {
+                action: 'save_system_config',
+                token: ADMIN_SECRET,
+                configs: [
+                    { key: 'Active_Exam_Type', value: activeExam },
+                    { key: 'Portal_Status', value: portalStatus },
+                    { key: 'Portal_Token', value: portalToken }
+                ]
+            };
+
+            try {
+                const res = await fetch(FINAL_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+                const result = await res.json();
+                if (result.status === 'success') {
+                    showToast('System Configuration Saved Globally', 'success');
+                    fetchSystemConfig(); // Refresh UI
+                } else throw new Error(result.message);
+            } catch (err) {
+                showToast(`Config Save Failed: ${err.message}`, 'error');
+            }
+        }
+
+        function copyPortalLink() {
+            const linkInput = document.getElementById('sysPortalLink');
+            linkInput.select();
+            document.execCommand("copy");
+            showToast('Secure Link Copied to Clipboard!', 'success');
         }
 
         function applyClassFilter(classLevel, btnElement) {
@@ -1065,12 +1173,12 @@
             });
 
             // Powerful Multi-Sort: Class -> Roll No -> Timestamp
-            filteredData.sort((a, b) => { 
-                let cA = parseInt(a.studentClass)||0; let cB = parseInt(b.studentClass)||0; 
-                if(cA !== cB) return cA - cB; 
-                let rA = parseInt(a.rollNo)||0; let rB = parseInt(b.rollNo)||0; 
-                if(rA !== rB) return rA - rB; 
-                return new Date(a.timestamp) - new Date(b.timestamp); 
+            filteredData.sort((a, b) => {
+                let cA = parseInt(a.studentClass) || 0; let cB = parseInt(b.studentClass) || 0;
+                if (cA !== cB) return cA - cB;
+                let rA = parseInt(a.rollNo) || 0; let rB = parseInt(b.rollNo) || 0;
+                if (rA !== rB) return rA - rB;
+                return new Date(a.timestamp) - new Date(b.timestamp);
             });
             renderFinalTable(filteredData);
         }
@@ -1133,15 +1241,15 @@
         function renderFinalTable(dataArray) {
             const tbody = document.getElementById('studentsTableBody'); tbody.innerHTML = '';
             document.getElementById('selectAll').checked = false; toggleBulkButtons();
-            
+
             if (!dataArray || dataArray.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="16" class="px-4 py-12 text-center text-slate-500">No verified students found.</td></tr>`;
                 return;
             }
 
             dataArray.forEach(row => {
-                const dbType = 'final'; const uniqueKey = row.studentId; 
-                
+                const dbType = 'final'; const uniqueKey = row.studentId;
+
                 // --- STRICT DD/MM/YYYY FORMATTING FOR TIMESTAMP ---
                 let rawTs = String(row.timestamp).replace(/^'/, '').trim();
                 let cleanTs = rawTs;
@@ -1150,7 +1258,7 @@
                     cleanTs = `${("0" + tsDate.getDate()).slice(-2)}/${("0" + (tsDate.getMonth() + 1)).slice(-2)}/${tsDate.getFullYear()} <span class="text-slate-400 text-xs ml-1">${tsDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>`;
                 } else if (rawTs.includes('/')) {
                     let parts = rawTs.split(' '); let p = parts[0].split('/');
-                    cleanTs = `${("0"+p[0]).slice(-2)}/${("0"+p[1]).slice(-2)}/${p[2]}`;
+                    cleanTs = `${("0" + p[0]).slice(-2)}/${("0" + p[1]).slice(-2)}/${p[2]}`;
                     if (parts.length > 1) cleanTs += ` <span class="text-slate-400 text-xs ml-1">${parts.slice(1).join(' ')}</span>`;
                 }
 
@@ -1161,15 +1269,15 @@
                 if (!isNaN(dobDate.getTime()) && (rawDob.includes('T') || parseInt(rawDob.split('/')[0]) <= 12)) {
                     cleanDob = `${("0" + dobDate.getDate()).slice(-2)}/${("0" + (dobDate.getMonth() + 1)).slice(-2)}/${dobDate.getFullYear()}`;
                 } else if (rawDob.includes('-')) {
-                    let p = rawDob.split('-'); cleanDob = p[0].length === 4 ? `${p[2]}/${p[1]}/${p[0]}` : `${("0"+p[0]).slice(-2)}/${("0"+p[1]).slice(-2)}/${p[2]}`;
+                    let p = rawDob.split('-'); cleanDob = p[0].length === 4 ? `${p[2]}/${p[1]}/${p[0]}` : `${("0" + p[0]).slice(-2)}/${("0" + p[1]).slice(-2)}/${p[2]}`;
                 } else if (rawDob.includes('/')) {
-                    let p = rawDob.split('/'); cleanDob = `${("0"+p[0]).slice(-2)}/${("0"+p[1]).slice(-2)}/${p[2]}`;
+                    let p = rawDob.split('/'); cleanDob = `${("0" + p[0]).slice(-2)}/${("0" + p[1]).slice(-2)}/${p[2]}`;
                 }
 
                 const badge = String(row.applicationId).startsWith('ADMIN-') ? `<span class="ml-2 px-1.5 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-700 border border-purple-200 inline-block align-middle">By Admin</span>` : '';
-                
-                let st = row.admitStatus || 'Not Release'; 
-                let stCol = st==='Release'?'bg-emerald-100 text-emerald-700 border-emerald-200':st==='Block'?'bg-red-100 text-red-700 border-red-200':'bg-slate-100 text-slate-700 border-slate-200';
+
+                let st = row.admitStatus || 'Not Release';
+                let stCol = st === 'Release' ? 'bg-emerald-100 text-emerald-700 border-emerald-200' : st === 'Block' ? 'bg-red-100 text-red-700 border-red-200' : 'bg-slate-100 text-slate-700 border-slate-200';
 
                 const tr = document.createElement('tr'); tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/20 transition-colors";
                 tr.setAttribute('data-sid', row.studentId); tr.setAttribute('data-sclass', row.studentClass);
@@ -1192,7 +1300,7 @@
                     <td class="px-4 py-3 text-blue-700 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-900/10 border-r border-slate-200 dark:border-slate-800 font-medium">${row.fySerial || '-'}</td>
                     <td class="px-4 py-3 whitespace-nowrap text-center sticky right-0 z-10 bg-white dark:bg-slate-900 shadow-[-4px_0_10px_rgba(0,0,0,0.04)]">
                         <div class="flex justify-center gap-2">
-                            <button onclick="openExamSelectModal('${row.studentId}')" class="p-1.5 rounded-lg bg-purple-50 text-purple-600 hover:bg-purple-600 hover:text-white border border-purple-200 transition-colors" title="Download Admit Card"><i data-lucide="printer" class="w-4 h-4"></i></button>
+                            <button onclick="prepareDirectPrint('${row.studentId}')" class="p-1.5 rounded-lg bg-purple-50 text-purple-600 hover:bg-purple-600 hover:text-white border border-purple-200 transition-colors" title="Download Admit Card"><i data-lucide="printer" class="w-4 h-4"></i></button>
                             <button onclick="openAdmitModal('${row.studentId}', '${row.studentClass}', '${st}')" class="p-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white border border-blue-200 transition-colors" title="Manage Admit Status"><i data-lucide="shield" class="w-4 h-4"></i></button>
                             <button onclick="openDeleteStudentModal('${row.studentId}', '${row.studentClass}')" class="p-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-600 hover:text-white border border-red-200 transition-colors" title="Delete Student"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                         </div>
@@ -1208,7 +1316,7 @@
         // 7. APPROVAL / REJECTION MODAL LOGIC
         // ==========================================
 
-        function openModal(id) { const m = document.getElementById(id); m.classList.remove('hidden'); requestAnimationFrame(() => { m.classList.remove('opacity-0'); m.querySelector('div').classList.remove('scale-95'); }); lucide.createIcons({root: m}); }
+        function openModal(id) { const m = document.getElementById(id); m.classList.remove('hidden'); requestAnimationFrame(() => { m.classList.remove('opacity-0'); m.querySelector('div').classList.remove('scale-95'); }); lucide.createIcons({ root: m }); }
         function closeModal(id) { const m = document.getElementById(id); m.classList.add('opacity-0'); m.querySelector('div').classList.add('scale-95'); setTimeout(() => { m.classList.add('hidden'); }, 300); }
 
         let pendingAction = null; let pendingAppId = null;
@@ -1254,28 +1362,28 @@
             btn.disabled = true; btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 spin"></i> Processing...`; lucide.createIcons({ root: btn });
             try {
                 if (pendingAction === 'approve') {
-                    const data = window.currentApplications.find(r => r.applicationId === pendingAppId); 
+                    const data = window.currentApplications.find(r => r.applicationId === pendingAppId);
                     if (!data) throw new Error("Could not find student data.");
                     data.action = 'approve_student';
                     data.token = ADMIN_SECRET; // FIX: Token added
                     const fRes = await fetch(FINAL_SCRIPT_URL, { method: 'POST', body: JSON.stringify(data) });
                     const fResult = await fRes.json();
-                    if(fResult.status !== 'success') throw new Error(fResult.message);
+                    if (fResult.status !== 'success') throw new Error(fResult.message);
                     await fetch(PENDING_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'delete_pending', token: ADMIN_SECRET, appId: pendingAppId }) }); // FIX: Token added
                 } else {
                     const rRes = await fetch(PENDING_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'reject_application', token: ADMIN_SECRET, appId: pendingAppId }) }); // FIX: Token added
                     const rResult = await rRes.json();
-                    if(rResult.status !== 'success') throw new Error(rResult.message);
+                    if (rResult.status !== 'success') throw new Error(rResult.message);
                 }
                 showToast(`Success!`, 'success'); closeModal('confirmModal'); fetchData(); fetchFinalStudents();
-            } catch(e) { showToast('Error processing', 'error'); } finally { btn.disabled = false; btn.innerHTML = origText; }
+            } catch (e) { showToast('Error processing', 'error'); } finally { btn.disabled = false; btn.innerHTML = origText; }
         }
 
         // ADMIT STATUS MODAL
         let activeStudentId = null; let activeStudentClass = null;
         function openAdmitModal(sId, sClass, currentStatus) {
             activeStudentId = sId; activeStudentClass = sClass; document.getElementById('admitStatusText').innerText = `Student ID: ${sId}`;
-            ['Release', 'Not Release', 'Block'].forEach(s => { const btn = document.getElementById('btnAdmit'+s.replace(' ','')); btn.disabled = (s === currentStatus); btn.className = btn.className.replace('opacity-50 cursor-not-allowed', ''); if(s === currentStatus) btn.classList.add('opacity-50', 'cursor-not-allowed'); });
+            ['Release', 'Not Release', 'Block'].forEach(s => { const btn = document.getElementById('btnAdmit' + s.replace(' ', '')); btn.disabled = (s === currentStatus); btn.className = btn.className.replace('opacity-50 cursor-not-allowed', ''); if (s === currentStatus) btn.classList.add('opacity-50', 'cursor-not-allowed'); });
             openModal('admitModal');
         }
         async function submitAdmitStatus(status) {
@@ -1287,11 +1395,11 @@
 
         // ADD STUDENT MODAL
         async function submitAddStudent(e) {
-            e.preventDefault(); const btn = document.getElementById('addStudentBtn'); btn.disabled = true; btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 spin"></i> Saving...`; lucide.createIcons({root:btn});
+            e.preventDefault(); const btn = document.getElementById('addStudentBtn'); btn.disabled = true; btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 spin"></i> Saving...`; lucide.createIcons({ root: btn });
             // FIX: Token added
             const payload = { action: 'add_student', token: ADMIN_SECRET, studentName: document.getElementById('addName').value, studentClass: document.getElementById('addClass').value, section: document.getElementById('addSection').value, rollNo: document.getElementById('addRoll').value, dob: document.getElementById('addDob').value, fatherName: document.getElementById('addFather').value, phone: document.getElementById('addPhone').value, email: document.getElementById('addEmail').value, admitStatus: document.getElementById('addStatus').value };
-            try { await fetch(FINAL_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) }); showToast('Student Added & Email Sent!', 'success'); closeModal('addStudentModal'); fetchFinalStudents(); } 
-            catch(err) { showToast('Add failed', 'error'); } finally { btn.disabled = false; btn.innerHTML = 'Add'; }
+            try { await fetch(FINAL_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) }); showToast('Student Added & Email Sent!', 'success'); closeModal('addStudentModal'); fetchFinalStudents(); }
+            catch (err) { showToast('Add failed', 'error'); } finally { btn.disabled = false; btn.innerHTML = 'Add'; }
         }
 
         // DELETE STUDENT MODAL
@@ -1302,10 +1410,10 @@
             document.getElementById('confirmAppId').innerText = sId;
             document.getElementById('confirmMessage').innerText = "Are you sure you want to permanently delete this student? This action cannot be undone.";
             const btn = document.getElementById('confirmExecuteBtn'); btn.className = "px-5 py-2.5 rounded-xl font-medium text-white shadow-sm flex items-center gap-2 bg-red-600 hover:bg-red-700 transition-colors"; btn.innerHTML = `Delete Student`;
-            btn.onclick = async function() {
+            btn.onclick = async function () {
                 closeModal('confirmModal'); showToast('Deleting...', 'info');
                 // FIX: Token added
-                try { await fetch(FINAL_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'delete_student', token: ADMIN_SECRET, studentId: sId, studentClass: sClass }) }); fetchFinalStudents(); showToast('Student Deleted', 'success'); } catch(err) { showToast('Delete failed', 'error'); }
+                try { await fetch(FINAL_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'delete_student', token: ADMIN_SECRET, studentId: sId, studentClass: sClass }) }); fetchFinalStudents(); showToast('Student Deleted', 'success'); } catch (err) { showToast('Delete failed', 'error'); }
             }; openModal('confirmModal');
         }
 
@@ -1319,13 +1427,13 @@
             document.getElementById('confirmAppId').innerText = "ALL RECORDS";
             document.getElementById('confirmMessage').innerText = `Are you absolutely sure you want to wipe all records from the ${type === 'pending' ? 'Pending Applications' : 'Final Class Databases'}? This is permanent.`;
             const btn = document.getElementById('confirmExecuteBtn'); btn.className = "px-5 py-2.5 rounded-xl font-medium text-white shadow-sm flex items-center gap-2 bg-red-800 hover:bg-red-900 transition-colors"; btn.innerHTML = `Wipe Database`;
-            btn.onclick = async function() {
-                btn.disabled = true; btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 spin"></i> Deleting...`; lucide.createIcons({root:btn});
+            btn.onclick = async function () {
+                btn.disabled = true; btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 spin"></i> Deleting...`; lucide.createIcons({ root: btn });
                 const url = universalDeleteType === 'pending' ? PENDING_SCRIPT_URL : FINAL_SCRIPT_URL;
                 const act = universalDeleteType === 'pending' ? 'delete_all_pending' : 'delete_all_final';
                 // FIX: Token added
-                try { await fetch(url, { method: 'POST', body: JSON.stringify({ action: act, token: ADMIN_SECRET }) }); showToast('Database wiped', 'success'); closeModal('confirmModal'); if(universalDeleteType === 'pending') fetchData(); else fetchFinalStudents(); } 
-                catch(e) { showToast('Delete failed', 'error'); } finally { btn.disabled = false; }
+                try { await fetch(url, { method: 'POST', body: JSON.stringify({ action: act, token: ADMIN_SECRET }) }); showToast('Database wiped', 'success'); closeModal('confirmModal'); if (universalDeleteType === 'pending') fetchData(); else fetchFinalStudents(); }
+                catch (e) { showToast('Delete failed', 'error'); } finally { btn.disabled = false; }
             }; openModal('confirmModal');
         }
 
@@ -1335,23 +1443,69 @@
             document.getElementById('confirmTitle').innerText = "Delete Pending Record";
             document.getElementById('confirmAppId').innerText = appId;
             document.getElementById('confirmMessage').innerText = "Are you sure you want to permanently erase this application? This action cannot be undone.";
-            const btn = document.getElementById('confirmExecuteBtn'); 
-            btn.className = "px-5 py-2.5 rounded-xl font-medium text-white shadow-sm flex items-center gap-2 bg-red-600 hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:outline-none transition-colors"; 
+            const btn = document.getElementById('confirmExecuteBtn');
+            btn.className = "px-5 py-2.5 rounded-xl font-medium text-white shadow-sm flex items-center gap-2 bg-red-600 hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:outline-none transition-colors";
             btn.innerHTML = `Delete Permanent`;
-            btn.onclick = async function() {
-                btn.disabled = true; btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 spin"></i> Deleting...`; lucide.createIcons({root:btn});
+            btn.onclick = async function () {
+                btn.disabled = true; btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 spin"></i> Deleting...`; lucide.createIcons({ root: btn });
                 // FIX: Token added
-                try { 
-                    await fetch(PENDING_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'permanent_delete_pending', token: ADMIN_SECRET, appId: appId }) }); 
-                    showToast('Record Erased', 'success'); closeModal('confirmModal'); fetchData(); 
-                } catch(err) { showToast('Delete failed', 'error'); } finally { btn.disabled = false; }
-            }; 
+                try {
+                    await fetch(PENDING_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'permanent_delete_pending', token: ADMIN_SECRET, appId: appId }) });
+                    showToast('Record Erased', 'success'); closeModal('confirmModal'); fetchData();
+                } catch (err) { showToast('Delete failed', 'error'); } finally { btn.disabled = false; }
+            };
             openModal('confirmModal');
         }
 
         // ==========================================
         // EXACT ADMIT CARD GENERATOR LOGIC
         // ==========================================
+
+
+        // ADD THIS FUNCTION to your script:
+        function prepareDirectPrint(studentId) {
+            const student = window.finalStudentsData.find(s => s.studentId === studentId);
+            if (!student) return showToast("Student data not found.", "error");
+
+            // Grab the global active exam type from the settings DOM (Defaults to 'FY' if missing)
+            const activeExamEl = document.getElementById('sysActiveExam');
+            const activeExam = activeExamEl ? activeExamEl.value : 'FY';
+
+            // Fetch the correct routine from memory
+            const routineRow = window.allRoutines[activeExam] ? window.allRoutines[activeExam][student.studentClass] : null;
+
+            // Map data EXACTLY as admitDownloadByAdmin.html expects it
+            let printPayload = {
+                'Student Name': student.studentName,
+                "Father's Name": student.fatherName,
+                'Student ID': student.studentId,
+                'Class': student.studentClass,
+                'Section': student.section,
+                'Roll No': student.rollNo,
+                'Serial Number': activeExam === 'HY' ? student.hySerial : student.fySerial,
+                'Photo URL': student.photoUrl || '',
+                'Signature URL': student.signatureUrl || ''
+            };
+
+            // Attach the routine to the payload
+            if (routineRow) {
+                let colIndex = 1;
+                for (let i = 1; i <= 10; i++) {
+                    let rDate = routineRow[colIndex];
+                    let rPaper = routineRow[colIndex + 1];
+                    if (rDate && String(rDate).trim() !== "") {
+                        printPayload[`Date ${i}`] = rDate;
+                        printPayload[`Paper ${i}`] = rPaper;
+                    }
+                    colIndex += 2;
+                }
+            }
+
+            // Save payload to local storage temporarily and open the print window
+            localStorage.setItem('directPrintData', JSON.stringify(printPayload));
+            window.open('admitDownloadByAdmin.html?mode=direct', '_blank');
+        }
+
         let activePrintStudentId = null;
 
         function openExamSelectModal(studentId) {
@@ -1381,10 +1535,10 @@
 
             const now = new Date();
             const issuedTime = now.toLocaleString('en-GB', { hour12: false });
-            
+
             let serialNumber = '';
             let examNameStr = '';
-            
+
             if (examType === 'HY') {
                 serialNumber = data.hySerial ? String(data.hySerial).toUpperCase() : 'PENDING';
                 examNameStr = "HALF-YEARLY EXAMINATION 2025-2026";
@@ -1392,26 +1546,26 @@
                 serialNumber = data.fySerial ? String(data.fySerial).toUpperCase() : 'PENDING';
                 examNameStr = "FINAL EXAMINATION 2025-2026";
             }
-            
+
             const barcodeID = `*${serialNumber}*`;
 
             // MERGE WITH UNIVERSAL ROUTINE
             const classRoutineRow = window.allRoutines[examType] ? window.allRoutines[examType][data.studentClass] : null;
             let rows = '';
-            
+
             if (classRoutineRow) {
                 let colIndex = 1;
                 let hasExams = false;
-                for(let i=1; i<=10; i++) {
+                for (let i = 1; i <= 10; i++) {
                     let rDate = classRoutineRow[colIndex];
-                    let rPaper = classRoutineRow[colIndex+1];
-                    if(rDate && String(rDate).trim() !== "") {
+                    let rPaper = classRoutineRow[colIndex + 1];
+                    if (rDate && String(rDate).trim() !== "") {
                         rows += `<tr><td>${formatDateOrig(rDate)}</td><td>${rPaper}</td><td></td><td></td></tr>`;
                         hasExams = true;
                     }
                     colIndex += 2;
                 }
-                if(!hasExams) rows = `<tr><td colspan="4" style="color:red; text-align:center; padding: 20px;">Routine is empty. Please add subjects in Settings.</td></tr>`;
+                if (!hasExams) rows = `<tr><td colspan="4" style="color:red; text-align:center; padding: 20px;">Routine is empty. Please add subjects in Settings.</td></tr>`;
             } else {
                 rows = `<tr><td colspan="4" style="color:red; text-align:center; padding: 20px;">No Routine found for Class ${data.studentClass} (${examType}). Please add it in the Settings Tab.</td></tr>`;
             }
@@ -1493,16 +1647,16 @@
                     </div>
                 </div>
             `;
-            
+
             // Create hidden render div if it doesn't exist yet
             let renderDiv = document.getElementById('admitCardRender');
-            if(!renderDiv) {
+            if (!renderDiv) {
                 renderDiv = document.createElement('div');
                 renderDiv.id = 'admitCardRender';
                 document.body.appendChild(renderDiv);
             }
             renderDiv.innerHTML = html;
-            
+
             // FIX: Strictly wait for the browser to confirm the barcode font is fully rendered before printing
             document.fonts.ready.then(() => {
                 setTimeout(() => { window.print(); }, 200);
@@ -1520,15 +1674,15 @@
             const cls = document.getElementById('routineClass').value;
             const routineRow = window.allRoutines[eType] ? window.allRoutines[eType][cls] : null;
 
-            for(let i=1; i<=10; i++) {
+            for (let i = 1; i <= 10; i++) {
                 let dateField = document.getElementById(`rDate${i}`);
                 let paperField = document.getElementById(`rPaper${i}`);
-                if(routineRow) {
+                if (routineRow) {
                     // DB Array: [0]=Class, [1]=Date1, [2]=Paper1...
-                    let dVal = routineRow[(i*2)-1] || "";
+                    let dVal = routineRow[(i * 2) - 1] || "";
                     // Input type="date" natively accepts YYYY-MM-DD, which is how we now save it
-                    dateField.value = String(dVal).trim().split('T')[0]; 
-                    paperField.value = String(routineRow[i*2] || "").trim();
+                    dateField.value = String(dVal).trim().split('T')[0];
+                    paperField.value = String(routineRow[i * 2] || "").trim();
                 } else {
                     dateField.value = ""; paperField.value = "";
                 }
@@ -1539,12 +1693,12 @@
             e.preventDefault();
             const btn = document.getElementById('saveRoutineBtn');
             const origHtml = btn.innerHTML;
-            btn.disabled = true; btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 spin"></i> Saving...`; lucide.createIcons({root:btn});
+            btn.disabled = true; btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 spin"></i> Saving...`; lucide.createIcons({ root: btn });
 
             let routineArray = [];
-            for(let i=1; i<=10; i++) {
+            for (let i = 1; i <= 10; i++) {
                 // We deliberately keep this as YYYY-MM-DD so the form can reload it later
-                let rDate = document.getElementById(`rDate${i}`).value; 
+                let rDate = document.getElementById(`rDate${i}`).value;
                 let rPaper = document.getElementById(`rPaper${i}`).value;
                 routineArray.push({ date: rDate, paper: rPaper });
             }
@@ -1560,14 +1714,14 @@
             try {
                 const res = await fetch(FINAL_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
                 const result = await res.json();
-                if(result.status === 'success') {
+                if (result.status === 'success') {
                     showToast('Routine Saved Successfully!', 'success');
                     fetchFinalStudents(); // Refresh memory so prints update instantly
                 } else throw new Error(result.message);
-            } catch(err) {
+            } catch (err) {
                 showToast(`Failed to save: ${err.message}`, 'error');
             } finally {
-                btn.disabled = false; btn.innerHTML = origHtml; lucide.createIcons({root:btn});
+                btn.disabled = false; btn.innerHTML = origHtml; lucide.createIcons({ root: btn });
             }
         }
 
@@ -1585,29 +1739,29 @@
             document.getElementById('confirmTitle').innerText = "Delete Class Routine";
             document.getElementById('confirmAppId').innerText = `Class ${cls} - ${examName}`;
             document.getElementById('confirmMessage').innerText = `Are you sure you want to permanently delete the ${examName} routine for Class ${cls}?`;
-            
+
             const btn = document.getElementById('confirmExecuteBtn');
             btn.className = "px-5 py-2.5 rounded-xl font-medium text-white shadow-sm flex items-center gap-2 bg-red-600 hover:bg-red-700 transition-colors";
             btn.innerHTML = `Delete Routine`;
-            
-            btn.onclick = async function() {
-                btn.disabled = true; btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 spin"></i> Deleting...`; lucide.createIcons({root:btn});
+
+            btn.onclick = async function () {
+                btn.disabled = true; btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 spin"></i> Deleting...`; lucide.createIcons({ root: btn });
                 try {
                     const payload = { action: 'delete_routine', token: ADMIN_SECRET, examType: eType, studentClass: cls };
                     const res = await fetch(FINAL_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
                     const result = await res.json();
-                    if(result.status === 'success') {
+                    if (result.status === 'success') {
                         showToast('Routine Deleted', 'success');
                         closeModal('confirmModal');
-                        fetchFinalStudents(); 
+                        fetchFinalStudents();
                     } else throw new Error(result.message);
-                } catch(err) { 
-                    showToast(`Error: ${err.message}`, 'error'); 
+                } catch (err) {
+                    showToast(`Error: ${err.message}`, 'error');
                 } finally {
                     btn.disabled = false;
                 }
             };
-            
+
             openModal('confirmModal');
         }
 
@@ -1618,34 +1772,37 @@
             document.getElementById('confirmTitle').innerText = "DANGER: Delete All Routines";
             document.getElementById('confirmAppId').innerText = "ALL CLASSES & EXAMS";
             document.getElementById('confirmMessage').innerText = `Are you absolutely sure you want to permanently delete ALL Exam Routines (Half-Yearly & Final) across all classes?`;
-            
+
             const btn = document.getElementById('confirmExecuteBtn');
             btn.className = "px-5 py-2.5 rounded-xl font-medium text-white shadow-sm flex items-center gap-2 bg-red-800 hover:bg-red-900 transition-colors";
             btn.innerHTML = `Delete All Routines`;
-            
-            btn.onclick = async function() {
-                btn.disabled = true; btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 spin"></i> Deleting...`; lucide.createIcons({root:btn});
+
+            btn.onclick = async function () {
+                btn.disabled = true; btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 spin"></i> Deleting...`; lucide.createIcons({ root: btn });
                 try {
                     const payload = { action: 'delete_all_routines', token: ADMIN_SECRET };
                     const res = await fetch(FINAL_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
                     const result = await res.json();
-                    if(result.status === 'success') {
+                    if (result.status === 'success') {
                         showToast('All Routines Deleted', 'success');
                         closeModal('confirmModal');
-                        fetchFinalStudents(); 
+                        fetchFinalStudents();
                     } else throw new Error(result.message);
-                } catch(err) { 
-                    showToast(`Error: ${err.message}`, 'error'); 
+                } catch (err) {
+                    showToast(`Error: ${err.message}`, 'error');
                 } finally {
                     btn.disabled = false;
                 }
             };
-            
+
             openModal('confirmModal');
         }
 
         // INIT
-        window.addEventListener('DOMContentLoaded', fetchData);
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchData();
+            fetchSystemConfig(); // <-- Add this
+        });
     </script>
 </body>
 
