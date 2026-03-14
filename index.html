@@ -502,16 +502,27 @@
             max-width: 400px;
             border: 1px solid #eee;
         }
+
+        #initLoader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(244, 247, 249, 0.95); backdrop-filter: blur(5px);
+            z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .spinner { width: 50px; height: 50px; border: 5px solid #d1d9e0; border-top: 5px solid var(--primary-blue); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 
 <body>
-    <div class="page-container">
+    <div id="initLoader">
+        <div class="spinner"></div>
+        <h3 style="color: var(--primary-blue); margin-top: 20px;">Establishing Secure Connection...</h3>
+    </div>
 
-        <div id="statusPage">
-            <div class="status-card">
+    <div class="page-container">
+        <div id="statusPage" style="display:none;"> <div class="status-card">
                 <h2 style="color: var(--accent-red); margin-top: 0;">Portal Closed</h2>
-                <p>The online application window is currently unavailable.</p>
+                <p>The secure link is invalid, expired, or the online application window is currently closed.</p>
             </div>
         </div>
 
@@ -548,22 +559,8 @@
                             <label>STUDENT'S FULL NAME</label>
                             <input type="text" id="student_name" name="student_name" placeholder="Full Name" required>
                         </div>
-                        <div class="form-group">
-                            <label>CLASS</label>
-                            <select id="class" name="class" required>
-                                <option value="">-- SELECT --</option>
-                                <option value="1">I</option>
-                                <option value="2">II</option>
-                                <option value="3">III</option>
-                                <option value="4">IV</option>
-                                <option value="5">V</option>
-                                <option value="6">VI</option>
-                                <option value="7">VII</option>
-                                <option value="8">VIII</option>
-                                <option value="9">IX</option>
-                                <option value="10">X</option>
-                                <option value="11">XI</option>
-                                <option value="12">XII</option>
+                        <div class="form-container" id="formContainer" style="display:none;"> <select id="class" name="class" required>
+                            <option value="">-- SELECT --</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -693,34 +690,43 @@
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby6k0EClmq3WueP-0SwCuce3-z6W-PZW1pjRk3lzaIHe_xwG64qnKMWW2pDw2lAa9NW1A/exec";
         // ADD FINAL SCRIPT URL SO WE CAN READ THE MASTER CONFIG
-        const FINAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby6DuDmq0fQdWwf_4KoS3fNM4g22ok3lScPdGV0CuIXagFyT5-b7_Qs7H6qKU9xcFSkTQ/exec";
+        const FINAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwLmpI21DZ2iBdXgg8RAeDiVGOi-ntQUhE-qx285TAcMlOEgBNVQnzDUI4cC_WgVufpvA/exec";
 
         const urlParams = new URLSearchParams(window.location.search);
         const pageToken = urlParams.get('token');
 
-        const FORM_CONFIG = {
-            START_TIME: "2025-01-01T08:00:00",
-            END_TIME: "2026-12-31T23:59:00"
-        };
-
-        // NEW SECURE AVAILABILITY CHECK
-        async function checkFormAvailability() {
-            if (!pageToken) {
-                lockPortal(); return;
-            }
+        async function initPortal() {
+            if (!pageToken) { lockPortal(); return; }
             try {
                 const res = await fetch(FINAL_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'get_public_config', appToken: pageToken }) });
                 const result = await res.json();
-                if (!result.isAppOpen) { lockPortal(); }
+                
+                if (result.status === 'success' && result.isAppOpen) {
+                    // Populate Allowed Classes
+                    const classSelect = document.getElementById('class');
+                    const allowedClasses = result.appClasses ? result.appClasses.split(',') : [];
+                    allowedClasses.forEach(cls => {
+                        let opt = document.createElement('option');
+                        opt.value = cls; opt.innerText = "Class " + cls;
+                        classSelect.appendChild(opt);
+                    });
+
+                    // Hide Loader, Show Form
+                    document.getElementById('initLoader').style.display = 'none';
+                    document.getElementById('formContainer').style.display = 'block';
+                } else {
+                    lockPortal();
+                }
             } catch(e) { lockPortal(); }
         }
 
         function lockPortal() {
+            document.getElementById('initLoader').style.display = 'none';
             document.getElementById('formContainer').style.display = 'none';
             document.getElementById('statusPage').style.display = 'block';
         }
 
-        checkFormAvailability();
+        window.onload = initPortal;
 
         function generateStudentId() {
             const classVal = document.getElementById('class').value.padStart(2, '0');
