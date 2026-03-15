@@ -726,14 +726,21 @@
         const pageToken = urlParams.get('token');
 
         async function initPortal() {
-            if (!pageToken) { lockPortal(); return; }
+            if (!pageToken) { lockPortal('Reason: No token found in URL.'); return; }
             try {
-                // FIXED: Use GET instead of POST — POST gets silently converted to GET
-                // by the browser after GAS's 302 redirect, breaking doPost entirely.
-                const res = await fetch(
-                    `${FINAL_SCRIPT_URL}?action=get_public_config&appToken=${encodeURIComponent(pageToken)}`
-                );
-                const result = await res.json();
+                // Use GET — POST gets silently converted to GET by browsers after GAS 302 redirect
+                const fetchUrl = `${FINAL_SCRIPT_URL}?action=get_public_config&appToken=${encodeURIComponent(pageToken)}&_=${Date.now()}`;
+                const res = await fetch(fetchUrl);
+                
+                // Read raw text first so we can show it on failure
+                const rawText = await res.text();
+                let result;
+                try {
+                    result = JSON.parse(rawText);
+                } catch(parseErr) {
+                    lockPortal(`Reason: Server returned non-JSON response.<br><small style="word-break:break-all">${rawText.substring(0, 300)}</small>`);
+                    return;
+                }
         
                 if (result.status === 'success' && result.isAppOpen) {
                     const classSelect = document.getElementById('class');
@@ -747,15 +754,26 @@
                     document.getElementById('initLoader').style.display = 'none';
                     document.getElementById('formContainer').style.display = 'block';
                 } else {
-                    lockPortal();
+                    lockPortal(`Reason: isAppOpen=${result.isAppOpen}, status=${result.status}${result.message ? ', msg='+result.message : ''}`);
                 }
-            } catch (e) { lockPortal(); }
+            } catch (e) { lockPortal('Reason: Network/fetch error — ' + e.message); }
         }
 
-        function lockPortal() {
+        function lockPortal(debugMsg) {
             document.getElementById('initLoader').style.display = 'none';
             document.getElementById('formContainer').style.display = 'none';
             document.getElementById('statusPage').style.display = 'block';
+            // Debug info shown below the "Portal Closed" card — remove this block once fixed
+            if (debugMsg) {
+                const existing = document.getElementById('_debugMsg');
+                if (!existing) {
+                    const el = document.createElement('p');
+                    el.id = '_debugMsg';
+                    el.style.cssText = 'color:#888;font-size:11px;margin-top:12px;padding:8px;background:#f8f8f8;border:1px solid #ddd;border-radius:4px;text-align:left;';
+                    el.innerHTML = '<strong>Debug:</strong> ' + debugMsg;
+                    document.querySelector('.status-card').appendChild(el);
+                }
+            }
         }
 
         window.onload = initPortal;
