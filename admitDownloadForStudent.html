@@ -669,10 +669,10 @@
             if (!urlToken) { lockPortal(); return; }
 
             try {
-                const res = await fetch(API, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: 'get_public_config', admitToken: urlToken })
-                });
+                // Use GET — POST is silently converted to GET by browsers after GAS 302 redirect
+                const res = await fetch(
+                    `${API}?action=get_public_config&admitToken=${encodeURIComponent(urlToken)}&_=${Date.now()}`
+                );
                 const result = await res.json();
 
                 if (result.status === 'success' && result.isAdmitOpen) {
