@@ -586,8 +586,10 @@
                             <label>STUDENT'S FULL NAME</label>
                             <input type="text" id="student_name" name="student_name" placeholder="Full Name" required>
                         </div>
-                        <div class="form-container" id="formContainer" style="display:none;"> <select id="class"
-                                name="class" required>
+                        <!-- FIXED: standard form-group like all other fields -->
+                        <div class="form-group">
+                            <label>CLASS</label>
+                            <select id="class" name="class" required>
                                 <option value="">-- SELECT --</option>
                             </select>
                         </div>
@@ -718,7 +720,7 @@
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby6k0EClmq3WueP-0SwCuce3-z6W-PZW1pjRk3lzaIHe_xwG64qnKMWW2pDw2lAa9NW1A/exec";
         // ADD FINAL SCRIPT URL SO WE CAN READ THE MASTER CONFIG
-        const FINAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwKvJk7JCIatnRsmG920YnldUZ8FZ1Dv2qFnK9eunhnDjhWXeImHptj4SH0JsYLWf_iiQ/exec";
+        const FINAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxB03mOoW6ULqM7efhVujxVEjbN6GA2zExVq9BtJBJDtJB-KBrchRhfgMJGwsBiKtZqBA/exec";
 
         const urlParams = new URLSearchParams(window.location.search);
         const pageToken = urlParams.get('token');
