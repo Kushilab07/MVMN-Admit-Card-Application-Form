@@ -802,7 +802,7 @@
         // 1. CONFIGURATION & GLOBALS
         // ==========================================
         const PENDING_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby6k0EClmq3WueP-0SwCuce3-z6W-PZW1pjRk3lzaIHe_xwG64qnKMWW2pDw2lAa9NW1A/exec";
-        const FINAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwKvJk7JCIatnRsmG920YnldUZ8FZ1Dv2qFnK9eunhnDjhWXeImHptj4SH0JsYLWf_iiQ/exec";
+        const FINAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxB03mOoW6ULqM7efhVujxVEjbN6GA2zExVq9BtJBJDtJB-KBrchRhfgMJGwsBiKtZqBA/exec";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBBkITpfUjxFUFvgQhjnXedrIX4GhfCSCo",
@@ -1329,14 +1329,16 @@
                 ]
             };
             try { 
-                await fetch(FINAL_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) }); 
+                const saveRes = await fetch(FINAL_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+                const saveResult = await saveRes.json();
+                if (saveResult.status !== 'success') throw new Error(saveResult.message || 'Server failed to save config.');
                 showToast('Portal Settings Updated', 'success'); 
                 updateToggleUI(activeConfigTarget, activeConfigAction, newToken, autoCloseMs);
                 closeModal('portalConfigModal');
             } 
             catch (err) { 
-                showToast(`Update Failed`, 'error'); 
-                cancelPortalToggle();
+                showToast(`Update Failed: ${err.message}`, 'error'); 
+                cancelPortalToggle(); // Reverts the toggle back to OFF
             } finally {
                 btn.disabled = false; btn.innerHTML = origHtml;
             }
