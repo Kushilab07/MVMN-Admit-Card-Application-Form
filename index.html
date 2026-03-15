@@ -720,7 +720,7 @@
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby6k0EClmq3WueP-0SwCuce3-z6W-PZW1pjRk3lzaIHe_xwG64qnKMWW2pDw2lAa9NW1A/exec";
         // ADD FINAL SCRIPT URL SO WE CAN READ THE MASTER CONFIG
-        const FINAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxB03mOoW6ULqM7efhVujxVEjbN6GA2zExVq9BtJBJDtJB-KBrchRhfgMJGwsBiKtZqBA/exec";
+        const FINAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby0ERe-ZK0r5QOv0zs6xpiz0-2lhv8OhDJzjUbiW7gZ5-bQhCtNlArZgXZNzoSf0Mbhtg/exec";
 
         const urlParams = new URLSearchParams(window.location.search);
         const pageToken = urlParams.get('token');
@@ -728,22 +728,22 @@
         async function initPortal() {
             if (!pageToken) { lockPortal(); return; }
             try {
-                const res = await fetch(FINAL_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'get_public_config', appToken: pageToken }) });
+                // FIXED: Use GET instead of POST — POST gets silently converted to GET
+                // by the browser after GAS's 302 redirect, breaking doPost entirely.
+                const res = await fetch(
+                    `${FINAL_SCRIPT_URL}?action=get_public_config&appToken=${encodeURIComponent(pageToken)}`
+                );
                 const result = await res.json();
-
+        
                 if (result.status === 'success' && result.isAppOpen) {
-                    // Populate Allowed Classes from Admin Settings
                     const classSelect = document.getElementById('class');
-                    classSelect.innerHTML = '<option value="">-- SELECT --</option>'; // Reset
+                    classSelect.innerHTML = '<option value="">-- SELECT --</option>';
                     const allowedClasses = result.appClasses ? result.appClasses.split(',') : [];
-
                     allowedClasses.forEach(cls => {
                         let opt = document.createElement('option');
                         opt.value = cls; opt.innerText = "Class " + cls;
                         classSelect.appendChild(opt);
                     });
-
-                    // Hide Loader, Show Form
                     document.getElementById('initLoader').style.display = 'none';
                     document.getElementById('formContainer').style.display = 'block';
                 } else {
