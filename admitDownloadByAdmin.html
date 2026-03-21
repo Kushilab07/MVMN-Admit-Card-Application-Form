@@ -490,11 +490,12 @@
             .admit-card-page,
             .instructions-page {
                 border: 1px solid #000 !important;
-                height: 100%; /*!important; / * 2. Dynamically stretches the border to perfectly fit Legal, A4, or Letter */
+                min-height: 100vh; /*!important; / * 2. Dynamically stretches the border to perfectly fit Legal, A4, or Letter */
                 page-break-after: always;
                 box-shadow: none;
                 margin: 0;
                 width: 100%;
+                box-sizing: border-box;
             }
         }
     </style>
