@@ -726,7 +726,7 @@
         const pageToken = urlParams.get('token');
 
         async function initPortal() {
-            if (!pageToken) { lockPortal('Reason: No token found in URL.'); return; }
+            if (!pageToken) { lockPortal(); return; }
             try {
                 // Use GET — POST gets silently converted to GET by browsers after GAS 302 redirect
                 const fetchUrl = `${FINAL_SCRIPT_URL}?action=get_public_config&appToken=${encodeURIComponent(pageToken)}&_=${Date.now()}`;
@@ -738,7 +738,7 @@
                 try {
                     result = JSON.parse(rawText);
                 } catch(parseErr) {
-                    lockPortal(`Reason: Server returned non-JSON response.<br><small style="word-break:break-all">${rawText.substring(0, 300)}</small>`);
+                    lockPortal();
                     return;
                 }
         
@@ -754,26 +754,15 @@
                     document.getElementById('initLoader').style.display = 'none';
                     document.getElementById('formContainer').style.display = 'block';
                 } else {
-                    lockPortal(`Reason: isAppOpen=${result.isAppOpen}, status=${result.status}${result.message ? ', msg='+result.message : ''}`);
+                    lockPortal();
                 }
-            } catch (e) { lockPortal('Reason: Network/fetch error — ' + e.message); }
+            } catch (e) { lockPortal(); }
         }
 
-        function lockPortal(debugMsg) {
+        function lockPortal() {
             document.getElementById('initLoader').style.display = 'none';
             document.getElementById('formContainer').style.display = 'none';
             document.getElementById('statusPage').style.display = 'block';
-            // Debug info shown below the "Portal Closed" card — remove this block once fixed
-            if (debugMsg) {
-                const existing = document.getElementById('_debugMsg');
-                if (!existing) {
-                    const el = document.createElement('p');
-                    el.id = '_debugMsg';
-                    el.style.cssText = 'color:#888;font-size:11px;margin-top:12px;padding:8px;background:#f8f8f8;border:1px solid #ddd;border-radius:4px;text-align:left;';
-                    el.innerHTML = '<strong>Debug:</strong> ' + debugMsg;
-                    document.querySelector('.status-card').appendChild(el);
-                }
-            }
         }
 
         window.onload = initPortal;
