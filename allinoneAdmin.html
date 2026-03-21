@@ -1202,7 +1202,7 @@
             const input = document.getElementById(type === 'app' ? 'sysPortalLink' : 'sysAdmitPortalLink');
             const timerContainer = document.getElementById(`${type}TimerDisplay`);
             const timerText = document.getElementById(`${type}TimerText`);
-
+        
             if (status === 'ON') {
                 toggle.checked = true;
                 badge.innerText = "PORTAL ACTIVE";
@@ -1211,10 +1211,20 @@
                 
                 const base = type === 'app' ? 'https://kushilab07.github.io/MVMN-Admit-Card-Application-Form/' : 'https://kushilab07.github.io/MVMN-Admit-Card-Application-Form/admitDownloadForStudent.html';
                 input.value = `${base}?token=${token}`;
-
+        
                 if (autoCloseMs) {
                     timerContainer.classList.remove('hidden');
                     timerText.innerText = formatDateTime(autoCloseMs);
+        
+                    // Auto-update UI when the timer expires
+                    const msUntilClose = parseInt(autoCloseMs) - Date.now();
+                    if (window[`_autoCloseTimer_${type}`]) clearTimeout(window[`_autoCloseTimer_${type}`]);
+                    if (msUntilClose > 0) {
+                        window[`_autoCloseTimer_${type}`] = setTimeout(() => {
+                            showToast(`${type === 'app' ? 'Application' : 'Admit'} Portal auto-closed.`, 'info');
+                            fetchSystemConfig();
+                        }, msUntilClose);
+                    }
                 } else {
                     timerContainer.classList.add('hidden');
                 }
@@ -1225,6 +1235,12 @@
                 container.classList.add('hidden');
                 timerContainer.classList.add('hidden');
                 input.value = '';
+        
+                // Clear any pending timer if portal is turned OFF manually before expiry
+                if (window[`_autoCloseTimer_${type}`]) {
+                    clearTimeout(window[`_autoCloseTimer_${type}`]);
+                    window[`_autoCloseTimer_${type}`] = null;
+                }
             }
         }
 
