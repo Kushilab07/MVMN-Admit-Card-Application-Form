@@ -239,7 +239,7 @@
         .instructions-page {
             background: white;
             padding: 12mm;
-            min-height: 297mm;
+            min-height: 100%;
             box-sizing: border-box;
             border: 3px solid var(--school-blue);
             position: relative;
@@ -504,6 +504,7 @@
             body {
                 padding: 0;
                 background: white;
+                margin: 0;
             }
 
             .login-container,
@@ -520,9 +521,11 @@
             .admit-card-page,
             .instructions-page {
                 border: 1px solid #000 !important;
-                height: 296mm;
+                height: 100%;
                 page-break-after: always;
                 box-shadow: none;
+                margin: 0;
+                width: 100%;
             }
         }
 
