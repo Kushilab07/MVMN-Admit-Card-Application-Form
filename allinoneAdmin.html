@@ -1170,7 +1170,7 @@
 
         async function fetchSystemConfig() {
             try {
-                const res = await fetch(`${FINAL_SCRIPT_URL}?action=get_config&token=${ADMIN_SECRET}`);
+                const res = await fetch(`${FINAL_SCRIPT_URL}?action=get_config&token=${ADMIN_SECRET}&_=${Date.now()}`);
                 const result = await res.json();
                 if (result.status === 'success') {
                     const conf = result.data;
