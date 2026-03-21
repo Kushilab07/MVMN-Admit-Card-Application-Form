@@ -17,6 +17,7 @@
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 
     <script>
         tailwind.config = {
@@ -96,10 +97,9 @@
         </div>
 
         <nav class="flex-1 overflow-y-auto scrollbar-hide py-4 px-2 flex flex-col gap-2 items-center xl:items-stretch">
-            <a href="#"
-                class="flex items-center xl:justify-start justify-center gap-3 px-3 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors font-medium text-sm group">
-                <i data-lucide="layout-dashboard" class="w-5 h-5 group-hover:text-blue-600 transition-colors"></i> <span
-                    class="hidden xl:block">Dashboard</span>
+            <a href="#" onclick="switchTab('dashboard')" id="navDashboard"
+                class="flex items-center xl:justify-start justify-center gap-3 px-3 py-3 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 font-medium text-sm transition-colors">
+                <i data-lucide="layout-dashboard" class="w-5 h-5"></i> <span class="hidden xl:block">Dashboard</span>
             </a>
             <a href="#" onclick="switchTab('students')" id="navStudents"
                 class="flex items-center lg:justify-start justify-center gap-3 px-3 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors font-medium text-sm group">
@@ -107,8 +107,9 @@
                 <span class="hidden lg:block">Students</span>
             </a>
             <a href="#" onclick="switchTab('pending')" id="navPending"
-                class="flex items-center xl:justify-start justify-center gap-3 px-3 py-3 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 font-medium text-sm transition-colors">
-                <i data-lucide="file-text" class="w-5 h-5"></i> <span class="hidden xl:block">Applications</span>
+                class="flex items-center xl:justify-start justify-center gap-3 px-3 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors font-medium text-sm group">
+                <i data-lucide="file-text" class="w-5 h-5 group-hover:text-blue-600 transition-colors"></i> <span
+                    class="hidden xl:block">Applications</span>
             </a>
             <a href="#" onclick="switchTab('settings')" id="navSettings"
                 class="flex items-center xl:justify-start justify-center gap-3 px-3 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors font-medium text-sm group">
@@ -163,6 +164,86 @@
                     A</div>
             </div>
         </header>
+
+        <div id="dashboardView" class="flex-1 flex flex-col p-8 overflow-y-auto custom-scrollbar">
+            <div class="mb-6 flex-shrink-0 flex items-center justify-between">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900 dark:text-white">Dashboard</h2>
+                    <p id="dashSystemInfo" class="text-sm text-slate-500 dark:text-slate-400 mt-1">Loading system
+                        info...</p>
+                </div>
+                <button onclick="renderDashboard()"
+                    class="flex items-center gap-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 text-slate-700 dark:text-slate-300 px-4 py-2 rounded-xl text-sm font-medium transition-all shadow-sm">
+                    <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6 flex-shrink-0">
+                <div
+                    class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Total Students</p>
+                    <p id="statTotalStudents" class="text-3xl font-bold text-slate-800 dark:text-white">—</p>
+                    <p class="text-xs text-slate-400 mt-1">In final database</p>
+                </div>
+                <div
+                    class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Pending Applications</p>
+                    <p id="statPending" class="text-3xl font-bold text-amber-500">—</p>
+                    <p class="text-xs text-slate-400 mt-1">Awaiting review</p>
+                </div>
+                <div
+                    class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Admit Cards</p>
+                    <div class="flex items-end gap-3 mt-1">
+                        <div>
+                            <p id="statReleased" class="text-2xl font-bold text-emerald-600">—</p>
+                            <p class="text-[10px] text-slate-400">Released</p>
+                        </div>
+                        <div>
+                            <p id="statNotReleased" class="text-2xl font-bold text-slate-500">—</p>
+                            <p class="text-[10px] text-slate-400">Not Released</p>
+                        </div>
+                        <div>
+                            <p id="statBlocked" class="text-2xl font-bold text-red-500">—</p>
+                            <p class="text-[10px] text-slate-400">Blocked</p>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Portal Status</p>
+                    <div class="flex flex-col gap-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-slate-500">Application</span>
+                            <span id="dashAppStatus"
+                                class="px-2 py-0.5 text-[10px] font-bold rounded-md bg-red-100 text-red-700 border border-red-200">CLOSED</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-slate-500">Admit Download</span>
+                            <span id="dashAdmitStatus"
+                                class="px-2 py-0.5 text-[10px] font-bold rounded-md bg-red-100 text-red-700 border border-red-200">CLOSED</span>
+                        </div>
+                    </div>
+                    <button onclick="switchTab('settings')"
+                        class="mt-3 w-full text-[10px] font-bold text-blue-600 hover:underline text-left">Manage in
+                        Settings →</button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div
+                    class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+                    <h3 class="text-sm font-bold text-slate-700 dark:text-slate-300 mb-4">Applications — Last 7 Days
+                    </h3>
+                    <div class="relative h-56"><canvas id="chartApplicationsTrend"></canvas></div>
+                </div>
+                <div
+                    class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+                    <h3 class="text-sm font-bold text-slate-700 dark:text-slate-300 mb-4">Students by Class</h3>
+                    <div class="relative h-56"><canvas id="chartClassBreakdown"></canvas></div>
+                </div>
+            </div>
+        </div>
 
         <div id="pendingView" class="flex-1 flex flex-col p-8 overflow-hidden">
             <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-6 gap-4 flex-shrink-0">
@@ -444,32 +525,41 @@
         <div id="settingsView" class="flex-1 flex flex-col p-8 overflow-y-auto custom-scrollbar hidden">
             <div class="mb-6 flex-shrink-0">
                 <h2 class="text-xl font-bold text-slate-900 dark:text-white">System Settings</h2>
-                <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Master Control Room: Manage portal configurations, links, and global variables.</p>
+                <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Master Control Room: Manage portal
+                    configurations, links, and global variables.</p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                
-                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+
+                <div
+                    class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
                     <div class="flex items-center gap-3 mb-6">
-                        <div class="w-10 h-10 rounded-full bg-purple-50 dark:bg-purple-900/30 flex items-center justify-center">
+                        <div
+                            class="w-10 h-10 rounded-full bg-purple-50 dark:bg-purple-900/30 flex items-center justify-center">
                             <i data-lucide="settings-2" class="w-5 h-5 text-purple-600 dark:text-purple-400"></i>
                         </div>
                         <h3 class="text-lg font-bold text-slate-800 dark:text-slate-200">Global Exam State</h3>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Active Examination</label>
-                            <select id="sysActiveExam" onchange="saveSystemConfig()" class="w-full p-2.5 text-sm border border-slate-200 rounded-lg dark:bg-slate-800 dark:border-slate-700 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none">
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Active
+                                Examination</label>
+                            <select id="sysActiveExam" onchange="saveSystemConfig()"
+                                class="w-full p-2.5 text-sm border border-slate-200 rounded-lg dark:bg-slate-800 dark:border-slate-700 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none">
                                 <option value="HY">Half-Yearly Examination</option>
                                 <option value="FY">Final Year Examination</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Academic Session</label>
-                            <input type="text" id="sysExamSession" onchange="saveSystemConfig()" placeholder="e.g. 2025-2026" class="w-full p-2.5 text-sm border border-slate-200 rounded-lg dark:bg-slate-800 dark:border-slate-700 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none">
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Academic
+                                Session</label>
+                            <input type="text" id="sysExamSession" onchange="saveSystemConfig()"
+                                placeholder="e.g. 2025-2026"
+                                class="w-full p-2.5 text-sm border border-slate-200 rounded-lg dark:bg-slate-800 dark:border-slate-700 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none">
                         </div>
                     </div>
-                    <div class="mt-6 border-t border-slate-100 dark:border-slate-800 pt-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg p-2 transition-colors flex items-center justify-between" onclick="openModal('routineModal')">
+                    <div class="mt-6 border-t border-slate-100 dark:border-slate-800 pt-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg p-2 transition-colors flex items-center justify-between"
+                        onclick="openModal('routineModal')">
                         <div>
                             <p class="font-bold text-slate-800 dark:text-slate-200 text-sm">Exam Routines Setup</p>
                             <p class="text-xs text-slate-500">Create, edit, or delete exam dates & subjects.</p>
@@ -478,60 +568,88 @@
                     </div>
                 </div>
 
-                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+                <div
+                    class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
                     <div class="flex items-center gap-3 mb-4">
-                        <div class="w-10 h-10 rounded-full bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center">
+                        <div
+                            class="w-10 h-10 rounded-full bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center">
                             <i data-lucide="globe" class="w-5 h-5 text-emerald-600 dark:text-emerald-400"></i>
                         </div>
                         <h3 class="text-lg font-bold text-slate-800 dark:text-slate-200">Application Portal</h3>
                     </div>
-                    
-                    <div class="flex items-center justify-between bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-800 mb-4">
-                        <span id="appStatusBadge" class="px-2.5 py-1 text-xs font-bold rounded-md bg-red-100 text-red-700 border border-red-200">PORTAL CLOSED</span>
+
+                    <div
+                        class="flex items-center justify-between bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-800 mb-4">
+                        <span id="appStatusBadge"
+                            class="px-2.5 py-1 text-xs font-bold rounded-md bg-red-100 text-red-700 border border-red-200">PORTAL
+                            CLOSED</span>
                         <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="appPortalToggle" class="sr-only peer" onchange="triggerPortalModal('app')">
-                            <div class="w-14 h-7 bg-red-500 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-emerald-500 shadow-inner"></div>
+                            <input type="checkbox" id="appPortalToggle" class="sr-only peer"
+                                onchange="triggerPortalModal('app')">
+                            <div
+                                class="w-14 h-7 bg-red-500 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-emerald-500 shadow-inner">
+                            </div>
                         </label>
                     </div>
 
-                    <div id="appTimerDisplay" class="text-xs font-bold text-slate-500 mb-4 hidden flex items-center gap-1">
-                        <i data-lucide="clock" class="w-3.5 h-3.5 text-orange-500"></i> Auto-Closes: <span id="appTimerText" class="text-orange-600"></span>
+                    <div id="appTimerDisplay"
+                        class="text-xs font-bold text-slate-500 mb-4 hidden flex items-center gap-1">
+                        <i data-lucide="clock" class="w-3.5 h-3.5 text-orange-500"></i> Auto-Closes: <span
+                            id="appTimerText" class="text-orange-600"></span>
                     </div>
 
                     <div id="appLinkContainer" class="hidden">
-                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Secure Public Link</label>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Secure Public
+                            Link</label>
                         <div class="flex">
-                            <input type="text" id="sysPortalLink" readonly class="w-full p-2.5 text-xs border border-r-0 border-slate-200 rounded-l-lg bg-white dark:bg-slate-950 dark:border-slate-700 dark:text-slate-300 focus:outline-none">
-                            <button onclick="copyLink('sysPortalLink')" class="px-4 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-r-lg font-bold transition-colors"><i data-lucide="copy" class="w-4 h-4"></i></button>
+                            <input type="text" id="sysPortalLink" readonly
+                                class="w-full p-2.5 text-xs border border-r-0 border-slate-200 rounded-l-lg bg-white dark:bg-slate-950 dark:border-slate-700 dark:text-slate-300 focus:outline-none">
+                            <button onclick="copyLink('sysPortalLink')"
+                                class="px-4 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-r-lg font-bold transition-colors"><i
+                                    data-lucide="copy" class="w-4 h-4"></i></button>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+                <div
+                    class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
                     <div class="flex items-center gap-3 mb-4">
-                        <div class="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center">
+                        <div
+                            class="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center">
                             <i data-lucide="download-cloud" class="w-5 h-5 text-blue-600 dark:text-blue-400"></i>
                         </div>
                         <h3 class="text-lg font-bold text-slate-800 dark:text-slate-200">Admit Download Portal</h3>
                     </div>
-                    
-                    <div class="flex items-center justify-between bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-800 mb-4">
-                        <span id="admitStatusBadge" class="px-2.5 py-1 text-xs font-bold rounded-md bg-red-100 text-red-700 border border-red-200">PORTAL CLOSED</span>
+
+                    <div
+                        class="flex items-center justify-between bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-800 mb-4">
+                        <span id="admitStatusBadge"
+                            class="px-2.5 py-1 text-xs font-bold rounded-md bg-red-100 text-red-700 border border-red-200">PORTAL
+                            CLOSED</span>
                         <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="admitPortalToggle" class="sr-only peer" onchange="triggerPortalModal('admit')">
-                            <div class="w-14 h-7 bg-red-500 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-emerald-500 shadow-inner"></div>
+                            <input type="checkbox" id="admitPortalToggle" class="sr-only peer"
+                                onchange="triggerPortalModal('admit')">
+                            <div
+                                class="w-14 h-7 bg-red-500 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-emerald-500 shadow-inner">
+                            </div>
                         </label>
                     </div>
 
-                    <div id="admitTimerDisplay" class="text-xs font-bold text-slate-500 mb-4 hidden flex items-center gap-1">
-                        <i data-lucide="clock" class="w-3.5 h-3.5 text-orange-500"></i> Auto-Closes: <span id="admitTimerText" class="text-orange-600"></span>
+                    <div id="admitTimerDisplay"
+                        class="text-xs font-bold text-slate-500 mb-4 hidden flex items-center gap-1">
+                        <i data-lucide="clock" class="w-3.5 h-3.5 text-orange-500"></i> Auto-Closes: <span
+                            id="admitTimerText" class="text-orange-600"></span>
                     </div>
 
                     <div id="admitLinkContainer" class="hidden">
-                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Secure Download Link</label>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Secure Download
+                            Link</label>
                         <div class="flex">
-                            <input type="text" id="sysAdmitPortalLink" readonly class="w-full p-2.5 text-xs border border-r-0 border-slate-200 rounded-l-lg bg-white dark:bg-slate-950 dark:border-slate-700 dark:text-slate-300 focus:outline-none">
-                            <button onclick="copyLink('sysAdmitPortalLink')" class="px-4 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-r-lg font-bold transition-colors"><i data-lucide="copy" class="w-4 h-4"></i></button>
+                            <input type="text" id="sysAdmitPortalLink" readonly
+                                class="w-full p-2.5 text-xs border border-r-0 border-slate-200 rounded-l-lg bg-white dark:bg-slate-950 dark:border-slate-700 dark:text-slate-300 focus:outline-none">
+                            <button onclick="copyLink('sysAdmitPortalLink')"
+                                class="px-4 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-r-lg font-bold transition-colors"><i
+                                    data-lucide="copy" class="w-4 h-4"></i></button>
                         </div>
                     </div>
                 </div>
@@ -539,47 +657,68 @@
             </div>
         </div>
 
-        <div id="portalConfigModal" class="fixed inset-0 z-[9999] hidden bg-slate-900/50 backdrop-blur-sm flex items-center justify-center opacity-0 transition-opacity duration-300">
-            <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-xl max-w-md w-full p-6 transform scale-95 transition-transform duration-300">
+        <div id="portalConfigModal"
+            class="fixed inset-0 z-[9999] hidden bg-slate-900/50 backdrop-blur-sm flex items-center justify-center opacity-0 transition-opacity duration-300">
+            <div
+                class="bg-white dark:bg-slate-900 rounded-2xl shadow-xl max-w-md w-full p-6 transform scale-95 transition-transform duration-300">
                 <div class="flex items-center gap-3 border-b border-slate-100 dark:border-slate-800 pb-3 mb-4">
                     <i id="configModalIcon" data-lucide="power" class="w-6 h-6 text-emerald-600"></i>
-                    <h3 class="text-lg font-bold text-slate-900 dark:text-white" id="configModalTitle">Portal Configuration</h3>
+                    <h3 class="text-lg font-bold text-slate-900 dark:text-white" id="configModalTitle">Portal
+                        Configuration</h3>
                 </div>
-                
+
                 <p id="configModalDesc" class="text-sm text-slate-600 dark:text-slate-400 mb-4"></p>
-                
+
                 <div id="configModalInputs" class="hidden">
                     <div id="classConfigSection" class="hidden mb-4">
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Allowed Classes</label>
                         <div class="grid grid-cols-4 gap-2 mb-2">
-                            <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check" value="1"> 1</label>
-                            <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check" value="2"> 2</label>
-                            <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check" value="3"> 3</label>
-                            <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check" value="4"> 4</label>
-                            <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check" value="5"> 5</label>
-                            <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check" value="6"> 6</label>
-                            <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check" value="7"> 7</label>
-                            <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check" value="8"> 8</label>
-                            <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check" value="9"> 9</label>
-                            <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check" value="10"> 10</label>
-                            <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check" value="11"> 11</label>
-                            <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check" value="12"> 12</label>
+                            <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check"
+                                    value="1"> 1</label>
+                            <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check"
+                                    value="2"> 2</label>
+                            <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check"
+                                    value="3"> 3</label>
+                            <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check"
+                                    value="4"> 4</label>
+                            <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check"
+                                    value="5"> 5</label>
+                            <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check"
+                                    value="6"> 6</label>
+                            <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check"
+                                    value="7"> 7</label>
+                            <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check"
+                                    value="8"> 8</label>
+                            <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check"
+                                    value="9"> 9</label>
+                            <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check"
+                                    value="10"> 10</label>
+                            <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check"
+                                    value="11"> 11</label>
+                            <label class="flex items-center gap-1 text-sm"><input type="checkbox" class="cls-check"
+                                    value="12"> 12</label>
                         </div>
                         <div class="p-2 bg-amber-50 border border-amber-200 text-amber-700 text-xs rounded">
-                            <strong>Warning:</strong> Opening applications for multiple classes at once may cause high database traffic.
+                            <strong>Warning:</strong> Opening applications for multiple classes at once may cause high
+                            database traffic.
                         </div>
                     </div>
 
                     <div class="mb-2">
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Auto-Close Timer (Optional)</label>
-                        <input type="datetime-local" id="autoCloseTime" class="w-full p-2.5 border border-slate-200 rounded-lg text-sm dark:bg-slate-800 dark:border-slate-700 dark:text-white">
-                        <p class="text-[10px] text-slate-400 mt-1">Portal will automatically switch OFF at this exact time.</p>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Auto-Close Timer
+                            (Optional)</label>
+                        <input type="datetime-local" id="autoCloseTime"
+                            class="w-full p-2.5 border border-slate-200 rounded-lg text-sm dark:bg-slate-800 dark:border-slate-700 dark:text-white">
+                        <p class="text-[10px] text-slate-400 mt-1">Portal will automatically switch OFF at this exact
+                            time.</p>
                     </div>
                 </div>
 
                 <div class="flex justify-end gap-3 mt-6">
-                    <button onclick="cancelPortalToggle()" class="px-5 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">Cancel</button>
-                    <button id="confirmPortalBtn" class="px-5 py-2.5 text-sm bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-medium shadow-sm transition-colors flex items-center gap-2">Confirm</button>
+                    <button onclick="cancelPortalToggle()"
+                        class="px-5 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">Cancel</button>
+                    <button id="confirmPortalBtn"
+                        class="px-5 py-2.5 text-sm bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-medium shadow-sm transition-colors flex items-center gap-2">Confirm</button>
                 </div>
             </div>
         </div>
@@ -916,8 +1055,8 @@
         // 3. UI NAVIGATION & TOASTS
         // ==========================================
         function switchTab(tabName) {
-            ['pendingView', 'studentsView', 'settingsView'].forEach(id => document.getElementById(id).classList.add('hidden'));
-            ['navPending', 'navStudents', 'navSettings'].forEach(id => {
+            ['dashboardView', 'pendingView', 'studentsView', 'settingsView'].forEach(id => document.getElementById(id).classList.add('hidden'));
+            ['navDashboard', 'navPending', 'navStudents', 'navSettings'].forEach(id => {
                 document.getElementById(id).classList.remove('bg-blue-50', 'dark:bg-blue-900/20', 'text-blue-700', 'dark:text-blue-400');
                 document.getElementById(id).classList.add('text-slate-600', 'dark:text-slate-400');
             });
@@ -926,6 +1065,7 @@
             document.getElementById('nav' + tabName.charAt(0).toUpperCase() + tabName.slice(1)).classList.remove('text-slate-600', 'dark:text-slate-400');
             document.getElementById('nav' + tabName.charAt(0).toUpperCase() + tabName.slice(1)).classList.add('bg-blue-50', 'dark:bg-blue-900/20', 'text-blue-700', 'dark:text-blue-400');
 
+            if (tabName === 'dashboard') renderDashboard();
             if (tabName === 'pending') fetchData();
             if (tabName === 'students') fetchFinalStudents();
         }
@@ -1176,7 +1316,7 @@
                     const conf = result.data;
                     document.getElementById('sysActiveExam').value = conf.Active_Exam_Type || 'FY';
                     document.getElementById('sysExamSession').value = conf.Exam_Session || '2025-2026';
-                    
+
                     memAppToken = conf.Portal_Token || '';
                     memAdmitToken = conf.Admit_Portal_Token || '';
                     memAppClasses = conf.App_Classes || '';
@@ -1190,7 +1330,7 @@
         }
 
         function formatDateTime(msStr) {
-            if(!msStr) return '';
+            if (!msStr) return '';
             const d = new Date(parseInt(msStr));
             return d.toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
         }
@@ -1202,20 +1342,20 @@
             const input = document.getElementById(type === 'app' ? 'sysPortalLink' : 'sysAdmitPortalLink');
             const timerContainer = document.getElementById(`${type}TimerDisplay`);
             const timerText = document.getElementById(`${type}TimerText`);
-        
+
             if (status === 'ON') {
                 toggle.checked = true;
                 badge.innerText = "PORTAL ACTIVE";
                 badge.className = "px-2.5 py-1 text-xs font-bold rounded-md bg-emerald-100 text-emerald-700 border border-emerald-200";
                 container.classList.remove('hidden');
-                
+
                 const base = type === 'app' ? 'https://kushilab07.github.io/MVMN-Admit-Card-Application-Form/' : 'https://kushilab07.github.io/MVMN-Admit-Card-Application-Form/admitDownloadForStudent.html';
                 input.value = `${base}?token=${token}`;
-        
+
                 if (autoCloseMs) {
                     timerContainer.classList.remove('hidden');
                     timerText.innerText = formatDateTime(autoCloseMs);
-        
+
                     // Auto-update UI when the timer expires
                     const msUntilClose = parseInt(autoCloseMs) - Date.now();
                     if (window[`_autoCloseTimer_${type}`]) clearTimeout(window[`_autoCloseTimer_${type}`]);
@@ -1235,7 +1375,7 @@
                 container.classList.add('hidden');
                 timerContainer.classList.add('hidden');
                 input.value = '';
-        
+
                 // Clear any pending timer if portal is turned OFF manually before expiry
                 if (window[`_autoCloseTimer_${type}`]) {
                     clearTimeout(window[`_autoCloseTimer_${type}`]);
@@ -1248,7 +1388,7 @@
             const toggle = document.getElementById(`${type}PortalToggle`);
             activeConfigTarget = type;
             activeConfigAction = toggle.checked ? 'ON' : 'OFF';
-            
+
             const modalTitle = document.getElementById('configModalTitle');
             const modalIcon = document.getElementById('configModalIcon');
             const modalDesc = document.getElementById('configModalDesc');
@@ -1261,7 +1401,7 @@
                 modalIcon.className = "w-6 h-6 text-emerald-600";
                 modalDesc.innerText = "Configure the settings below before generating the secure live link.";
                 inputsSec.classList.remove('hidden');
-                
+
                 document.getElementById('autoCloseTime').value = '';
                 if (type === 'app') {
                     document.getElementById('classConfigSection').classList.remove('hidden');
@@ -1269,7 +1409,7 @@
                 } else {
                     document.getElementById('classConfigSection').classList.add('hidden');
                 }
-                
+
                 btn.className = "px-5 py-2.5 text-sm bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-medium shadow-sm transition-colors flex items-center gap-2";
                 btn.innerHTML = "Activate Link";
             } else {
@@ -1278,11 +1418,11 @@
                 modalIcon.className = "w-6 h-6 text-red-600";
                 modalDesc.innerText = "Are you sure you want to CLOSE this portal? The current secure link will be permanently destroyed and access will be blocked immediately.";
                 inputsSec.classList.add('hidden');
-                
+
                 btn.className = "px-5 py-2.5 text-sm bg-red-600 hover:bg-red-700 text-white rounded-xl font-medium shadow-sm transition-colors flex items-center gap-2";
                 btn.innerHTML = "Confirm Close";
             }
-            
+
             lucide.createIcons({ root: document.getElementById('portalConfigModal') });
             document.getElementById('confirmPortalBtn').onclick = executePortalSave;
             openModal('portalConfigModal');
@@ -1291,7 +1431,7 @@
         function cancelPortalToggle() {
             closeModal('portalConfigModal');
             // Revert visually
-            document.getElementById(`${activeConfigTarget}PortalToggle`).checked = (activeConfigAction === 'OFF'); 
+            document.getElementById(`${activeConfigTarget}PortalToggle`).checked = (activeConfigAction === 'OFF');
         }
 
         async function executePortalSave() {
@@ -1318,7 +1458,7 @@
                 }
             } else {
                 // If OFF, clear memory
-                if (activeConfigTarget === 'app') { memAppClasses = ''; memAppClose = ''; } 
+                if (activeConfigTarget === 'app') { memAppClasses = ''; memAppClose = ''; }
                 else { memAdmitClose = ''; }
             }
 
@@ -1326,7 +1466,7 @@
             if (activeConfigAction === 'ON') {
                 newToken = activeConfigTarget === 'app' ? 'x' + Math.random().toString(36).substr(2, 9) + Date.now().toString(36) : 'd' + Math.random().toString(36).substr(2, 9) + Date.now().toString(36);
             }
-            
+
             if (activeConfigTarget === 'app') memAppToken = newToken; else memAdmitToken = newToken;
 
             // Trigger Save API
@@ -1344,22 +1484,22 @@
                     { key: 'Admit_Auto_Close', value: memAdmitClose }
                 ]
             };
-            try { 
+            try {
                 const saveRes = await fetch(FINAL_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
                 const saveResult = await saveRes.json();
                 if (saveResult.status !== 'success') throw new Error(saveResult.message || 'Server failed to save config.');
-                showToast('Portal Settings Updated', 'success'); 
+                showToast('Portal Settings Updated', 'success');
                 updateToggleUI(activeConfigTarget, activeConfigAction, newToken, autoCloseMs);
                 closeModal('portalConfigModal');
-            } 
-            catch (err) { 
-                showToast(`Update Failed: ${err.message}`, 'error'); 
+            }
+            catch (err) {
+                showToast(`Update Failed: ${err.message}`, 'error');
                 cancelPortalToggle(); // Reverts the toggle back to OFF
             } finally {
                 btn.disabled = false; btn.innerHTML = origHtml;
             }
         }
-        
+
         function copyLink(id) {
             document.getElementById(id).select(); document.execCommand("copy"); showToast('Link Copied!', 'success');
         }
@@ -1380,10 +1520,10 @@
                     { key: 'Admit_Auto_Close', value: memAdmitClose }
                 ]
             };
-            try { 
-                await fetch(FINAL_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) }); 
-                showToast('Settings Saved', 'success'); 
-            } 
+            try {
+                await fetch(FINAL_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+                showToast('Settings Saved', 'success');
+            }
             catch (err) { showToast(`Save Failed`, 'error'); }
         }
 
@@ -1705,15 +1845,15 @@
         function prepareDirectPrint(studentId) {
             const student = window.finalStudentsData.find(s => s.studentId === studentId);
             if (!student) return showToast("Student data not found.", "error");
-        
+
             // Grab the global active exam type & session from the settings DOM
             const activeExamEl = document.getElementById('sysActiveExam');
             const sessionEl = document.getElementById('sysExamSession');
             const activeExam = activeExamEl ? activeExamEl.value : 'FY';
             const examSession = sessionEl ? sessionEl.value : '2025-2026';
-            
+
             const routineRow = window.allRoutines[activeExam] ? window.allRoutines[activeExam][student.studentClass] : null;
-        
+
             // Map data EXACTLY as admitDownloadByAdmin.html expects it
             let printPayload = {
                 'Student Name': student.studentName,
@@ -1723,12 +1863,12 @@
                 'Section': student.section,
                 'Roll No': student.rollNo,
                 'Serial Number': activeExam === 'HY' ? student.hySerial : student.fySerial,
-                'Photo URL': student.photoUrl || '', 
+                'Photo URL': student.photoUrl || '',
                 'Signature URL': student.signatureUrl || '',
                 'Exam Type': activeExam,      // Send to print page
                 'Session': examSession        // Send to print page
             };
-        
+
             if (routineRow) {
                 let colIndex = 1;
                 for (let i = 1; i <= 10; i++) {
@@ -1741,7 +1881,7 @@
                     colIndex += 2;
                 }
             }
-        
+
             localStorage.setItem('directPrintData', JSON.stringify(printPayload));
             window.open('admitDownloadByAdmin.html?mode=direct', '_blank');
         }
@@ -2038,10 +2178,117 @@
             openModal('confirmModal');
         }
 
+        // ==========================================
+        // DASHBOARD
+        // ==========================================
+        let _chartTrend = null;
+        let _chartClass = null;
+
+        async function renderDashboard() {
+            const [appsRes, studentsRes, configRes] = await Promise.all([
+                fetch(PENDING_SCRIPT_URL).then(r => r.json()).catch(() => ({ status: 'error', data: [] })),
+                fetch(`${FINAL_SCRIPT_URL}?token=${ADMIN_SECRET}&_=${Date.now()}`).then(r => r.json()).catch(() => ({ status: 'error', data: [] })),
+                fetch(`${FINAL_SCRIPT_URL}?action=get_config&token=${ADMIN_SECRET}&_=${Date.now()}`).then(r => r.json()).catch(() => ({ status: 'error', data: {} }))
+            ]);
+
+            const apps = appsRes.status === 'success' ? appsRes.data : [];
+            const students = studentsRes.status === 'success' ? studentsRes.data : [];
+            const conf = configRes.status === 'success' ? configRes.data : {};
+
+            if (appsRes.status === 'success') window.currentApplications = apps;
+            if (studentsRes.status === 'success') { window.finalStudentsData = students; window.allRoutines = studentsRes.routines || { 'HY': {}, 'FY': {} }; }
+
+            const examLabel = (conf.Active_Exam_Type === 'HY') ? 'Half-Yearly' : 'Final Year';
+            document.getElementById('dashSystemInfo').innerText = `${examLabel} Examination  •  Session: ${conf.Exam_Session || '—'}`;
+
+            document.getElementById('statTotalStudents').innerText = students.length;
+            document.getElementById('statPending').innerText = apps.filter(a => (a.status || 'Pending') === 'Pending').length;
+            document.getElementById('statReleased').innerText = students.filter(s => (s.admitStatus || 'Not Release') === 'Release').length;
+            document.getElementById('statNotReleased').innerText = students.filter(s => (s.admitStatus || 'Not Release') === 'Not Release').length;
+            document.getElementById('statBlocked').innerText = students.filter(s => (s.admitStatus || 'Not Release') === 'Block').length;
+
+            const appOn = conf.Portal_Status === 'ON';
+            const admitOn = conf.Admit_Portal_Status === 'ON';
+            const appBadge = document.getElementById('dashAppStatus');
+            const admitBadge = document.getElementById('dashAdmitStatus');
+            appBadge.innerText = appOn ? 'ACTIVE' : 'CLOSED';
+            appBadge.className = appOn ? 'px-2 py-0.5 text-[10px] font-bold rounded-md bg-emerald-100 text-emerald-700 border border-emerald-200' : 'px-2 py-0.5 text-[10px] font-bold rounded-md bg-red-100 text-red-700 border border-red-200';
+            admitBadge.innerText = admitOn ? 'ACTIVE' : 'CLOSED';
+            admitBadge.className = admitOn ? 'px-2 py-0.5 text-[10px] font-bold rounded-md bg-emerald-100 text-emerald-700 border border-emerald-200' : 'px-2 py-0.5 text-[10px] font-bold rounded-md bg-red-100 text-red-700 border border-red-200';
+
+            const isDark = document.documentElement.classList.contains('dark');
+            const gridColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
+            const labelColor = isDark ? '#94a3b8' : '#64748b';
+
+            const today = new Date(); today.setHours(0, 0, 0, 0);
+            const dayLabels = [];
+            const dayCounts = new Array(7).fill(0);
+            for (let i = 6; i >= 0; i--) {
+                const d = new Date(today); d.setDate(today.getDate() - i);
+                dayLabels.push(d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }));
+            }
+            apps.forEach(app => {
+                const raw = String(app.timestamp || '').replace(/^'/, '').trim();
+                const parts = raw.split(' '); if (!parts[0]) return;
+                const dp = parts[0].split('/'); if (dp.length < 3) return;
+                const appDate = new Date(parseInt(dp[2]), parseInt(dp[1]) - 1, parseInt(dp[0]));
+                appDate.setHours(0, 0, 0, 0);
+                const diff = Math.round((today - appDate) / 86400000);
+                if (diff >= 0 && diff <= 6) dayCounts[6 - diff]++;
+            });
+
+            if (_chartTrend) _chartTrend.destroy();
+            _chartTrend = new Chart(document.getElementById('chartApplicationsTrend').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: dayLabels,
+                    datasets: [{ label: 'Applications', data: dayCounts, backgroundColor: 'rgba(59,130,246,0.7)', borderColor: 'rgba(59,130,246,1)', borderWidth: 1, borderRadius: 6 }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { color: gridColor }, ticks: { color: labelColor, font: { size: 11 } } },
+                        y: { grid: { color: gridColor }, ticks: { color: labelColor, font: { size: 11 }, stepSize: 1, precision: 0 }, beginAtZero: true }
+                    }
+                }
+            });
+
+            const classNums = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
+            const relData = [], nrData = [], blData = [];
+            classNums.forEach(cls => {
+                const inClass = students.filter(s => String(s.studentClass) === cls);
+                relData.push(inClass.filter(s => (s.admitStatus || 'Not Release') === 'Release').length);
+                nrData.push(inClass.filter(s => (s.admitStatus || 'Not Release') === 'Not Release').length);
+                blData.push(inClass.filter(s => (s.admitStatus || 'Not Release') === 'Block').length);
+            });
+
+            if (_chartClass) _chartClass.destroy();
+            _chartClass = new Chart(document.getElementById('chartClassBreakdown').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: classNums.map(c => 'Cls ' + c),
+                    datasets: [
+                        { label: 'Released', data: relData, backgroundColor: 'rgba(16,185,129,0.8)', borderRadius: 4, stack: 'a' },
+                        { label: 'Not Released', data: nrData, backgroundColor: 'rgba(148,163,184,0.7)', borderRadius: 0, stack: 'a' },
+                        { label: 'Blocked', data: blData, backgroundColor: 'rgba(239,68,68,0.8)', borderRadius: 0, stack: 'a' }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: true, position: 'bottom', labels: { color: labelColor, font: { size: 11 }, boxWidth: 12, padding: 12 } } },
+                    scales: {
+                        x: { stacked: true, grid: { color: gridColor }, ticks: { color: labelColor, font: { size: 10 } } },
+                        y: { stacked: true, grid: { color: gridColor }, ticks: { color: labelColor, font: { size: 11 }, stepSize: 1, precision: 0 }, beginAtZero: true }
+                    }
+                }
+            });
+        }
+
         // INIT
         window.addEventListener('DOMContentLoaded', () => {
-            fetchData();
-            fetchSystemConfig(); // <-- Add this
+            switchTab('dashboard');
+            fetchSystemConfig();
         });
     </script>
 </body>
