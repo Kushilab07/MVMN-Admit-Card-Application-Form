@@ -74,6 +74,30 @@
             }
         }
     </style>
+    <style>
+        /* Show nav text in mobile drawer regardless of xl: classes */
+        @media (max-width: 1023px) {
+            #sidebar nav a span {
+                display: block !important;
+            }
+        }
+
+        /* Hide dashboard UI during Admit Card printing */
+        @media print {
+            #sidebar, header, main > div:not(#admitCardRender) {
+                display: none !important;
+            }
+            body, main {
+                background: white !important;
+                height: auto !important;
+                overflow: visible !important;
+            }
+            #admitCardRender {
+                display: block !important;
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 
 <body
@@ -86,13 +110,13 @@
     <div id="toast-container"
         class="fixed top-6 right-6 z-[99999] flex flex-col gap-3 w-full max-w-sm pointer-events-none"></div>
 
-    <aside
-        class="w-[10%] min-w-[80px] bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col transition-colors duration-300 flex-shrink-0">
-        <div class="h-16 flex items-center justify-center border-b border-slate-200 dark:border-slate-800">
+    <aside id="sidebar"
+        class="fixed inset-y-0 left-0 z-50 w-72 -translate-x-full lg:relative lg:inset-auto lg:z-auto lg:w-[10%] lg:min-w-[80px] lg:translate-x-0 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col transition-transform duration-300 ease-in-out flex-shrink-0">
+        <div class="h-14 flex items-center justify-center border-b border-slate-200 dark:border-slate-800">
             <div
                 class="flex items-center gap-2 text-blue-600 dark:text-blue-500 font-bold tracking-tight text-sm lg:text-base">
                 <i data-lucide="graduation-cap" class="w-6 h-6"></i>
-                <span class="hidden xl:block">MVMN</span>
+                <span class="block lg:hidden xl:block">MVMN</span>
             </div>
         </div>
 
@@ -118,23 +142,32 @@
             </a>
         </nav>
     </aside>
+    <div id="drawerBackdrop" onclick="closeDrawer()" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 hidden lg:hidden"></div>
 
     <main
-        class="w-[90%] flex flex-col h-screen overflow-hidden bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
+        class="w-full lg:w-[90%] flex flex-col h-screen overflow-hidden bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
 
         <header
-            class="h-16 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center px-8 flex-shrink-0 transition-colors duration-300">
-            <h1 class="font-semibold text-lg text-slate-800 dark:text-white">Exam Management System</h1>
+            class="h-[56px] bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 flex justify-between items-center px-6 lg:px-10 flex-shrink-0 transition-all duration-300 z-20 shadow-sm">
+            <div class="flex items-center gap-4">
+                <button onclick="toggleDrawer()" class="lg:hidden p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                    <i data-lucide="menu" class="w-5 h-5 text-slate-600 dark:text-slate-400"></i>
+                </button>
+                <h1 class="font-semibold text-lg text-slate-800 dark:text-white tracking-tight">
+                    <span class="hidden sm:inline">Exam Management System</span>
+                    <span class="sm:hidden">EMS</span>
+                </h1>
+            </div>
             <div class="flex items-center gap-5">
-                <div class="relative">
+                <div class="relative flex items-center">
                     <button id="bellBtn" onclick="toggleNotifications()"
-                        class="relative text-slate-500 hover:text-blue-600 transition-colors focus:outline-none">
+                        class="relative p-2 rounded-xl flex items-center justify-center text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-slate-800 transition-all focus:outline-none">
                         <i data-lucide="bell" class="w-5 h-5"></i>
                         <span id="notificationBadge"
-                            class="hidden absolute -top-1.5 -right-1.5 h-4 w-4 rounded-full bg-red-500 text-[10px] font-bold text-white flex items-center justify-center border border-white dark:border-slate-900">0</span>
+                            class="hidden absolute top-0 right-0 transform translate-x-1/4 -translate-y-1/4 h-4 w-4 rounded-full bg-red-500 text-[10px] font-bold text-white flex items-center justify-center border-2 border-white dark:border-slate-900">0</span>
                     </button>
                     <div id="notificationPanel"
-                        class="hidden absolute right-0 mt-3 w-80 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 z-[9999] overflow-hidden">
+                        class="hidden absolute right-0 top-full mt-2 w-80 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 z-[9999] overflow-hidden">
                         <div
                             class="p-3 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50">
                             <span class="font-bold text-sm text-slate-800 dark:text-slate-200">Notifications</span>
@@ -155,63 +188,73 @@
                 </button>
 
                 <button id="theme-toggle"
-                    class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all border border-slate-200 dark:border-slate-700 focus:outline-none">
+                    class="p-2 rounded-xl flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none">
                     <i data-lucide="moon" class="w-5 h-5 text-slate-600 dark:text-slate-400 block dark:hidden"></i>
                     <i data-lucide="sun" class="w-5 h-5 text-amber-500 hidden dark:block"></i>
                 </button>
-                <div
-                    class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-md cursor-pointer">
-                    A</div>
             </div>
         </header>
 
-        <div id="dashboardView" class="flex-1 flex flex-col p-8 overflow-y-auto custom-scrollbar">
-            <div class="mb-6 flex-shrink-0 flex items-center justify-between">
+        <div id="dashboardView" class="flex-1 flex flex-col p-4 sm:p-8 overflow-y-auto scrollbar-hide">
+            <div class="mb-6 flex-shrink-0 flex items-start sm:items-center justify-between w-full">
                 <div>
                     <h2 class="text-xl font-bold text-slate-900 dark:text-white">Dashboard</h2>
-                    <p id="dashSystemInfo" class="text-sm text-slate-500 dark:text-slate-400 mt-1">Loading system
-                        info...</p>
+                    <p id="dashSystemInfo" class="text-sm text-slate-500 dark:text-slate-400 mt-1">Loading system info...</p>
                 </div>
                 <button onclick="renderDashboard()"
-                    class="flex items-center gap-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 text-slate-700 dark:text-slate-300 px-4 py-2 rounded-xl text-sm font-medium transition-all shadow-sm">
+                    class="ml-auto flex items-center justify-center gap-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 text-slate-700 dark:text-slate-300 p-2.5 sm:px-4 sm:py-2 rounded-xl text-sm font-medium transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <i data-lucide="refresh-cw" class="w-4 h-4"></i>
                 </button>
             </div>
 
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6 flex-shrink-0">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-6 flex-shrink-0">
                 <div
-                    class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
+                class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md hover:border-blue-300 dark:hover:border-blue-700 hover:bg-blue-50/30 dark:hover:bg-slate-800/80 cursor-pointer active:scale-[0.98]">
                     <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Total Students</p>
                     <p id="statTotalStudents" class="text-3xl font-bold text-slate-800 dark:text-white">—</p>
-                    <p class="text-xs text-slate-400 mt-1">In final database</p>
+                    <p class="text-xs text-slate-400 mt-1">In the School</p>
                 </div>
                 <div
-                    class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
+                class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md hover:border-blue-300 dark:hover:border-blue-700 hover:bg-blue-50/30 dark:hover:bg-slate-800/80 cursor-pointer active:scale-[0.98]">
                     <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Pending Applications</p>
                     <p id="statPending" class="text-3xl font-bold text-amber-500">—</p>
                     <p class="text-xs text-slate-400 mt-1">Awaiting review</p>
                 </div>
                 <div
-                    class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Admit Cards</p>
-                    <div class="flex items-end gap-3 mt-1">
-                        <div>
-                            <p id="statReleased" class="text-2xl font-bold text-emerald-600">—</p>
-                            <p class="text-[10px] text-slate-400">Released</p>
+                class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md hover:border-blue-300 dark:hover:border-blue-700 hover:bg-blue-50/30 dark:hover:bg-slate-800/80 cursor-pointer active:scale-[0.98]">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Admit Cards</p>
+                    
+                    <!-- We use grid-cols-3 to guarantee exactly equal width for the 3 sections -->
+                    <div class="grid grid-cols-3 gap-2 w-full">
+                        
+                        <!-- Released -->
+                        <div class="flex flex-col items-center text-center">
+                            <p id="statReleased" class="text-2xl font-bold text-emerald-600 leading-none mb-1.5">—</p>
+                            <p class="text-[10px] text-slate-400 leading-tight font-medium uppercase">Released</p>
                         </div>
-                        <div>
-                            <p id="statNotReleased" class="text-2xl font-bold text-slate-500">—</p>
-                            <p class="text-[10px] text-slate-400">Not Released</p>
+                        
+                        <!-- Not Released -->
+                        <div class="flex flex-col items-center text-center">
+                            <p id="statNotReleased" class="text-2xl font-bold text-slate-500 leading-none mb-1.5">—</p>
+                            <p class="text-[10px] text-slate-400 leading-tight font-medium uppercase">Not Released</p>
                         </div>
-                        <div>
-                            <p id="statBlocked" class="text-2xl font-bold text-red-500">—</p>
-                            <p class="text-[10px] text-slate-400">Blocked</p>
+                        
+                        <!-- Blocked -->
+                        <div class="flex flex-col items-center text-center">
+                            <p id="statBlocked" class="text-2xl font-bold text-red-500 leading-none mb-1.5">—</p>
+                            <p class="text-[10px] text-slate-400 leading-tight font-medium uppercase">Blocked</p>
                         </div>
+                        
                     </div>
                 </div>
                 <div
-                    class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Portal Status</p>
+                class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md hover:border-blue-300 dark:hover:border-blue-700 hover:bg-blue-50/30 dark:hover:bg-slate-800/80 cursor-pointer active:scale-[0.98]">
+                <div class="flex justify-between items-center mb-2">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-0">Portal Status</p>
+                    <button onclick="fetchSystemConfig(this)" class="p-1.5 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors focus:outline-none">
+                        <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                    </button>
+                </div>
                     <div class="flex flex-col gap-2">
                         <div class="flex items-center justify-between">
                             <span class="text-xs text-slate-500">Application</span>
@@ -239,13 +282,14 @@
                 </div>
                 <div
                     class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
-                    <h3 class="text-sm font-bold text-slate-700 dark:text-slate-300 mb-4">Students by Class</h3>
+                    <h3 class="text-sm font-bold text-slate-700 dark:text-slate-300 mb-4">Students by Class with Admit
+                        Status</h3>
                     <div class="relative h-56"><canvas id="chartClassBreakdown"></canvas></div>
                 </div>
             </div>
         </div>
 
-        <div id="pendingView" class="flex-1 flex flex-col p-8 overflow-hidden">
+        <!-- <div id="pendingView" class="flex-1 flex flex-col p-4 lg:p-8 overflow-y-auto lg:overflow-hidden scrollbar-hide">
             <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-6 gap-4 flex-shrink-0">
                 <div>
                     <h2 class="text-xl font-bold text-slate-900 dark:text-white">Application Manager</h2>
@@ -270,7 +314,7 @@
                         <i data-lucide="search"
                             class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400"></i>
                         <input type="text" id="searchPending" placeholder="Search ID or Name..."
-                            onkeyup="filterPendingTable()"
+                            oninput="handlePendingSearch()"
                             class="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
 
@@ -287,14 +331,7 @@
 
             <div
                 class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm flex flex-col min-h-0 overflow-hidden transition-colors duration-300 relative">
-                <!-- <div id="newDataAlert"
-                    class="hidden flex justify-center w-full absolute top-8 left-0 z-40 pointer-events-none">
-                    <button onclick="loadNewData()"
-                        class="pointer-events-auto flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-full shadow-lg font-medium text-sm transition-transform transform translate-y-0 hover:-translate-y-1">
-                        <i data-lucide="arrow-up" class="w-4 h-4"></i>
-                        <span id="newDataText">1 New Application</span>
-                    </button>
-                </div> -->
+
                 <div class="flex-1 overflow-x-auto overflow-y-auto scrollbar-hide relative">
                     <table class="w-full text-left border-collapse min-w-max">
                         <thead class="sticky top-0 z-20 bg-slate-50/95 dark:bg-slate-800/95 backdrop-blur shadow-sm">
@@ -341,178 +378,77 @@
                     </table>
                 </div>
             </div>
-        </div>
+        </div> -->
 
-        <div id="studentsView" class="flex-1 flex flex-col p-8 overflow-hidden hidden">
-
-            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-6 gap-4 flex-shrink-0">
+        <!-- ================= PENDING APPLICATIONS TAB ================= -->
+        <div id="pendingView" class="flex-1 flex flex-col p-4 lg:p-8 overflow-y-auto scrollbar-hide">
+            <!-- 1. Header Row -->
+            <div class="flex items-start sm:items-center justify-between w-full mb-6 flex-shrink-0">
                 <div>
-                    <h2 class="text-xl font-bold text-slate-900 dark:text-white">Manage Students</h2>
-                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Add Students, Edit Records & Admit
-                        Status, Export and Delete</p>
+                    <h2 class="text-xl font-bold text-slate-900 dark:text-white">Application Manager</h2>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Edit Records, Approve Student Applications or Reject and Delete</p>
                 </div>
+                <button onclick="fetchData()" id="refreshBtn"
+                    class="ml-auto flex items-center justify-center gap-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 text-slate-700 dark:text-slate-300 p-2.5 sm:px-4 sm:py-2 rounded-xl text-sm font-medium transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <i data-lucide="refresh-cw" class="w-4 h-4" id="refreshIcon"></i>
+                    <span class="hidden sm:inline">Reload</span>
+                </button>
+            </div>
 
-                <div class="flex items-center gap-3 w-full lg:w-auto flex-wrap">
-                    <button onclick="bulkAction('Release')"
-                        class="px-3 py-1.5 text-sm font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg hover:bg-emerald-100 hidden bulk-btn">Release
-                        Admit</button>
-                    <button onclick="bulkAction('Block')"
-                        class="px-3 py-1.5 text-sm font-medium bg-red-50 text-red-700 border border-red-200 rounded-lg hover:bg-red-100 hidden bulk-btn">Block</button>
-                    <button onclick="exportData()"
-                        class="px-3 py-1.5 text-sm font-medium bg-slate-100 text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-200 flex items-center gap-1"><i
-                            data-lucide="download" class="w-4 h-4"></i> Export</button>
-
-                    <button onclick="openModal('addStudentModal')"
-                        class="px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-xl shadow hover:bg-blue-700 flex items-center gap-1 transition-colors"><i
-                            data-lucide="plus" class="w-4 h-4"></i> Add Student</button>
-
-                    <div class="relative">
-                        <button onclick="document.getElementById('advFilterPanel').classList.toggle('hidden')"
-                            class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700"><i
-                                data-lucide="filter" class="w-4 h-4"></i></button>
-                        <div id="advFilterPanel"
-                            class="hidden absolute right-0 mt-2 w-64 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 p-4 z-50">
-                            <h4 class="text-sm font-bold mb-3 dark:text-white">Advanced Filters</h4>
-                            <label class="block text-xs font-medium text-slate-500 mb-1">Section</label>
-                            <select id="filterSection" onchange="filterStudentsTable()"
-                                class="w-full mb-3 p-1.5 text-sm border rounded dark:bg-slate-900 dark:border-slate-700 dark:text-white">
-                                <option value="All">All Sections</option>
-                                <option value="MAHA">MAHA</option>
-                                <option value="RISHI">RISHI</option>
-                                <option value="NONE">NONE</option>
-                            </select>
-                            <label class="block text-xs font-medium text-slate-500 mb-1">Admit Status</label>
-                            <select id="filterStatus" onchange="filterStudentsTable()"
-                                class="w-full mb-3 p-1.5 text-sm border rounded dark:bg-slate-900 dark:border-slate-700 dark:text-white">
-                                <option value="All">All Statuses</option>
-                                <option value="Release">Release</option>
-                                <option value="Not Release">Not Release</option>
-                                <option value="Block">Block</option>
-                            </select>
-                            <label class="block text-xs font-medium text-slate-500 mb-1">Source</label>
-                            <select id="filterSource" onchange="filterStudentsTable()"
-                                class="w-full p-1.5 text-sm border rounded dark:bg-slate-900 dark:border-slate-700 dark:text-white">
-                                <option value="All">All Sources</option>
-                                <option value="Admin">Added By Admin</option>
-                            </select>
-                        </div>
+            <!-- 2. Toolbar Row -->
+            <div class="flex flex-col lg:flex-row items-start lg:items-center gap-3 mb-6 w-full flex-wrap flex-shrink-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                    <div class="flex bg-slate-100 dark:bg-slate-800/80 p-1 rounded-xl border border-slate-200 dark:border-slate-700 overflow-x-auto scrollbar-hide">
+                        <button onclick="setPendingFilter('All', this)" class="app-filter-btn px-4 py-1.5 text-sm font-medium rounded-lg border border-transparent text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500">All</button>
+                        <button onclick="setPendingFilter('Pending', this)" class="app-filter-btn px-4 py-1.5 text-sm font-medium rounded-lg bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 border border-slate-200 dark:border-slate-700 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500">Pending</button>
+                        <button onclick="setPendingFilter('Approved', this)" class="app-filter-btn px-4 py-1.5 text-sm font-medium rounded-lg border border-transparent text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500">Approved</button>
+                        <button onclick="setPendingFilter('Rejected', this)" class="app-filter-btn px-4 py-1.5 text-sm font-medium rounded-lg border border-transparent text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500">Rejected</button>
                     </div>
-
-                    <div class="relative w-full lg:w-56">
-                        <i data-lucide="search"
-                            class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400"></i>
-                        <input type="text" id="searchStudent" placeholder="Search ID or Name..."
-                            onkeyup="filterStudentsTable()"
-                            class="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <!-- Universal Delete Button Moved Here! -->
+                    <button onclick="openUniversalDeleteModal('pending')" class="flex items-center justify-center bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 p-2.5 rounded-xl transition-colors" title="Delete ALL Pending Applications"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                </div>
+                
+                <div class="flex items-center gap-3 w-full lg:w-auto lg:ml-auto mt-2 lg:mt-0">
+                    <div class="relative w-full lg:w-64">
+                        <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                        <input type="text" id="searchPending" placeholder="Search ID or Name..." oninput="handlePendingSearch()" class="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
-                    <button onclick="openUniversalDeleteModal('final')"
-                        class="flex items-center justify-center bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 p-2.5 rounded-xl transition-colors"
-                        title="Delete ALL Students"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                    <button onclick="fetchFinalStudents()" id="refreshBtnStudents"
-                        class="flex items-center gap-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 text-slate-700 dark:text-slate-300 px-4 py-2 rounded-xl text-sm font-medium shadow-sm">
-                        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
-                    </button>
                 </div>
             </div>
 
-            <!-- Students Table -->
-            <div class="flex items-center gap-2 mb-4 overflow-x-auto scrollbar-hide pb-2" id="classFilters">
-                <button onclick="applyClassFilter('All', this)"
-                    class="class-filter-btn filter-active bg-blue-600 dark:bg-blue-500 text-white px-4 py-1.5 rounded-full text-sm font-medium border border-blue-600 dark:border-blue-500 transition-colors whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">All</button>
-                <button onclick="applyClassFilter('1', this)"
-                    class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class
-                    1</button>
-                <button onclick="applyClassFilter('2', this)"
-                    class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class
-                    2</button>
-                <button onclick="applyClassFilter('3', this)"
-                    class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class
-                    3</button>
-                <button onclick="applyClassFilter('4', this)"
-                    class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class
-                    4</button>
-                <button onclick="applyClassFilter('5', this)"
-                    class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class
-                    5</button>
-                <button onclick="applyClassFilter('6', this)"
-                    class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class
-                    6</button>
-                <button onclick="applyClassFilter('7', this)"
-                    class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class
-                    7</button>
-                <button onclick="applyClassFilter('8', this)"
-                    class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class
-                    8</button>
-                <button onclick="applyClassFilter('9', this)"
-                    class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class
-                    9</button>
-                <button onclick="applyClassFilter('10', this)"
-                    class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class
-                    10</button>
-                <button onclick="applyClassFilter('11', this)"
-                    class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class
-                    11</button>
-                <button onclick="applyClassFilter('12', this)"
-                    class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class
-                    12</button>
-            </div>
-
-            <div
-                class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm flex flex-col min-h-0 overflow-hidden transition-colors duration-300 relative">
-                <div class="flex-1 overflow-x-auto overflow-y-auto scrollbar-hide relative">
-                    <table class="w-full text-left border-collapse min-w-max" id="studentsTableElement">
-                        <thead class="sticky top-0 z-30 bg-slate-50/95 dark:bg-slate-800/95 backdrop-blur shadow-sm">
-                            <tr
-                                class="border-b border-slate-200 dark:border-slate-800 text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold">
-                                <th
-                                    class="px-4 py-3 w-10 text-center sticky left-0 z-30 bg-slate-50 dark:bg-slate-900 shadow-[4px_0_10px_rgba(0,0,0,0.04)] border-r border-slate-200 dark:border-slate-800">
-                                    <input type="checkbox" id="selectAll" onclick="toggleSelectAll(this)"
-                                        class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-800">
-                                </th>
+            <!-- 3. Table -->
+            <!-- flex-shrink-0 is the secret here to let it grow vertically without getting squished by flexbox! -->
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm transition-colors duration-300 relative mb-12 flex-shrink-0">
+                <div class="overflow-x-auto scrollbar-hide relative rounded-2xl">
+                    <table class="w-full text-left border-collapse min-w-max">
+                        <thead class="bg-slate-50 dark:bg-slate-800/95 border-b border-slate-200 dark:border-slate-800">
+                            <tr class="text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold">
                                 <th class="px-4 py-3">
                                     <div>Date & Time</div>
-                                    <div
-                                        class="text-[10px] font-normal text-slate-400 normal-case mt-0.5 tracking-normal">
-                                        DD/MM/YYYY</div>
+                                    <div class="text-[10px] font-normal text-slate-400 normal-case mt-0.5 tracking-normal">DD/MM/YYYY</div>
                                 </th>
-                                <th class="px-4 py-3 border-r border-slate-200 dark:border-slate-700">Application ID
-                                </th>
+                                <th class="px-4 py-3 border-r border-slate-200 dark:border-slate-700">Application ID</th>
                                 <th class="px-4 py-3">Student ID</th>
-                                <th class="px-4 py-3">Name</th>
+                                <th class="px-4 py-3">Student Name</th>
                                 <th class="px-4 py-3">Class</th>
                                 <th class="px-4 py-3">Section</th>
-                                <th class="px-4 py-3">Roll</th>
+                                <th class="px-4 py-3">Roll No</th>
                                 <th class="px-4 py-3">
-                                    <div>DOB</div>
-                                    <div
-                                        class="text-[10px] font-normal text-slate-400 normal-case mt-0.5 tracking-normal">
-                                        DD/MM/YYYY</div>
+                                    <div>Date of Birth</div>
+                                    <div class="text-[10px] font-normal text-slate-400 normal-case mt-0.5 tracking-normal">DD/MM/YYYY</div>
                                 </th>
                                 <th class="px-4 py-3">Father's Name</th>
-                                <th class="px-4 py-3">Phone</th>
+                                <th class="px-4 py-3">Phone Number</th>
                                 <th class="px-4 py-3 border-r border-slate-200 dark:border-slate-800">Email ID</th>
-                                <th
-                                    class="px-4 py-3 border-x border-slate-200 dark:border-slate-800 bg-amber-50/50 dark:bg-amber-900/10 text-amber-700 dark:text-amber-500">
-                                    Admit Status</th>
-                                <th
-                                    class="px-4 py-3 bg-blue-50/50 dark:bg-blue-900/10 text-blue-700 dark:text-blue-400">
-                                    HY Serial No.</th>
-                                <th
-                                    class="px-4 py-3 bg-blue-50/50 dark:bg-blue-900/10 text-blue-700 dark:text-blue-400">
-                                    FY Serial No.</th>
-                                <th
-                                    class="px-4 py-3 text-center sticky right-0 z-20 bg-slate-50/95 dark:bg-slate-800/95 shadow-[-4px_0_10px_rgba(0,0,0,0.05)] w-[100px]">
-                                    Action</th>
+                                <th class="px-4 py-3 text-center sticky right-0 z-20 bg-slate-50 dark:bg-slate-800/95 shadow-[-4px_0_10px_rgba(0,0,0,0.04)] w-[120px]">Action</th>
                             </tr>
                         </thead>
-                        <tbody id="studentsTableBody" class="divide-y divide-slate-200 dark:divide-slate-800 text-sm">
+                        <tbody id="tableBody" class="divide-y divide-slate-200 dark:divide-slate-800 text-sm">
                             <tr>
-                                <td colspan="16" class="py-16 text-center">
+                                <td colspan="12" class="py-16 text-center">
                                     <div class="flex flex-col items-center justify-center gap-3 opacity-70">
-                                        <i data-lucide="loader-2"
-                                            class="w-8 h-8 animate-spin text-blue-600 dark:text-blue-400"></i>
-                                        <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Loading
-                                            student database...</span>
+                                        <i data-lucide="loader-2" class="w-8 h-8 animate-spin text-blue-600 dark:text-blue-400"></i>
+                                        <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Fetching applications...</span>
                                     </div>
                                 </td>
                             </tr>
@@ -522,17 +458,165 @@
             </div>
         </div>
 
-        <div id="settingsView" class="flex-1 flex flex-col p-8 overflow-y-auto custom-scrollbar hidden">
-            <div class="mb-6 flex-shrink-0">
-                <h2 class="text-xl font-bold text-slate-900 dark:text-white">System Settings</h2>
-                <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Master Control Room: Manage portal
-                    configurations, links, and global variables.</p>
+        <div id="studentsView" class="flex-1 flex flex-col p-4 lg:p-8 overflow-y-auto scrollbar-hide">
+            <!-- 1. Header Row -->
+            <div class="flex items-start sm:items-center justify-between w-full mb-6 flex-shrink-0">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900 dark:text-white">Manage Students</h2>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Add Students, Edit Records & Admit Status, Export and Delete</p>
+                </div>
+                <button onclick="fetchFinalStudents()" id="refreshBtnStudents"
+                    class="ml-auto flex items-center justify-center gap-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 text-slate-700 dark:text-slate-300 p-2.5 sm:px-4 sm:py-2 rounded-xl text-sm font-medium transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline">Reload</span>
+                </button>
+            </div>
+
+            <!-- 2. Toolbar Row -->
+            <div class="flex flex-col lg:flex-row items-start lg:items-center gap-3 mb-6 w-full flex-wrap flex-shrink-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                    <button onclick="bulkAction('Release')"
+                        class="px-3 py-1.5 text-sm font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg hover:bg-emerald-100 hidden bulk-btn transition-colors">Release Admit</button>
+                    <button onclick="bulkAction('Block')"
+                        class="px-3 py-1.5 text-sm font-medium bg-red-50 text-red-700 border border-red-200 rounded-lg hover:bg-red-100 hidden bulk-btn transition-colors">Block</button>
+                    <button onclick="exportData()"
+                        class="px-3 py-1.5 text-sm font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center gap-1 transition-colors"><i data-lucide="download" class="w-4 h-4"></i> Export</button>
+
+                    <button onclick="openModal('addStudentModal')"
+                        class="px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-xl shadow hover:bg-blue-700 flex items-center gap-1 transition-colors"><i data-lucide="plus" class="w-4 h-4"></i> Add Student</button>
+                    
+                    <!-- Universal Delete Button Moved Here! -->
+                    <button onclick="openUniversalDeleteModal('final')"
+                        class="flex items-center justify-center bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 p-2 lg:px-3 lg:py-2 rounded-xl transition-colors"
+                        title="Delete ALL Students"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                </div>
+
+                <div class="flex items-center gap-3 w-full lg:w-auto lg:ml-auto mt-2 lg:mt-0">
+                    <div class="relative w-full lg:w-56">
+                        <i data-lucide="search"
+                            class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                        <input type="text" id="searchStudent" placeholder="Search ID or Name..."
+                            oninput="handleStudentSearch()"
+                            class="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div class="relative">
+                        <button onclick="document.getElementById('advFilterPanel').classList.toggle('hidden')"
+                            class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"><i data-lucide="filter" class="w-4 h-4"></i></button>
+                        <div id="advFilterPanel"
+                            class="hidden absolute right-0 mt-2 w-64 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 p-4 z-50">
+                            <h4 class="text-sm font-bold mb-3 dark:text-white">Advanced Filters</h4>
+                            <label class="block text-xs font-medium text-slate-500 mb-1">Section</label>
+                            <select id="filterSection" onchange="filterStudentsTable()"
+                                class="w-full mb-3 p-1.5 text-sm border rounded dark:bg-slate-900 dark:border-slate-700 dark:text-white outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="All">All Sections</option>
+                                <option value="MAHA">MAHA</option>
+                                <option value="RISHI">RISHI</option>
+                                <option value="NONE">NONE</option>
+                            </select>
+                            <label class="block text-xs font-medium text-slate-500 mb-1">Admit Status</label>
+                            <select id="filterStatus" onchange="filterStudentsTable()"
+                                class="w-full mb-3 p-1.5 text-sm border rounded dark:bg-slate-900 dark:border-slate-700 dark:text-white outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="All">All Statuses</option>
+                                <option value="Release">Release</option>
+                                <option value="Not Release">Not Release</option>
+                                <option value="Block">Block</option>
+                            </select>
+                            <label class="block text-xs font-medium text-slate-500 mb-1">Source</label>
+                            <select id="filterSource" onchange="filterStudentsTable()"
+                                class="w-full p-1.5 text-sm border rounded dark:bg-slate-900 dark:border-slate-700 dark:text-white outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="All">All Sources</option>
+                                <option value="Admin">Added By Admin</option>
+                            </select>
+                        </div>
+                    </div>
+
+
+
+
+
+                </div>
+            </div>
+
+            <!-- Class Filters Row -->
+            <div class="flex items-center gap-2 mb-4 overflow-x-auto scrollbar-hide pb-2 flex-shrink-0" id="classFilters">
+                <button onclick="applyClassFilter('All', this)" class="class-filter-btn filter-active bg-blue-600 dark:bg-blue-500 text-white px-4 py-1.5 rounded-full text-sm font-medium border border-blue-600 dark:border-blue-500 transition-colors whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">All</button>
+                <button onclick="applyClassFilter('1', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class 1</button>
+                <button onclick="applyClassFilter('2', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class 2</button>
+                <button onclick="applyClassFilter('3', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class 3</button>
+                <button onclick="applyClassFilter('4', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class 4</button>
+                <button onclick="applyClassFilter('5', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class 5</button>
+                <button onclick="applyClassFilter('6', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class 6</button>
+                <button onclick="applyClassFilter('7', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class 7</button>
+                <button onclick="applyClassFilter('8', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class 8</button>
+                <button onclick="applyClassFilter('9', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class 9</button>
+                <button onclick="applyClassFilter('10', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class 10</button>
+                <button onclick="applyClassFilter('11', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class 11</button>
+                <button onclick="applyClassFilter('12', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class 12</button>
+            </div>
+
+            <!-- Full Page Scrolling Table Wrapper -->
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm transition-colors duration-300 relative mb-12">
+                <div class="overflow-x-auto scrollbar-hide relative rounded-2xl">
+                    <table class="w-full text-left border-collapse min-w-max" id="studentsTableElement">
+                        <thead class="bg-slate-50 dark:bg-slate-800/95 border-b border-slate-200 dark:border-slate-800">
+                            <tr class="text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold">
+                                <th class="px-4 py-3 w-10 text-center sticky left-0 z-20 bg-slate-50 dark:bg-slate-800/95 shadow-[4px_0_10px_rgba(0,0,0,0.04)] border-r border-slate-200 dark:border-slate-800">
+                                    <input type="checkbox" id="selectAll" onclick="toggleSelectAll(this)" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-800">
+                                </th>
+                                <th class="px-4 py-3">
+                                    <div>Date & Time</div>
+                                    <div class="text-[10px] font-normal text-slate-400 normal-case mt-0.5 tracking-normal">DD/MM/YYYY</div>
+                                </th>
+                                <th class="px-4 py-3 border-r border-slate-200 dark:border-slate-700">Application ID</th>
+                                <th class="px-4 py-3">Student ID</th>
+                                <th class="px-4 py-3">Name</th>
+                                <th class="px-4 py-3">Class</th>
+                                <th class="px-4 py-3">Section</th>
+                                <th class="px-4 py-3">Roll</th>
+                                <th class="px-4 py-3">
+                                    <div>DOB</div>
+                                    <div class="text-[10px] font-normal text-slate-400 normal-case mt-0.5 tracking-normal">DD/MM/YYYY</div>
+                                </th>
+                                <th class="px-4 py-3">Father's Name</th>
+                                <th class="px-4 py-3">Phone</th>
+                                <th class="px-4 py-3 border-r border-slate-200 dark:border-slate-800">Email ID</th>
+                                <th class="px-4 py-3 border-x border-slate-200 dark:border-slate-800 bg-amber-50/50 dark:bg-amber-900/10 text-amber-700 dark:text-amber-500">Admit Status</th>
+                                <th class="px-4 py-3 bg-blue-50/50 dark:bg-blue-900/10 text-blue-700 dark:text-blue-400">HY Serial No.</th>
+                                <th class="px-4 py-3 bg-blue-50/50 dark:bg-blue-900/10 text-blue-700 dark:text-blue-400">FY Serial No.</th>
+                                <th class="px-4 py-3 text-center sticky right-0 z-20 bg-slate-50 dark:bg-slate-800/95 shadow-[-4px_0_10px_rgba(0,0,0,0.04)] w-[100px]">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentsTableBody" class="divide-y divide-slate-200 dark:divide-slate-800 text-sm">
+                            <tr>
+                                <td colspan="16" class="py-16 text-center">
+                                    <div class="flex flex-col items-center justify-center gap-3 opacity-70">
+                                        <i data-lucide="loader-2" class="w-8 h-8 animate-spin text-blue-600 dark:text-blue-400"></i>
+                                        <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Loading student database...</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="settingsView" class="flex-1 flex flex-col p-4 sm:p-8 overflow-y-auto scrollbar-hide">
+            <div class="flex items-start sm:items-center justify-between w-full mb-6 flex-shrink-0">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900 dark:text-white">System Settings</h2>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Master Control Room: Manage portal configurations, links, and global variables.</p>
+                </div>
+                <button onclick="reloadSettingsAndRoutines(this)"
+                    class="ml-auto flex items-center justify-center gap-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 text-slate-700 dark:text-slate-300 p-2.5 sm:px-4 sm:py-2 rounded-xl text-sm font-medium transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                </button>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
                 <div
-                    class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+                    class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm transition-all duration-300 hover:shadow-md hover:border-purple-300 dark:hover:border-purple-700">
                     <div class="flex items-center gap-3 mb-6">
                         <div
                             class="w-10 h-10 rounded-full bg-purple-50 dark:bg-purple-900/30 flex items-center justify-center">
@@ -540,7 +624,7 @@
                         </div>
                         <h3 class="text-lg font-bold text-slate-800 dark:text-slate-200">Global Exam State</h3>
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 gap-4">
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Active
                                 Examination</label>
@@ -558,18 +642,20 @@
                                 class="w-full p-2.5 text-sm border border-slate-200 rounded-lg dark:bg-slate-800 dark:border-slate-700 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none">
                         </div>
                     </div>
-                    <div class="mt-6 border-t border-slate-100 dark:border-slate-800 pt-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg p-2 transition-colors flex items-center justify-between"
+                    <div class="mt-6 border-t border-slate-100 dark:border-slate-800 pt-4 cursor-pointer hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-xl p-3 transition-all duration-200 active:scale-[0.98] group flex items-center justify-between"
                         onclick="openModal('routineModal')">
                         <div>
-                            <p class="font-bold text-slate-800 dark:text-slate-200 text-sm">Exam Routines Setup</p>
+                            <p class="font-bold text-slate-800 dark:text-slate-200 text-sm group-hover:text-purple-700 dark:group-hover:text-purple-400 transition-colors">Exam Routines Setup</p>
                             <p class="text-xs text-slate-500">Create, edit, or delete exam dates & subjects.</p>
                         </div>
-                        <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400"></i>
+                        <div class="bg-white dark:bg-slate-800 p-1 rounded-lg shadow-sm border border-slate-100 dark:border-slate-700 group-hover:border-purple-200 dark:group-hover:border-purple-800 transition-colors">
+                            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-purple-600 transition-colors"></i>
+                        </div>
                     </div>
                 </div>
 
                 <div
-                    class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+                    class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm transition-all duration-300 hover:shadow-md hover:border-emerald-300 dark:hover:border-emerald-700">
                     <div class="flex items-center gap-3 mb-4">
                         <div
                             class="w-10 h-10 rounded-full bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center">
@@ -612,7 +698,7 @@
                 </div>
 
                 <div
-                    class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+                    class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm transition-all duration-300 hover:shadow-md hover:border-blue-300 dark:hover:border-blue-700">
                     <div class="flex items-center gap-3 mb-4">
                         <div
                             class="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center">
@@ -727,14 +813,20 @@
             class="fixed inset-0 z-[9999] hidden bg-slate-900/50 backdrop-blur-sm flex items-center justify-center opacity-0 transition-opacity duration-300">
             <div
                 class="bg-white dark:bg-slate-900 rounded-2xl shadow-xl max-w-3xl w-full p-6 transform scale-95 transition-transform duration-300 max-h-[90vh] overflow-y-auto custom-scrollbar">
-                <div
-                    class="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-3 mb-5">
+                <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-3 mb-5">
                     <h3 class="text-lg font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
                         <i data-lucide="calendar-clock" class="w-5 h-5 text-blue-600"></i> Manage Exam Routine
                     </h3>
-                    <button onclick="closeModal('routineModal')"
-                        class="text-slate-400 hover:text-red-500 transition-colors"><i data-lucide="x"
-                            class="w-5 h-5"></i></button>
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="reloadSettingsAndRoutines(this)" title="Reload Routines"
+                            class="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-slate-800 rounded-lg transition-colors focus:outline-none">
+                            <i data-lucide="refresh-cw" class="w-5 h-5"></i>
+                        </button>
+                        <button type="button" onclick="closeModal('routineModal')"
+                            class="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-slate-800 rounded-lg transition-colors focus:outline-none">
+                            <i data-lucide="x" class="w-5 h-5"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <form id="routineForm" onsubmit="submitRoutine(event)">
@@ -839,27 +931,6 @@
             </div>
         </div>
 
-        <!-- <div id="examTypeModal"
-            class="fixed inset-0 z-[9999] hidden bg-slate-900/50 backdrop-blur-sm flex items-center justify-center opacity-0 transition-opacity duration-300">
-            <div
-                class="bg-white dark:bg-slate-900 rounded-2xl shadow-xl max-w-sm w-full p-6 transform scale-95 transition-transform duration-300">
-                <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Download Admit Card</h3>
-                <p class="text-sm text-slate-500 mb-5">Select the examination type to generate the correct Admit Card
-                    and Serial Number.</p>
-                <div class="flex flex-col gap-3">
-                    <button onclick="generateAndPrintAdmitCard('HY')"
-                        class="py-2.5 border rounded-lg font-medium text-blue-700 bg-blue-50 border-blue-200 hover:bg-blue-100 transition-colors">Half-Yearly
-                        Examination</button>
-                    <button onclick="generateAndPrintAdmitCard('FY')"
-                        class="py-2.5 border rounded-lg font-medium text-purple-700 bg-purple-50 border-purple-200 hover:bg-purple-100 transition-colors">Final
-                        Year Examination</button>
-                </div>
-                <div class="mt-5 text-right"><button onclick="closeModal('examTypeModal')"
-                        class="px-4 py-2 text-sm text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">Cancel</button>
-                </div>
-            </div>
-        </div> -->
-
         <div id="addStudentModal"
             class="fixed inset-0 z-[9999] hidden bg-slate-900/50 backdrop-blur-sm flex items-center justify-center opacity-0 transition-opacity duration-300">
             <div
@@ -941,7 +1012,7 @@
         // 1. CONFIGURATION & GLOBALS
         // ==========================================
         const PENDING_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby6k0EClmq3WueP-0SwCuce3-z6W-PZW1pjRk3lzaIHe_xwG64qnKMWW2pDw2lAa9NW1A/exec";
-        const FINAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwExxF4bd05tuil5DQlplZA7BogjcpUmqtvxg5EIOwSOPW6Svi0CwFa6GKkz_3BBavRbQ/exec";
+        const FINAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyA4mSwvqmxHGgI2lzxZBsQyjD6FUhl3yIHeOg0PGH7tB_nUsS8VZLKm6ZyM8YkErpYEQ/exec";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBBkITpfUjxFUFvgQhjnXedrIX4GhfCSCo",
@@ -955,14 +1026,32 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // FIX: Added missing Admin Secret so the JS payload stops crashing!
-        const ADMIN_SECRET = "MVM_Secure_2026!";
+        // SECURE AUTHENTICATION: Pull the token from session storage (granted by login.html)
+        const ADMIN_SECRET = sessionStorage.getItem("adminToken");
+
+        // SECURITY CHECK: If there is no token in memory, immediately kick them to the login page
+        if (!ADMIN_SECRET) {
+            window.location.replace("login.html");
+        }
 
         window.currentApplications = [];
         window.finalStudentsData = [];
         window.allRoutines = { 'HY': {}, 'FY': {} }; // Holds universal timetables
         let currentClassFilter = 'All';
         let currentAppFilter = 'Pending';
+
+        // Debounce utility to prevent UI lag during search
+        function debounce(func, wait) {
+            let timeout;
+            return function(...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), wait);
+            };
+        }
+        
+        // Create debounced versions of your search functions
+        const handlePendingSearch = debounce(filterPendingTable, 300);
+        const handleStudentSearch = debounce(filterStudentsTable, 300);
 
         // Generate the 10 Routine Input Rows automatically
         let routineHTML = '';
@@ -1054,7 +1143,29 @@
         // ==========================================
         // 3. UI NAVIGATION & TOASTS
         // ==========================================
+        function toggleDrawer() {
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar.classList.contains('-translate-x-full')) {
+                openDrawer();
+            } else {
+                closeDrawer();
+            }
+        }
+        
+        function openDrawer() {
+            document.getElementById('sidebar').classList.remove('-translate-x-full');
+            document.getElementById('drawerBackdrop').classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // prevent background scroll
+        }
+        
+        function closeDrawer() {
+            document.getElementById('sidebar').classList.add('-translate-x-full');
+            document.getElementById('drawerBackdrop').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
         function switchTab(tabName) {
+            closeDrawer();
             ['dashboardView', 'pendingView', 'studentsView', 'settingsView'].forEach(id => document.getElementById(id).classList.add('hidden'));
             ['navDashboard', 'navPending', 'navStudents', 'navSettings'].forEach(id => {
                 document.getElementById(id).classList.remove('bg-blue-50', 'dark:bg-blue-900/20', 'text-blue-700', 'dark:text-blue-400');
@@ -1150,9 +1261,13 @@
                         if (memFinal) memFinal[fieldKey] = newValue;
                     }
 
-                    // Force a refresh if structural data changes so IDs and Sheets sort correctly
+                    // Re-sort and re-render the local data instantly instead of hitting the server again
                     if (['studentClass', 'section', 'rollNo', 'studentId'].includes(fieldKey)) {
-                        setTimeout(() => { if (dbType === 'pending') fetchData(); else fetchFinalStudents(); }, 600);
+                        if (dbType === 'pending') {
+                            filterPendingTable(); 
+                        } else {
+                            filterStudentsTable();
+                        }
                     }
                 } else throw new Error(result.message || "Unknown server error");
             } catch (err) {
@@ -1308,12 +1423,24 @@
         let memAppToken = ''; let memAdmitToken = '';
         let memAppClasses = ''; let memAppClose = ''; let memAdmitClose = '';
 
-        async function fetchSystemConfig() {
+        async function fetchSystemConfig(btn = null) {
+            // Stop click from bubbling up to the card
+            if (btn && event) event.stopPropagation();
+            
+            // Lucide replaces <i> with <svg>, so we must select the SVG to spin it!
+            let icon = null;
+            if (btn) {
+                icon = btn.querySelector('svg') || btn.querySelector('i');
+                if (icon) icon.classList.add('spin');
+            }
+            
             try {
                 const res = await fetch(`${FINAL_SCRIPT_URL}?action=get_config&token=${ADMIN_SECRET}&_=${Date.now()}`);
                 const result = await res.json();
                 if (result.status === 'success') {
                     const conf = result.data;
+                    
+                    // 1. Update Settings Tab Variables
                     document.getElementById('sysActiveExam').value = conf.Active_Exam_Type || 'FY';
                     document.getElementById('sysExamSession').value = conf.Exam_Session || '2025-2026';
 
@@ -1325,8 +1452,30 @@
 
                     updateToggleUI('app', conf.Portal_Status || 'OFF', memAppToken, memAppClose);
                     updateToggleUI('admit', conf.Admit_Portal_Status || 'OFF', memAdmitToken, memAdmitClose);
+
+                    // 2. Update Dashboard Badges directly
+                    const appOn = conf.Portal_Status === 'ON';
+                    const admitOn = conf.Admit_Portal_Status === 'ON';
+                    const appBadge = document.getElementById('dashAppStatus');
+                    const admitBadge = document.getElementById('dashAdmitStatus');
+                    
+                    if (appBadge && admitBadge) {
+                        appBadge.innerText = appOn ? 'ACTIVE' : 'CLOSED';
+                        appBadge.className = appOn ? 'px-2 py-0.5 text-[10px] font-bold rounded-md bg-emerald-100 text-emerald-700 border border-emerald-200' : 'px-2 py-0.5 text-[10px] font-bold rounded-md bg-red-100 text-red-700 border border-red-200';
+                        
+                        admitBadge.innerText = admitOn ? 'ACTIVE' : 'CLOSED';
+                        admitBadge.className = admitOn ? 'px-2 py-0.5 text-[10px] font-bold rounded-md bg-emerald-100 text-emerald-700 border border-emerald-200' : 'px-2 py-0.5 text-[10px] font-bold rounded-md bg-red-100 text-red-700 border border-red-200';
+                    }
+
+                    if (btn) showToast('Portal config synced', 'success');
                 }
-            } catch (e) { console.error("Config load failed", e); }
+            } catch (e) { 
+                console.error("Config load failed", e); 
+                if (btn) showToast('Sync failed', 'error');
+            } finally {
+                // Stop spinning the icon
+                if (icon) icon.classList.remove('spin');
+            }
         }
 
         function formatDateTime(msStr) {
@@ -2049,6 +2198,46 @@
         // ==========================================
         // SETTINGS: LOAD & SAVE ROUTINE TO DATABASE
         // ==========================================
+        async function reloadSettingsAndRoutines(btn) {
+            if (btn && event) event.stopPropagation();
+            
+            // Start spin animation
+            let icon = null;
+            if (btn) {
+                icon = btn.querySelector('svg') || btn.querySelector('i');
+                if (icon) icon.classList.add('spin');
+                btn.disabled = true;
+            }
+            
+            try {
+                // 1. Refresh System Config (silently)
+                await fetchSystemConfig();
+                
+                // 2. Refresh Routines (via the Final Students script)
+                const res = await fetch(`${FINAL_SCRIPT_URL}?token=${ADMIN_SECRET}`);
+                const result = await res.json();
+                
+                if (result.status === 'success') {
+                    window.allRoutines = result.routines || { 'HY': {}, 'FY': {} };
+                    
+                    // If the modal is currently open, instantly update the input fields with the fresh data
+                    if (!document.getElementById('routineModal').classList.contains('hidden')) {
+                        populateRoutineForm();
+                    }
+                    if (btn) showToast('Settings & Routines Synced', 'success');
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (err) {
+                console.error("Sync failed", err);
+                if (btn) showToast('Sync failed', 'error');
+            } finally {
+                // Stop spin animation
+                if (icon) icon.classList.remove('spin');
+                if (btn) btn.disabled = false;
+            }
+        }
+
         function populateRoutineForm() {
             const eType = document.getElementById('routineExamType').value;
             const cls = document.getElementById('routineClass').value;
