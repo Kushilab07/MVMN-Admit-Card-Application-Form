@@ -528,22 +528,23 @@
                 display: block !important;
                 width: 215.9mm !important; 
                 margin: 0 auto !important;
+                padding-top: 5mm !important; /* Top clearance for the first page */
             }
 
-            /* Force exact Legal dimensions to stop vertical spilling */
+            /* Create a "Safe Zone" inside the Legal paper so borders aren't clipped */
             .admit-card-page,
             .instructions-page {
-                width: 215.9mm !important;
-                height: 355mm !important; /* Roughly 14 inches, minus a tiny fraction to prevent blank overflow pages */
-                max-height: 355mm !important;
+                width: 195mm !important;  /* Shrunk from 215.9mm to pull left/right borders inward */
+                height: 335mm !important; /* Shrunk from 355mm to pull top/bottom borders inward */
+                max-height: 335mm !important;
+                margin: 0 auto 10mm auto !important; /* Centers the card and adds a bottom gap between pages */
                 border: 2px solid var(--school-blue) !important;
                 page-break-after: always !important;
                 page-break-inside: avoid !important;
                 box-shadow: none !important;
-                margin: 0 !important;
-                padding: 12mm !important;
+                padding: 10mm !important; /* Internal padding so text doesn't hit the new safe border */
                 box-sizing: border-box !important;
-                overflow: hidden !important; /* Forces content to stay inside the borders */
+                overflow: hidden !important; 
             }
         }
 
