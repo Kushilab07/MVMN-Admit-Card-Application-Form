@@ -222,7 +222,7 @@
            ========================================= */
 
         .page-container {
-            width: 210mm;
+            width: 215.9mm; /* Legal Paper Width */
             margin: 20px auto;
             display: none;
             /* Hidden until search */
@@ -460,10 +460,10 @@
             margin-top: 15px;
         }
 
-        /* PRINT STYLES - STRICTLY A4 FORMATTED */
+        /* PRINT STYLES - STRICTLY LEGAL FORMATTED */
         @media print {
             @page {
-                size: A4 portrait;
+                size: legal portrait; /* Forces mobile/desktop browsers to use 8.5" x 14" */
                 margin: 0; /* Strips out default browser margins */
             }
 
@@ -488,19 +488,19 @@
                 display: none !important;
             }
 
-            /* Force the container to exact A4 width, ignoring mobile screen size */
+            /* Force the container to exact Legal width */
             .page-container {
                 display: block !important;
-                width: 210mm !important; 
+                width: 215.9mm !important; 
                 margin: 0 auto !important;
             }
 
-            /* Force exact A4 dimensions to stop vertical spilling */
+            /* Force exact Legal dimensions to stop vertical spilling */
             .admit-card-page,
             .instructions-page {
-                width: 210mm !important;
-                height: 296mm !important; /* 1mm less than A4 to prevent accidental blank pages */
-                max-height: 296mm !important;
+                width: 215.9mm !important;
+                height: 355mm !important; /* Roughly 14 inches, minus a tiny fraction to prevent blank overflow pages */
+                max-height: 355mm !important;
                 border: 2px solid var(--school-blue) !important;
                 page-break-after: always !important;
                 page-break-inside: avoid !important;
