@@ -495,38 +495,55 @@
             margin-top: 15px;
         }
 
+        /* PRINT STYLES - STRICTLY A4 FORMATTED */
         @media print {
+            @page {
+                size: A4 portrait;
+                margin: 0; /* Strips out default browser margins */
+            }
+
             * {
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
 
             body {
-                padding: 0;
-                background: white;
-                margin: 0;
+                padding: 0 !important;
+                background: white !important;
+                margin: 0 !important;
             }
 
+            /* Hide all UI elements across both Admin and Student files */
+            .admin-container,
+            .login-overlay,
             .login-container,
+            #initLoader,
+            #closedMessageCard,
             .btn-area {
                 display: none !important;
             }
 
+            /* Force the container to exact A4 width, ignoring mobile screen size */
             .page-container {
                 display: block !important;
-                width: 100%;
-                margin: 0;
+                width: 210mm !important; 
+                margin: 0 auto !important;
             }
 
+            /* Force exact A4 dimensions to stop vertical spilling */
             .admit-card-page,
             .instructions-page {
-                border: 1px solid #000 !important;
-                min-height: 100vh;
-                page-break-after: always;
-                box-shadow: none;
-                margin: 0;
-                width: 100%;
-                box-sizing: border-box;
+                width: 210mm !important;
+                height: 296mm !important; /* 1mm less than A4 to prevent accidental blank pages */
+                max-height: 296mm !important;
+                border: 2px solid var(--school-blue) !important;
+                page-break-after: always !important;
+                page-break-inside: avoid !important;
+                box-shadow: none !important;
+                margin: 0 !important;
+                padding: 12mm !important;
+                box-sizing: border-box !important;
+                overflow: hidden !important; /* Forces content to stay inside the borders */
             }
         }
 
