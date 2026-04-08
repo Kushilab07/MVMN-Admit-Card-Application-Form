@@ -460,11 +460,11 @@
             margin-top: 15px;
         }
 
-        /* PRINT STYLES - STRICTLY LEGAL FORMATTED */
+        /* PRINT STYLES - BULLETPROOF LEGAL FORMATTED */
         @media print {
             @page {
-                size: legal portrait; /* Forces mobile/desktop browsers to use 8.5" x 14" */
-                margin: 0; /* Strips out default browser margins */
+                size: legal portrait;
+                margin: 10mm; /* Let the browser natively handle the perfect 4-sided safe zone */
             }
 
             * {
@@ -472,10 +472,12 @@
                 print-color-adjust: exact !important;
             }
 
-            body {
+            body, html {
                 padding: 0 !important;
-                background: white !important;
                 margin: 0 !important;
+                background: white !important;
+                width: 100% !important;
+                height: 100% !important;
             }
 
             /* Hide all UI elements across both Admin and Student files */
@@ -488,26 +490,24 @@
                 display: none !important;
             }
 
-            /* Force the container to exact Legal width */
             .page-container {
                 display: block !important;
-                width: 215.9mm !important; 
-                margin: 0 auto !important;
-                padding-top: 5mm !important; /* Top clearance for the first page */
+                width: 100% !important; 
+                margin: 0 !important;
+                padding: 0 !important;
             }
 
-            /* Create a "Safe Zone" inside the Legal paper so borders aren't clipped */
             .admit-card-page,
             .instructions-page {
-                width: 195mm !important;  /* Shrunk from 215.9mm to pull left/right borders inward */
-                height: 335mm !important; /* Shrunk from 355mm to pull top/bottom borders inward */
-                max-height: 335mm !important;
-                margin: 0 auto 10mm auto !important; /* Centers the card and adds a bottom gap between pages */
+                width: 100% !important; /* Take full width of the @page margin area */
+                height: 330mm !important; /* Strict height safely under the 355mm Legal limit to prevent page bleed */
+                max-height: 330mm !important;
+                margin: 0 !important; /* Removed manual margins, @page handles it now */
                 border: 2px solid var(--school-blue) !important;
                 page-break-after: always !important;
                 page-break-inside: avoid !important;
                 box-shadow: none !important;
-                padding: 10mm !important; /* Internal padding so text doesn't hit the new safe border */
+                padding: 10mm !important;
                 box-sizing: border-box !important;
                 overflow: hidden !important; 
             }
@@ -628,7 +628,7 @@
         };
 
         // Final Sheet URL
-        const API = 'https://script.google.com/macros/s/AKfycbyA4mSwvqmxHGgI2lzxZBsQyjD6FUhl3yIHeOg0PGH7tB_nUsS8VZLKm6ZyM8YkErpYEQ/exec';
+        const API = 'https://script.google.com/macros/s/AKfycbzyWAznrBo0sODWxruOJ3rmATu6egkwu9676BiGOqeeuIELR1dtRVj842mqTJSTHzv6sQ/exec';
 
         // LOGIN LOGIC
         //document.getElementById('loginForm').addEventListener('submit', function (e) {
