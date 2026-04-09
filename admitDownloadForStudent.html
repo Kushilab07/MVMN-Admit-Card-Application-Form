@@ -509,6 +509,7 @@
             body {
                 padding: 0;
                 background: white;
+                margin: 0;
             }
 
             .login-container,
@@ -523,12 +524,15 @@
             }
 
             .admit-card-page,
-            .instructions-page {
-                border: 1px solid #000 !important;
-                height: 296mm;
-                page-break-after: always;
-                box-shadow: none;
-            }
+.instructions-page {
+    border: 1px solid #000 !important;
+    min-height: 100vh;
+    page-break-after: always;
+    box-shadow: none;
+    margin: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
         }
 
         #initLoader {
@@ -647,7 +651,9 @@
     </div>
 
     <div class="btn-area" id="actionArea">
-        <button class="print-btn" onclick="window.print()"><i class="fa-solid fa-print"></i> Print Admit Card</button>
+        <button class="print-btn" onclick="triggerPrint()">
+    <i class="fa-solid fa-print"></i> Print Admit Card
+</button>
     </div>
 
     <script>
@@ -772,6 +778,21 @@
             const d = new Date(dStr);
             return `${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}-${d.getFullYear()}`;
         }
+
+        function triggerPrint() {
+    // Remove any previously injected page size style
+    const old = document.getElementById('_dynPageSize');
+    if (old) old.remove();
+
+    const style = document.createElement('style');
+    style.id = '_dynPageSize';
+    // Force Legal on mobile (under 1024px), keep Legal on desktop too
+    const size = window.innerWidth < 1024 ? 'legal' : 'legal';
+    style.textContent = `@page { size: ${size} portrait; }`;
+    document.head.appendChild(style);
+
+    window.print();
+}
 
         function renderCard(data) {
             const now = new Date();
