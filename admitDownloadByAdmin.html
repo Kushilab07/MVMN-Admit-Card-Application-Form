@@ -460,22 +460,11 @@
             margin-top: 15px;
         }
 
-        /* =========================================
-           PRINT STYLES - STRICT LEGAL & MOBILE FIX
-           ========================================= */
+        /* PRINT STYLES - STRICTLY ORIGINAL */
         @media print {
-            
-            @page {
-                size: legal portrait !important; /* Strictly request Legal size */
-                margin: 12mm !important;         /* Force exactly equal margins on all 4 sides */
-            }
 
-            html, body {
-                width: 100%;
-                height: 100%; /* Required for the percentage fix below */
-                margin: 0 !important;
-                padding: 0 !important;
-                background: white;
+            @page {
+                size: legal portrait;
             }
 
             * {
@@ -483,39 +472,34 @@
                 print-color-adjust: exact !important;
             }
 
-            /* Hide all UI elements */
-            .admin-container, 
-            .login-overlay, 
-            .login-container, 
-            .btn-area {
+            body {
+                padding: 0;
+                background: white;
+                margin: 0;
+            }
+
+            /* Hide Admin UI */
+            .admin-container,
+            .login-overlay {
                 display: none !important;
             }
 
+            /* Show Admit Card */
             .page-container {
                 display: block !important;
                 width: 100%;
-                height: 100%;
                 margin: 0;
-                padding: 0;
             }
 
-            /* The Mobile Overflow & Border Fix */
             .admit-card-page,
             .instructions-page {
-                border: 2px solid #000 !important; /* Slightly thinner border prints cleaner */
-                
-                min-height: auto !important; /* Kills the 100vh bug causing 4 pages */
-                height: 97% !important;      /* Stretches to fill paper height minus a tiny safety buffer */
-                max-height: 97% !important;
-                width: 100% !important;      /* Adapts perfectly to the 12mm margins */
-                
-                margin: 0 auto !important;
-                box-sizing: border-box !important;
-                
-                /* Strictly prevent the border from splitting */
-                page-break-inside: avoid !important; 
-                page-break-after: always !important;
-                overflow: hidden !important; 
+                border: 1px solid #000 !important;
+                height: 296mm; /*!important; / * 2. Dynamically stretches the border to perfectly fit Legal, A4, or Letter */
+                page-break-after: always;
+                box-shadow: none;
+                margin: 0;
+                width: 100%;
+                box-sizing: border-box;
             }
         }
     </style>
