@@ -222,7 +222,7 @@
            ========================================= */
 
         .page-container {
-            width: 215.9mm; /* Legal Paper Width */
+            width: 210mm;
             margin: 20px auto;
             display: none;
             /* Hidden until search */
@@ -460,11 +460,11 @@
             margin-top: 15px;
         }
 
-        /* PRINT STYLES - BULLETPROOF LEGAL FORMATTED */
+        /* PRINT STYLES - STRICTLY ORIGINAL */
         @media print {
+
             @page {
                 size: legal portrait;
-                margin: 10mm; /* Let the browser natively handle the perfect 4-sided safe zone */
             }
 
             * {
@@ -472,44 +472,34 @@
                 print-color-adjust: exact !important;
             }
 
-            body, html {
-                padding: 0 !important;
-                margin: 0 !important;
-                background: white !important;
-                width: 100% !important;
-                height: 100% !important;
+            body {
+                padding: 0;
+                background: white;
+                margin: 0;
             }
 
-            /* Hide all UI elements across both Admin and Student files */
+            /* Hide Admin UI */
             .admin-container,
-            .login-overlay,
-            .login-container,
-            #initLoader,
-            #closedMessageCard,
-            .btn-area {
+            .login-overlay {
                 display: none !important;
             }
 
+            /* Show Admit Card */
             .page-container {
                 display: block !important;
-                width: 100% !important; 
-                margin: 0 !important;
-                padding: 0 !important;
+                width: 100%;
+                margin: 0;
             }
 
             .admit-card-page,
             .instructions-page {
-                width: 100% !important; /* Take full width of the @page margin area */
-                height: 330mm !important; /* Strict height safely under the 355mm Legal limit to prevent page bleed */
-                max-height: 330mm !important;
-                margin: 0 !important; /* Removed manual margins, @page handles it now */
-                border: 2px solid var(--school-blue) !important;
-                page-break-after: always !important;
-                page-break-inside: avoid !important;
-                box-shadow: none !important;
-                padding: 10mm !important;
-                box-sizing: border-box !important;
-                overflow: hidden !important; 
+                border: 1px solid #000 !important;
+                min-height: 100vh; /*!important; / * 2. Dynamically stretches the border to perfectly fit Legal, A4, or Letter */
+                page-break-after: always;
+                box-shadow: none;
+                margin: 0;
+                width: 100%;
+                box-sizing: border-box;
             }
         }
     </style>
@@ -628,7 +618,7 @@
         };
 
         // Final Sheet URL
-        const API = 'https://script.google.com/macros/s/AKfycbzyWAznrBo0sODWxruOJ3rmATu6egkwu9676BiGOqeeuIELR1dtRVj842mqTJSTHzv6sQ/exec';
+        const API = 'https://script.google.com/macros/s/AKfycbyA4mSwvqmxHGgI2lzxZBsQyjD6FUhl3yIHeOg0PGH7tB_nUsS8VZLKm6ZyM8YkErpYEQ/exec';
 
         // LOGIN LOGIC
         //document.getElementById('loginForm').addEventListener('submit', function (e) {
