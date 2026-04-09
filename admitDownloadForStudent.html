@@ -495,10 +495,19 @@
             margin-top: 15px;
         }
 
+        /* PRINT STYLES - FIXED FOR MOBILE & DESKTOP */
         @media print {
-
+            
             @page {
-                size: legal portrait;
+                size: legal portrait; /* Desktop will still default to Legal */
+                margin: 12mm; /* FIX: Forces EXACTLY equal margins on all sides, fixing the uneven mobile spacing */
+            }
+
+            html, body {
+                padding: 0 !important;
+                margin: 0 !important;
+                background: white;
+                height: 100% !important; /* Required for the percentage height fix below */
             }
 
             * {
@@ -506,13 +515,10 @@
                 print-color-adjust: exact !important;
             }
 
-            body {
-                padding: 0;
-                background: white;
-                margin: 0;
-            }
-
-            .login-container,
+            /* Hide UI components (Applies safely to both Admin and Student files) */
+            .admin-container, 
+            .login-overlay, 
+            .login-container, 
             .btn-area {
                 display: none !important;
             }
@@ -520,18 +526,25 @@
             .page-container {
                 display: block !important;
                 width: 100%;
+                height: 100%;
                 margin: 0;
             }
 
             .admit-card-page,
             .instructions-page {
-                border: 1px solid #000 !important;
-                min-height: 100vh;
-                page-break-after: always;
-                box-shadow: none;
-                margin: 0;
-                width: 100%;
+                border: 2px solid #000 !important; /* Slightly thinner border scales better on mobile print */
+                
+                /* --- THE MOBILE FIX --- */
+                min-height: auto !important; /* Kills the 100vh bug that causes 4 pages */
+                height: 98% !important;      /* Stretches to the paper size without overflowing */
+                max-height: 98% !important;
+                width: 100% !important;      /* Adapts perfectly to the 12mm @page margin */
+                /* ------------------------ */
+                
+                margin: 0 auto !important;
                 box-sizing: border-box;
+                page-break-after: always;
+                page-break-inside: avoid;    /* Strictly prevents the border from breaking in half */
             }
         }
 
