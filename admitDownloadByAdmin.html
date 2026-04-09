@@ -492,15 +492,15 @@
             }
 
             .admit-card-page,
-            .instructions-page {
-                border: 1px solid #000 !important;
-                height: 296mm; /*!important; / * 2. Dynamically stretches the border to perfectly fit Legal, A4, or Letter */
-                page-break-after: always;
-                box-shadow: none;
-                margin: 0;
-                width: 100%;
-                box-sizing: border-box;
-            }
+.instructions-page {
+    border: 1px solid #000 !important;
+    min-height: 100vh;
+    page-break-after: always;
+    box-shadow: none;
+    margin: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
         }
     </style>
 </head>
@@ -595,8 +595,16 @@
 
                     // 4. Trigger print automatically once fonts are loaded
                     document.fonts.ready.then(() => {
-                        setTimeout(() => { window.print(); }, 300);
-                    });
+    setTimeout(() => {
+        const old = document.getElementById('_dynPageSize');
+        if (old) old.remove();
+        const style = document.createElement('style');
+        style.id = '_dynPageSize';
+        style.textContent = '@page { size: legal portrait; }';
+        document.head.appendChild(style);
+        window.print();
+    }, 300);
+});
                 } else {
                     alert("Error: No print data found. Please trigger this from the main Admin Portal.");
                 }
