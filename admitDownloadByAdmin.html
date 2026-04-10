@@ -503,59 +503,6 @@
 
 <body>
 
-    <!-- 1. LOGIN SCREEN -->
-    <!-- <div class="login-overlay" id="loginScreen">
-        <div class="login-box">
-            <img src="logo.png" style="width: 80px; margin-bottom: 10px;">
-            <h2 style="margin: 5px 0 20px 0; color: var(--admin-dark);">ADMIN LOGIN</h2>
-            <form id="loginForm">
-                <input type="email" id="adminId" placeholder="Admin ID" required>
-                <input type="password" id="adminPass" placeholder="Password" required>
-                <button type="submit" class="login-btn" id="loginBtn">SECURE LOGIN</button>
-            </form>
-            <div id="loginMsg" style="color: red; margin-top: 10px; font-size: 13px; font-weight: bold;"></div>
-        </div>
-    </div> -->
-
-    <!-- 2. ADMIN DASHBOARD -->
-    <!-- <div class="admin-container" id="adminDashboard" style="display: none;">
-
-        <div class="dashboard-header">
-            <div class="admin-title">
-                <h1>MVM NALBARI | ADMIN CONSOLE</h1>
-            </div>
-            <div onclick="location.reload()" class="logout-btn">Logout <i class="fa-solid fa-right-from-bracket"></i>
-            </div>
-        </div>
-
-        <div class="search-panel">
-            <h3 style="margin-top: 0; color: #555;">Search Student Database</h3>
-            <div class="search-row">
-                <input type="text" id="searchInput" class="search-input"
-                    placeholder="Enter Student ID (e.g., MVM/2025/001) or Serial No.">
-                <button class="search-btn" id="searchBtn" onclick="searchStudent()">SEARCH</button>
-            </div>
-        </div> -->
-
-        <!-- Result & Actions -->
-        <!-- <div class="result-panel" id="resultArea">
-            <div class="result-header">
-                <div>
-                    <h2 style="margin: 0; font-size: 18px;" id="resName">Student Name</h2>
-                    <div style="font-size: 13px; color: #666; margin-top: 4px;" id="resInfo">ID: 12345 | Class X</div>
-                </div>
-                <div id="statusBadge" class="status-tag tag-active">ACTIVE</div>
-            </div>
-            <div class="admin-actions">
-                <span class="override-msg"><i class="fa-solid fa-lock-open"></i> Admin Override: Download enabled for
-                    blocked/held cards.</span>
-                <button class="print-admin-btn" onclick="window.print()">
-                    <i class="fa-solid fa-print"></i> PRINT ADMIT CARD
-                </button>
-            </div>
-        </div>
-    </div> -->
-
     <!-- 3. ADMIT CARD RENDER AREA (STRICTLY ORIGINAL LAYOUT) -->
     <div class="page-container" id="admitCardRender">
         <!-- HTML Injected Here via JS -->
@@ -572,9 +519,6 @@
             // DIRECT PRINT MODE (Triggered from allinoneAdmin.html)
             // -----------------------------------------------------------------
             if (urlParams.get('mode') === 'direct') {
-                // 1. Hide Admin Dashboards & Login completely
-                //document.getElementById('loginScreen').style.display = 'none';
-                //document.getElementById('adminDashboard').style.display = 'none';
 
                 // 2. Fetch the bundled data passed from the main admin page
                 const rawData = localStorage.getItem('directPrintData');
@@ -598,106 +542,10 @@
                 }
                 return; // Halt further execution
             }
-
-            // -----------------------------------------------------------------
-            // STANDARD SEARCH MODE (If accessed directly via ?search=ID)
-            // -----------------------------------------------------------------
-            //const searchId = urlParams.get('search');
-            //const authCode = urlParams.get('auth');
-
-            //if (searchId && authCode === 'MVM_Secure_2026!') {
-            //    document.getElementById('loginScreen').style.display = 'none';
-            //    document.getElementById('adminDashboard').style.display = 'block';
-            //    document.getElementById('searchInput').value = searchId;
-            //    searchStudent(); // This triggers the DB fetch
-            //}
         };
 
         // Final Sheet URL
-        const API = 'https://script.google.com/macros/s/AKfycbyA4mSwvqmxHGgI2lzxZBsQyjD6FUhl3yIHeOg0PGH7tB_nUsS8VZLKm6ZyM8YkErpYEQ/exec';
-
-        // LOGIN LOGIC
-        //document.getElementById('loginForm').addEventListener('submit', function (e) {
-        //    e.preventDefault();
-        //    const id = document.getElementById('adminId').value;
-        //    const pass = document.getElementById('adminPass').value;
-        //    const btn = document.getElementById('loginBtn');
-        //    const msg = document.getElementById('loginMsg');
-
-        //    btn.innerHTML = 'Verifying...';
-
-            // Hardcoded Check
-        //    if (id === 'admit@mvm.com' && pass === 'Mvm#2018') {
-        //        setTimeout(() => {
-        //            document.getElementById('loginScreen').style.display = 'none';
-        //            document.getElementById('adminDashboard').style.display = 'block';
-        //        }, 500);
-        //    } else {
-        //        setTimeout(() => {
-        //            msg.innerText = "Invalid Admin Credentials";
-        //            btn.innerHTML = 'SECURE LOGIN';
-        //        }, 500);
-        //    }
-        //});
-
-        // SEARCH LOGIC
-        //async function searchStudent() {
-        //    const query = document.getElementById('searchInput').value.trim().toUpperCase();
-        //    const btn = document.getElementById('searchBtn');
-        //    const resPanel = document.getElementById('resultArea');
-        //    const renderArea = document.getElementById('admitCardRender');
-
-        //    if (!query) return alert("Enter ID or Serial Number");
-
-        //    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
-        //    btn.disabled = true;
-        //    resPanel.style.display = 'none';
-        //    renderArea.style.display = 'none';
-
-        //    try {
-        //        const res = await fetch(API);
-        //        const json = await res.json();
-
-                // Find by ID OR Serial Number
-        //        const student = json.data.find(x =>
-        //            String(x['Student ID']).toUpperCase() === query ||
-        //            String(x['Serial Number']).toUpperCase() === query
-        //        );
-
-        //       if (student) {
-        //            displayAdminResult(student);
-         //           renderCard(student);
-        //        } else {
-        //            alert("Student not found!");
-        //        }
-        //    } catch (err) {
-        //        alert("Database Error");
-        //    } finally {
-        //        btn.innerHTML = 'SEARCH';
-        //        btn.disabled = false;
-        //    }
-        //}
-
-        // DISPLAY ADMIN STATUS
-        //function displayAdminResult(data) {
-        //    document.getElementById('resultArea').style.display = 'block';
-        //    document.getElementById('resName').innerText = data['Student Name'];
-        //    document.getElementById('resInfo').innerText = `ID: ${data['Student ID']} | Class: ${data['Class']}-${data['Section']}`;
-
-        //    const status = String(data['Status'] || '').trim().toLowerCase();
-        //    const badge = document.getElementById('statusBadge');
-
-        //    if (status === 'block') {
-        //        badge.className = 'status-tag tag-block';
-        //        badge.innerText = 'BLOCKED (DUES)';
-        //    } else if (status === 'not release') {
-        //        badge.className = 'status-tag tag-hold';
-        //        badge.innerText = 'NOT RELEASED';
-        //    } else {
-        //        badge.className = 'status-tag tag-active';
-        //        badge.innerText = 'ACTIVE';
-        //    }
-        //}
+        const API = 'https://script.google.com/macros/s/AKfycbzyWAznrBo0sODWxruOJ3rmATu6egkwu9676BiGOqeeuIELR1dtRVj842mqTJSTHzv6sQ/exec';
 
         function formatDate(dStr) {
             if (!dStr) return '';
