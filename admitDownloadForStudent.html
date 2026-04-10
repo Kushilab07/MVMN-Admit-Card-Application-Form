@@ -497,11 +497,6 @@
 
         @media print {
 
-            @page {
-                size: legal portrait;
-                margin: 0;
-            }
-
             * {
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
@@ -510,11 +505,11 @@
             body {
                 padding: 0;
                 background: white;
+                margin: 0;
             }
 
             .login-container,
-            .btn-area,
-            #mobilePrintWarning {
+            .btn-area {
                 display: none !important;
             }
 
@@ -524,25 +519,15 @@
                 margin: 0;
             }
 
-            /* FIX: Removed height: 296mm which caused blank page + overflow on mobile.
-               Page separation handled by page-break-after + break-after. */
             .admit-card-page,
             .instructions-page {
                 border: 1px solid #000 !important;
+                height: 100%;
                 page-break-after: always;
-                break-after: page;
                 box-shadow: none;
-                padding: 10mm !important;
-                margin: 0 !important;
-                width: 100% !important;
+                margin: 0;
+                width: 100%;
                 box-sizing: border-box;
-                height: auto;
-                min-height: unset;
-            }
-
-            .footer-sigs {
-                margin-top: 20px !important;
-                padding-top: 20px !important;
             }
         }
 
@@ -662,28 +647,9 @@
     </div>
 
     <div class="btn-area" id="actionArea">
-        <button class="print-btn" onclick="printAdmitCard()"><i class="fa-solid fa-print"></i> Print Admit Card</button>
+        <button class="print-btn" onclick="window.print()"><i class="fa-solid fa-print"></i> Print Admit Card</button>
     </div>
 
-    <!-- Mobile Paper Size Warning -->
-    <div id="mobilePrintWarning" style="display:none; position:fixed; bottom:70px; left:0; right:0; background:#856404; color:#fff8e1; padding:10px 15px; font-size:13px; font-weight:700; text-align:center; z-index:9999; border-radius:8px 8px 0 0;">
-        ⚠️ In the print dialog, set Paper Size to <u>Legal (8.5×14)</u> for best results.
-        <span onclick="document.getElementById('mobilePrintWarning').style.display='none'" style="float:right;cursor:pointer;font-size:16px;">✕</span>
-    </div>
-
-    <script>
-        // FIX: Wait for all fonts (including Libre Barcode 39) to load before printing.
-        // Calling window.print() before fonts load on mobile produces a 0-byte PDF.
-        function printAdmitCard() {
-            if (/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)) {
-                document.getElementById('mobilePrintWarning').style.display = 'block';
-            }
-            document.fonts.ready.then(() => {
-                setTimeout(() => { window.print(); }, 500);
-            });
-        }
-
-    </script>
     <script>
         // Final Sheet URL
         const API = 'https://script.google.com/macros/s/AKfycbyA4mSwvqmxHGgI2lzxZBsQyjD6FUhl3yIHeOg0PGH7tB_nUsS8VZLKm6ZyM8YkErpYEQ/exec';
@@ -892,7 +858,7 @@
                             <li>The admit card must clearly display all student details, the barcode, and the principal's signature. Admit cards without these will not be accepted.</li>
                             <li>Students must verify all details carefully before printing the admit card. In case of any errors, immediately inform the school administration.</li>
                         </ol>
-                        <div style="margin-top: 30px; position: relative; z-index: 1;">
+                        <div style="margin-top: auto; position: relative; z-index: 1;">
                             <div style="text-align: center;"><div class="hash-disp" style="font-family: 'Libre Barcode 39', cursive !important; font-size: 40px; color:#000 !important;">${barcodeID}</div></div>
                             <div class="page-timestamp-footer">Issued: ${issuedTime}</div>
                         </div>
