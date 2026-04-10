@@ -582,6 +582,73 @@
             color: var(--exam-red);
             margin-top: 0;
         }
+
+        /* --- MOBILE RESPONSIVENESS FIXES --- */
+        @media screen and (max-width: 768px) {
+
+            /* 1. Override the rigid A4 width for screens */
+            .page-container {
+                width: 100%;
+                padding: 0 10px;
+                box-sizing: border-box;
+            }
+
+            .admit-card-page,
+            .instructions-page {
+                padding: 15px;
+                /* Shrink the 12mm padding for mobile */
+            }
+
+            /* 2. Stack the header elements */
+            .header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .header-text h1 {
+                font-size: 20px;
+            }
+
+            /* 3. Stack the student details and photo vertically */
+            .content-flex {
+                flex-direction: column-reverse;
+                /* Puts photo above details */
+                align-items: center;
+            }
+
+            .lbl {
+                width: 120px;
+                /* Shrink label column width */
+            }
+
+            .details-table td {
+                font-size: 14px;
+            }
+
+            /* 4. Make the exam table scrollable horizontally if needed */
+            .exam-table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+
+            /* 5. Shrink the barcode font so it doesn't blow out the container */
+            .barcode-disp {
+                font-size: 45px;
+            }
+
+            /* 6. Stack the signatures vertically */
+            .footer-sigs {
+                flex-direction: column;
+                align-items: center;
+                gap: 30px;
+                padding-top: 25px;
+            }
+
+            .sig-item {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 
