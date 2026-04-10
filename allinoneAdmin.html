@@ -201,7 +201,7 @@
                     <h2 class="text-xl font-bold text-slate-900 dark:text-white">Dashboard</h2>
                     <p id="dashSystemInfo" class="text-sm text-slate-500 dark:text-slate-400 mt-1">Loading system info...</p>
                 </div>
-                <button onclick="renderDashboard()"
+                <button onclick="renderDashboard(this)"
                     class="ml-auto flex items-center justify-center gap-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 text-slate-700 dark:text-slate-300 p-2.5 sm:px-4 sm:py-2 rounded-xl text-sm font-medium transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <i data-lucide="refresh-cw" class="w-4 h-4"></i>
                 </button>
@@ -273,7 +273,7 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-24 lg:mb-6">
                 <div
                     class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
                     <h3 class="text-sm font-bold text-slate-700 dark:text-slate-300 mb-4">Applications — Last 7 Days
@@ -288,97 +288,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- <div id="pendingView" class="flex-1 flex flex-col p-4 lg:p-8 overflow-y-auto lg:overflow-hidden scrollbar-hide">
-            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-6 gap-4 flex-shrink-0">
-                <div>
-                    <h2 class="text-xl font-bold text-slate-900 dark:text-white">Application Manager</h2>
-                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1 hover-instruction">Edit Records, Approve
-                        Student Applications or Reject and Delete</p>
-                </div>
-
-                <div class="flex flex-col lg:flex-row items-center gap-3 w-full lg:w-auto">
-                    <div
-                        class="flex bg-slate-100 dark:bg-slate-800/80 p-1 rounded-xl w-full lg:w-auto overflow-x-auto border border-slate-200 dark:border-slate-700">
-                        <button onclick="setPendingFilter('All', this)"
-                            class="app-filter-btn px-4 py-1.5 text-sm font-medium rounded-lg border border-transparent text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500">All</button>
-                        <button onclick="setPendingFilter('Pending', this)"
-                            class="app-filter-btn px-4 py-1.5 text-sm font-medium rounded-lg bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 border border-slate-200 dark:border-slate-700 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500">Pending</button>
-                        <button onclick="setPendingFilter('Approved', this)"
-                            class="app-filter-btn px-4 py-1.5 text-sm font-medium rounded-lg border border-transparent text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500">Approved</button>
-                        <button onclick="setPendingFilter('Rejected', this)"
-                            class="app-filter-btn px-4 py-1.5 text-sm font-medium rounded-lg border border-transparent text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500">Rejected</button>
-                    </div>
-
-                    <div class="relative w-full lg:w-64">
-                        <i data-lucide="search"
-                            class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400"></i>
-                        <input type="text" id="searchPending" placeholder="Search ID or Name..."
-                            oninput="handlePendingSearch()"
-                            class="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
-
-                    <button onclick="openUniversalDeleteModal('pending')"
-                        class="flex items-center justify-center bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 p-2.5 rounded-xl transition-colors"
-                        title="Delete ALL Pending Applications"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-
-                    <button onclick="fetchData()" id="refreshBtn"
-                        class="flex items-center gap-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 text-slate-700 dark:text-slate-300 px-4 py-2 rounded-xl text-sm font-medium transition-all shadow-sm">
-                        <i data-lucide="refresh-cw" class="w-4 h-4" id="refreshIcon"></i>
-                    </button>
-                </div>
-            </div>
-
-            <div
-                class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm flex flex-col min-h-0 overflow-hidden transition-colors duration-300 relative">
-
-                <div class="flex-1 overflow-x-auto overflow-y-auto scrollbar-hide relative">
-                    <table class="w-full text-left border-collapse min-w-max">
-                        <thead class="sticky top-0 z-20 bg-slate-50/95 dark:bg-slate-800/95 backdrop-blur shadow-sm">
-                            <tr
-                                class="border-b border-slate-200 dark:border-slate-800 text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold">
-                                <th class="px-4 py-3">
-                                    <div>Date & Time</div>
-                                    <div
-                                        class="text-[10px] font-normal text-slate-400 normal-case mt-0.5 tracking-normal">
-                                        DD/MM/YYYY</div>
-                                </th>
-                                <th class="px-4 py-3">Application ID</th>
-                                <th class="px-4 py-3">Student ID</th>
-                                <th class="px-4 py-3">Student Name</th>
-                                <th class="px-4 py-3">Class</th>
-                                <th class="px-4 py-3">Section</th>
-                                <th class="px-4 py-3">Roll No</th>
-                                <th class="px-4 py-3">
-                                    <div>Date of Birth</div>
-                                    <div
-                                        class="text-[10px] font-normal text-slate-400 normal-case mt-0.5 tracking-normal">
-                                        DD/MM/YYYY</div>
-                                </th>
-                                <th class="px-4 py-3">Father's Name</th>
-                                <th class="px-4 py-3">Phone Number</th>
-                                <th class="px-4 py-3 border-r border-slate-200 dark:border-slate-800">Email ID</th>
-                                <th
-                                    class="px-4 py-3 text-center sticky right-0 z-30 bg-slate-50/95 dark:bg-slate-800/95 backdrop-blur shadow-[-4px_0_10px_rgba(0,0,0,0.05)] w-[120px]">
-                                    Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tableBody" class="divide-y divide-slate-200 dark:divide-slate-800 text-sm">
-                            <tr>
-                                <td colspan="12" class="py-16 text-center">
-                                    <div class="flex flex-col items-center justify-center gap-3 opacity-70">
-                                        <i data-lucide="loader-2"
-                                            class="w-8 h-8 animate-spin text-blue-600 dark:text-blue-400"></i>
-                                        <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Fetching
-                                            applications...</span>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div> -->
 
         <!-- ================= PENDING APPLICATIONS TAB ================= -->
         <div id="pendingView" class="flex-1 flex flex-col p-4 lg:p-8 overflow-y-auto scrollbar-hide">
@@ -418,7 +327,7 @@
 
             <!-- 3. Table -->
             <!-- flex-shrink-0 is the secret here to let it grow vertically without getting squished by flexbox! -->
-            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm transition-colors duration-300 relative mb-12 flex-shrink-0">
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm transition-colors duration-300 relative mb-24 lg:mb-6 flex-shrink-0">
                 <div class="overflow-x-auto scrollbar-hide relative rounded-2xl">
                     <table class="w-full text-left border-collapse min-w-max">
                         <thead class="bg-slate-50 dark:bg-slate-800/95 border-b border-slate-200 dark:border-slate-800">
@@ -555,7 +464,7 @@
             </div>
 
             <!-- Full Page Scrolling Table Wrapper -->
-            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm transition-colors duration-300 relative mb-12">
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm transition-colors duration-300 relative mb-24 lg:mb-6">
                 <div class="overflow-x-auto scrollbar-hide relative rounded-2xl">
                     <table class="w-full text-left border-collapse min-w-max" id="studentsTableElement">
                         <thead class="bg-slate-50 dark:bg-slate-800/95 border-b border-slate-200 dark:border-slate-800">
@@ -613,7 +522,7 @@
                 </button>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-24 lg:mb-6">
 
                 <div
                     class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm transition-all duration-300 hover:shadow-md hover:border-purple-300 dark:hover:border-purple-700">
@@ -1012,7 +921,7 @@
         // 1. CONFIGURATION & GLOBALS
         // ==========================================
         const PENDING_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby6k0EClmq3WueP-0SwCuce3-z6W-PZW1pjRk3lzaIHe_xwG64qnKMWW2pDw2lAa9NW1A/exec";
-        const FINAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyA4mSwvqmxHGgI2lzxZBsQyjD6FUhl3yIHeOg0PGH7tB_nUsS8VZLKm6ZyM8YkErpYEQ/exec";
+        const FINAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzyWAznrBo0sODWxruOJ3rmATu6egkwu9676BiGOqeeuIELR1dtRVj842mqTJSTHzv6sQ/exec";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBBkITpfUjxFUFvgQhjnXedrIX4GhfCSCo",
@@ -1849,23 +1758,6 @@
 
         let pendingAction = null; let pendingAppId = null;
 
-        //function handleAction(appId, type) {
-        //    pendingAction = type; pendingAppId = appId;
-        //    document.getElementById('confirmAppId').innerText = appId;
-        //    document.getElementById('confirmIconBox').className = type === 'approve' ? "w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 bg-emerald-100 text-emerald-600" : "w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 bg-red-100 text-red-600";
-        //    document.getElementById('confirmIcon').setAttribute('data-lucide', type === 'approve' ? 'check-circle' : 'alert-octagon');
-        //    document.getElementById('confirmTitle').innerText = type === 'approve' ? "Approve Application" : "Reject Application";
-        //    document.getElementById('confirmMessage').innerText = type === 'approve' ? "Are you sure you want to approve this application? An email with credentials will be sent to the student." : "Are you sure you want to reject this application? A rejection email will be sent.";
-
-        //    const btn = document.getElementById('confirmExecuteBtn');
-        //    btn.className = type === 'approve' ? "px-5 py-2.5 rounded-xl font-medium text-white shadow-sm transition-colors flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700" : "px-5 py-2.5 rounded-xl font-medium text-white shadow-sm transition-colors flex items-center gap-2 bg-red-600 hover:bg-red-700";
-        //    btn.innerHTML = type === 'approve' ? `Approve Student` : `Reject Application`;
-
-        //    const modal = document.getElementById('confirmModal'); modal.classList.remove('hidden');
-        //    requestAnimationFrame(() => { modal.classList.remove('opacity-0'); modal.querySelector('div').classList.remove('scale-95'); });
-        //    lucide.createIcons({ root: modal });
-        //}
-
         function handleAction(appId, type) {
             pendingAction = type; pendingAppId = appId;
             document.getElementById('confirmAppId').innerText = appId;
@@ -1951,9 +1843,9 @@
             universalDeleteType = type;
             document.getElementById('confirmIconBox').className = "w-12 h-12 rounded-full flex items-center justify-center bg-red-100 text-red-600";
             document.getElementById('confirmIcon').setAttribute('data-lucide', 'alert-triangle');
-            document.getElementById('confirmTitle').innerText = "DANGER: Universal Delete";
+            document.getElementById('confirmTitle').innerText = "DANGER: Delete";
             document.getElementById('confirmAppId').innerText = "ALL RECORDS";
-            document.getElementById('confirmMessage').innerText = `Are you absolutely sure you want to wipe all records from the ${type === 'pending' ? 'Pending Applications' : 'Final Class Databases'}? This is permanent.`;
+            document.getElementById('confirmMessage').innerText = `Are you absolutely sure you want to delete all records from the ${type === 'pending' ? 'Applications Database' : 'Students Database'}? This action cannot be undone.`;
             const btn = document.getElementById('confirmExecuteBtn'); btn.className = "px-5 py-2.5 rounded-xl font-medium text-white shadow-sm flex items-center gap-2 bg-red-800 hover:bg-red-900 transition-colors"; btn.innerHTML = `Wipe Database`;
             btn.onclick = async function () {
                 btn.disabled = true; btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 spin"></i> Deleting...`; lucide.createIcons({ root: btn });
@@ -1968,9 +1860,9 @@
         function openDeletePendingModal(appId) {
             document.getElementById('confirmIconBox').className = "w-12 h-12 rounded-full flex items-center justify-center bg-red-100 text-red-600";
             document.getElementById('confirmIcon').setAttribute('data-lucide', 'trash-2');
-            document.getElementById('confirmTitle').innerText = "Delete Pending Record";
+            document.getElementById('confirmTitle').innerText = "Delete An Application";
             document.getElementById('confirmAppId').innerText = appId;
-            document.getElementById('confirmMessage').innerText = "Are you sure you want to permanently erase this application? This action cannot be undone.";
+            document.getElementById('confirmMessage').innerText = "Are you sure you want to permanently delete this application? This action cannot be undone.";
             const btn = document.getElementById('confirmExecuteBtn');
             btn.className = "px-5 py-2.5 rounded-xl font-medium text-white shadow-sm flex items-center gap-2 bg-red-600 hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:outline-none transition-colors";
             btn.innerHTML = `Delete Permanent`;
@@ -2373,8 +2265,18 @@
         let _chartTrend = null;
         let _chartClass = null;
 
-        async function renderDashboard() {
-            const [appsRes, studentsRes, configRes] = await Promise.all([
+        async function renderDashboard(btn = null) {
+            if (btn && event) event.stopPropagation();
+            
+            let icon = null;
+            if (btn) {
+                icon = btn.querySelector('svg') || btn.querySelector('i');
+                if (icon) icon.classList.add('spin');
+                btn.disabled = true;
+            }
+
+            try {
+                const [appsRes, studentsRes, configRes] = await Promise.all([
                 fetch(PENDING_SCRIPT_URL).then(r => r.json()).catch(() => ({ status: 'error', data: [] })),
                 fetch(`${FINAL_SCRIPT_URL}?token=${ADMIN_SECRET}&_=${Date.now()}`).then(r => r.json()).catch(() => ({ status: 'error', data: [] })),
                 fetch(`${FINAL_SCRIPT_URL}?action=get_config&token=${ADMIN_SECRET}&_=${Date.now()}`).then(r => r.json()).catch(() => ({ status: 'error', data: {} }))
@@ -2472,6 +2374,16 @@
                     }
                 }
             });
+            
+            if (btn) showToast('Dashboard updated', 'success');
+            
+            } catch (err) {
+                console.error("Dashboard render failed", err);
+                if (btn) showToast('Failed to reload dashboard', 'error');
+            } finally {
+                if (icon) icon.classList.remove('spin');
+                if (btn) btn.disabled = false;
+            }
         }
 
         // INIT
