@@ -84,14 +84,20 @@
 
         /* Hide dashboard UI during Admit Card printing */
         @media print {
-            #sidebar, header, main > div:not(#admitCardRender) {
+
+            #sidebar,
+            header,
+            main>div:not(#admitCardRender) {
                 display: none !important;
             }
-            body, main {
+
+            body,
+            main {
                 background: white !important;
                 height: auto !important;
                 overflow: visible !important;
             }
+
             #admitCardRender {
                 display: block !important;
                 width: 100%;
@@ -115,7 +121,7 @@
         <div class="h-14 flex items-center justify-center border-b border-slate-200 dark:border-slate-800">
             <div
                 class="flex items-center gap-2 text-blue-600 dark:text-blue-500 font-bold tracking-tight text-sm lg:text-base">
-                <i data-lucide="graduation-cap" class="w-6 h-6"></i>
+                <img src="logo.png" alt="MVMN Logo" class="w-8 h-8 object-contain">
                 <span class="block lg:hidden xl:block">MVMN</span>
             </div>
         </div>
@@ -140,9 +146,15 @@
                 <i data-lucide="settings" class="w-5 h-5 group-hover:text-blue-600 transition-colors"></i> <span
                     class="hidden xl:block">Settings</span>
             </a>
+            <a href="#" onclick="handleLogout(event)"
+                class="flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all font-medium mt-auto">
+                <i data-lucide="log-out" class="w-5 h-5"></i>
+                <span>Logout</span>
+            </a>
         </nav>
     </aside>
-    <div id="drawerBackdrop" onclick="closeDrawer()" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 hidden lg:hidden"></div>
+    <div id="drawerBackdrop" onclick="closeDrawer()"
+        class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 hidden lg:hidden"></div>
 
     <main
         class="w-full lg:w-[90%] flex flex-col h-screen overflow-hidden bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
@@ -150,7 +162,8 @@
         <header
             class="h-[56px] bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 flex justify-between items-center px-6 lg:px-10 flex-shrink-0 transition-all duration-300 z-20 shadow-sm">
             <div class="flex items-center gap-4">
-                <button onclick="toggleDrawer()" class="lg:hidden p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                <button onclick="toggleDrawer()"
+                    class="lg:hidden p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
                     <i data-lucide="menu" class="w-5 h-5 text-slate-600 dark:text-slate-400"></i>
                 </button>
                 <h1 class="font-semibold text-lg text-slate-800 dark:text-white tracking-tight">
@@ -160,22 +173,37 @@
             </div>
             <div class="flex items-center gap-5">
                 <div class="relative flex items-center">
-                    <button id="bellBtn" onclick="toggleNotifications()"
+                    <div id="notifOverlay" onclick="toggleMobileNotif()"
+                        class="fixed inset-0 bg-black/40 z-[9998] hidden md:hidden transition-opacity"></div>
+
+                    <button id="bellBtn" onclick="toggleMobileNotif()"
                         class="relative p-2 rounded-xl flex items-center justify-center text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-slate-800 transition-all focus:outline-none">
                         <i data-lucide="bell" class="w-5 h-5"></i>
                         <span id="notificationBadge"
                             class="hidden absolute top-0 right-0 transform translate-x-1/4 -translate-y-1/4 h-4 w-4 rounded-full bg-red-500 text-[10px] font-bold text-white flex items-center justify-center border-2 border-white dark:border-slate-900">0</span>
                     </button>
+
                     <div id="notificationPanel"
-                        class="hidden absolute right-0 top-full mt-2 w-80 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 z-[9999] overflow-hidden">
+                        class="fixed top-0 right-0 h-full w-80 bg-white dark:bg-slate-800 shadow-2xl border-l border-slate-200 dark:border-slate-700 z-[9999] transform translate-x-full transition-transform duration-300 md:absolute md:top-full md:mt-2 md:right-0 md:h-auto md:w-80 md:rounded-xl md:shadow-xl md:border md:translate-x-0 hidden">
+
                         <div
-                            class="p-3 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50">
+                            class="md:hidden p-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50">
+                            <span class="font-bold text-lg text-slate-800 dark:text-slate-200">Notifications</span>
+                            <button onclick="toggleMobileNotif()"
+                                class="p-2 bg-slate-200 dark:bg-slate-700 rounded-full text-slate-600 dark:text-slate-300">
+                                <i data-lucide="x" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+
+                        <div
+                            class="hidden md:flex p-3 border-b border-slate-100 dark:border-slate-700 justify-between items-center bg-slate-50 dark:bg-slate-800/50">
                             <span class="font-bold text-sm text-slate-800 dark:text-slate-200">Notifications</span>
                             <button onclick="markAllRead()" class="text-xs text-blue-600 hover:underline">Mark all
                                 read</button>
                         </div>
+
                         <div id="notificationList"
-                            class="max-h-64 overflow-y-auto custom-scrollbar divide-y divide-slate-100 dark:divide-slate-700">
+                            class="h-[calc(100%-70px)] md:h-auto md:max-h-64 overflow-y-auto custom-scrollbar divide-y divide-slate-100 dark:divide-slate-700">
                             <div class="p-4 text-center text-sm text-slate-500">No new notifications</div>
                         </div>
                     </div>
@@ -199,7 +227,8 @@
             <div class="mb-6 flex-shrink-0 flex items-start sm:items-center justify-between w-full">
                 <div>
                     <h2 class="text-xl font-bold text-slate-900 dark:text-white">Dashboard</h2>
-                    <p id="dashSystemInfo" class="text-sm text-slate-500 dark:text-slate-400 mt-1">Loading system info...</p>
+                    <p id="dashSystemInfo" class="text-sm text-slate-500 dark:text-slate-400 mt-1">Loading system
+                        info...</p>
                 </div>
                 <button onclick="renderDashboard(this)"
                     class="ml-auto flex items-center justify-center gap-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 text-slate-700 dark:text-slate-300 p-2.5 sm:px-4 sm:py-2 rounded-xl text-sm font-medium transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -209,52 +238,53 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-6 flex-shrink-0">
                 <div
-                class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md hover:border-blue-300 dark:hover:border-blue-700 hover:bg-blue-50/30 dark:hover:bg-slate-800/80 cursor-pointer active:scale-[0.98]">
+                    class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md hover:border-blue-300 dark:hover:border-blue-700 hover:bg-blue-50/30 dark:hover:bg-slate-800/80 cursor-pointer active:scale-[0.98]">
                     <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Total Students</p>
                     <p id="statTotalStudents" class="text-3xl font-bold text-slate-800 dark:text-white">—</p>
                     <p class="text-xs text-slate-400 mt-1">In the School</p>
                 </div>
                 <div
-                class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md hover:border-blue-300 dark:hover:border-blue-700 hover:bg-blue-50/30 dark:hover:bg-slate-800/80 cursor-pointer active:scale-[0.98]">
+                    class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md hover:border-blue-300 dark:hover:border-blue-700 hover:bg-blue-50/30 dark:hover:bg-slate-800/80 cursor-pointer active:scale-[0.98]">
                     <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Pending Applications</p>
                     <p id="statPending" class="text-3xl font-bold text-amber-500">—</p>
                     <p class="text-xs text-slate-400 mt-1">Awaiting review</p>
                 </div>
                 <div
-                class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md hover:border-blue-300 dark:hover:border-blue-700 hover:bg-blue-50/30 dark:hover:bg-slate-800/80 cursor-pointer active:scale-[0.98]">
+                    class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md hover:border-blue-300 dark:hover:border-blue-700 hover:bg-blue-50/30 dark:hover:bg-slate-800/80 cursor-pointer active:scale-[0.98]">
                     <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Admit Cards</p>
-                    
+
                     <!-- We use grid-cols-3 to guarantee exactly equal width for the 3 sections -->
                     <div class="grid grid-cols-3 gap-2 w-full">
-                        
+
                         <!-- Released -->
                         <div class="flex flex-col items-center text-center">
                             <p id="statReleased" class="text-2xl font-bold text-emerald-600 leading-none mb-1.5">—</p>
                             <p class="text-[10px] text-slate-400 leading-tight font-medium uppercase">Released</p>
                         </div>
-                        
+
                         <!-- Not Released -->
                         <div class="flex flex-col items-center text-center">
                             <p id="statNotReleased" class="text-2xl font-bold text-slate-500 leading-none mb-1.5">—</p>
                             <p class="text-[10px] text-slate-400 leading-tight font-medium uppercase">Not Released</p>
                         </div>
-                        
+
                         <!-- Blocked -->
                         <div class="flex flex-col items-center text-center">
                             <p id="statBlocked" class="text-2xl font-bold text-red-500 leading-none mb-1.5">—</p>
                             <p class="text-[10px] text-slate-400 leading-tight font-medium uppercase">Blocked</p>
                         </div>
-                        
+
                     </div>
                 </div>
                 <div
-                class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md hover:border-blue-300 dark:hover:border-blue-700 hover:bg-blue-50/30 dark:hover:bg-slate-800/80 cursor-pointer active:scale-[0.98]">
-                <div class="flex justify-between items-center mb-2">
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-0">Portal Status</p>
-                    <button onclick="fetchSystemConfig(this)" class="p-1.5 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors focus:outline-none">
-                        <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
-                    </button>
-                </div>
+                    class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md hover:border-blue-300 dark:hover:border-blue-700 hover:bg-blue-50/30 dark:hover:bg-slate-800/80 cursor-pointer active:scale-[0.98]">
+                    <div class="flex justify-between items-center mb-2">
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-0">Portal Status</p>
+                        <button onclick="fetchSystemConfig(this)"
+                            class="p-1.5 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors focus:outline-none">
+                            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
                     <div class="flex flex-col gap-2">
                         <div class="flex items-center justify-between">
                             <span class="text-xs text-slate-500">Application</span>
@@ -295,7 +325,8 @@
             <div class="flex items-start sm:items-center justify-between w-full mb-6 flex-shrink-0">
                 <div>
                     <h2 class="text-xl font-bold text-slate-900 dark:text-white">Application Manager</h2>
-                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Edit Records, Approve Student Applications or Reject and Delete</p>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Edit Records, Approve Student
+                        Applications or Reject and Delete</p>
                 </div>
                 <button onclick="fetchData()" id="refreshBtn"
                     class="ml-auto flex items-center justify-center gap-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 text-slate-700 dark:text-slate-300 p-2.5 sm:px-4 sm:py-2 rounded-xl text-sm font-medium transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -305,38 +336,54 @@
             </div>
 
             <!-- 2. Toolbar Row -->
-            <div class="flex flex-col lg:flex-row items-start lg:items-center gap-3 mb-6 w-full flex-wrap flex-shrink-0">
+            <div
+                class="flex flex-col lg:flex-row items-start lg:items-center gap-3 mb-6 w-full flex-wrap flex-shrink-0">
                 <div class="flex items-center gap-2 flex-wrap">
-                    <div class="flex bg-slate-100 dark:bg-slate-800/80 p-1 rounded-xl border border-slate-200 dark:border-slate-700 overflow-x-auto scrollbar-hide">
-                        <button onclick="setPendingFilter('All', this)" class="app-filter-btn px-4 py-1.5 text-sm font-medium rounded-lg border border-transparent text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500">All</button>
-                        <button onclick="setPendingFilter('Pending', this)" class="app-filter-btn px-4 py-1.5 text-sm font-medium rounded-lg bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 border border-slate-200 dark:border-slate-700 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500">Pending</button>
-                        <button onclick="setPendingFilter('Approved', this)" class="app-filter-btn px-4 py-1.5 text-sm font-medium rounded-lg border border-transparent text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500">Approved</button>
-                        <button onclick="setPendingFilter('Rejected', this)" class="app-filter-btn px-4 py-1.5 text-sm font-medium rounded-lg border border-transparent text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500">Rejected</button>
+                    <div
+                        class="flex bg-slate-100 dark:bg-slate-800/80 p-1 rounded-xl border border-slate-200 dark:border-slate-700 overflow-x-auto scrollbar-hide">
+                        <button onclick="setPendingFilter('All', this)"
+                            class="app-filter-btn px-4 py-1.5 text-sm font-medium rounded-lg border border-transparent text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500">All</button>
+                        <button onclick="setPendingFilter('Pending', this)"
+                            class="app-filter-btn px-4 py-1.5 text-sm font-medium rounded-lg bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 border border-slate-200 dark:border-slate-700 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500">Pending</button>
+                        <button onclick="setPendingFilter('Approved', this)"
+                            class="app-filter-btn px-4 py-1.5 text-sm font-medium rounded-lg border border-transparent text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500">Approved</button>
+                        <button onclick="setPendingFilter('Rejected', this)"
+                            class="app-filter-btn px-4 py-1.5 text-sm font-medium rounded-lg border border-transparent text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500">Rejected</button>
                     </div>
                     <!-- Universal Delete Button Moved Here! -->
-                    <button onclick="openUniversalDeleteModal('pending')" class="flex items-center justify-center bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 p-2.5 rounded-xl transition-colors" title="Delete ALL Pending Applications"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    <button onclick="openUniversalDeleteModal('pending')"
+                        class="flex items-center justify-center bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 p-2.5 rounded-xl transition-colors"
+                        title="Delete ALL Pending Applications"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                 </div>
-                
+
                 <div class="flex items-center gap-3 w-full lg:w-auto lg:ml-auto mt-2 lg:mt-0">
                     <div class="relative w-full lg:w-64">
-                        <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400"></i>
-                        <input type="text" id="searchPending" placeholder="Search ID or Name..." oninput="handlePendingSearch()" class="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <i data-lucide="search"
+                            class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                        <input type="text" id="searchPending" placeholder="Search ID or Name..."
+                            oninput="handlePendingSearch()"
+                            class="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                 </div>
             </div>
 
             <!-- 3. Table -->
             <!-- flex-shrink-0 is the secret here to let it grow vertically without getting squished by flexbox! -->
-            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm transition-colors duration-300 relative mb-24 lg:mb-6 flex-shrink-0">
+            <div
+                class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm transition-colors duration-300 relative mb-24 lg:mb-6 flex-shrink-0">
                 <div class="overflow-x-auto scrollbar-hide relative rounded-2xl">
                     <table class="w-full text-left border-collapse min-w-max">
                         <thead class="bg-slate-50 dark:bg-slate-800/95 border-b border-slate-200 dark:border-slate-800">
-                            <tr class="text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold">
+                            <tr
+                                class="text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold">
                                 <th class="px-4 py-3">
                                     <div>Date & Time</div>
-                                    <div class="text-[10px] font-normal text-slate-400 normal-case mt-0.5 tracking-normal">DD/MM/YYYY</div>
+                                    <div
+                                        class="text-[10px] font-normal text-slate-400 normal-case mt-0.5 tracking-normal">
+                                        DD/MM/YYYY</div>
                                 </th>
-                                <th class="px-4 py-3 border-r border-slate-200 dark:border-slate-700">Application ID</th>
+                                <th class="px-4 py-3 border-r border-slate-200 dark:border-slate-700">Application ID
+                                </th>
                                 <th class="px-4 py-3">Student ID</th>
                                 <th class="px-4 py-3">Student Name</th>
                                 <th class="px-4 py-3">Class</th>
@@ -344,20 +391,26 @@
                                 <th class="px-4 py-3">Roll No</th>
                                 <th class="px-4 py-3">
                                     <div>Date of Birth</div>
-                                    <div class="text-[10px] font-normal text-slate-400 normal-case mt-0.5 tracking-normal">DD/MM/YYYY</div>
+                                    <div
+                                        class="text-[10px] font-normal text-slate-400 normal-case mt-0.5 tracking-normal">
+                                        DD/MM/YYYY</div>
                                 </th>
                                 <th class="px-4 py-3">Father's Name</th>
                                 <th class="px-4 py-3">Phone Number</th>
                                 <th class="px-4 py-3 border-r border-slate-200 dark:border-slate-800">Email ID</th>
-                                <th class="px-4 py-3 text-center sticky right-0 z-20 bg-slate-50 dark:bg-slate-800/95 shadow-[-4px_0_10px_rgba(0,0,0,0.04)] w-[120px]">Action</th>
+                                <th
+                                    class="px-4 py-3 text-center sticky right-0 z-20 bg-slate-50 dark:bg-slate-800/95 shadow-[-4px_0_10px_rgba(0,0,0,0.04)] w-[120px]">
+                                    Action</th>
                             </tr>
                         </thead>
                         <tbody id="tableBody" class="divide-y divide-slate-200 dark:divide-slate-800 text-sm">
                             <tr>
                                 <td colspan="12" class="py-16 text-center">
                                     <div class="flex flex-col items-center justify-center gap-3 opacity-70">
-                                        <i data-lucide="loader-2" class="w-8 h-8 animate-spin text-blue-600 dark:text-blue-400"></i>
-                                        <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Fetching applications...</span>
+                                        <i data-lucide="loader-2"
+                                            class="w-8 h-8 animate-spin text-blue-600 dark:text-blue-400"></i>
+                                        <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Fetching
+                                            applications...</span>
                                     </div>
                                 </td>
                             </tr>
@@ -372,7 +425,8 @@
             <div class="flex items-start sm:items-center justify-between w-full mb-6 flex-shrink-0">
                 <div>
                     <h2 class="text-xl font-bold text-slate-900 dark:text-white">Manage Students</h2>
-                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Add Students, Edit Records & Admit Status, Export and Delete</p>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Add Students, Edit Records & Admit
+                        Status, Export and Delete</p>
                 </div>
                 <button onclick="fetchFinalStudents()" id="refreshBtnStudents"
                     class="ml-auto flex items-center justify-center gap-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 text-slate-700 dark:text-slate-300 p-2.5 sm:px-4 sm:py-2 rounded-xl text-sm font-medium transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -382,18 +436,22 @@
             </div>
 
             <!-- 2. Toolbar Row -->
-            <div class="flex flex-col lg:flex-row items-start lg:items-center gap-3 mb-6 w-full flex-wrap flex-shrink-0">
+            <div
+                class="flex flex-col lg:flex-row items-start lg:items-center gap-3 mb-6 w-full flex-wrap flex-shrink-0">
                 <div class="flex items-center gap-2 flex-wrap">
                     <button onclick="bulkAction('Release')"
-                        class="px-3 py-1.5 text-sm font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg hover:bg-emerald-100 hidden bulk-btn transition-colors">Release Admit</button>
+                        class="px-3 py-1.5 text-sm font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg hover:bg-emerald-100 hidden bulk-btn transition-colors">Release
+                        Admit</button>
                     <button onclick="bulkAction('Block')"
                         class="px-3 py-1.5 text-sm font-medium bg-red-50 text-red-700 border border-red-200 rounded-lg hover:bg-red-100 hidden bulk-btn transition-colors">Block</button>
                     <button onclick="exportData()"
-                        class="px-3 py-1.5 text-sm font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center gap-1 transition-colors"><i data-lucide="download" class="w-4 h-4"></i> Export</button>
+                        class="px-3 py-1.5 text-sm font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center gap-1 transition-colors"><i
+                            data-lucide="download" class="w-4 h-4"></i> Export</button>
 
                     <button onclick="openModal('addStudentModal')"
-                        class="px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-xl shadow hover:bg-blue-700 flex items-center gap-1 transition-colors"><i data-lucide="plus" class="w-4 h-4"></i> Add Student</button>
-                    
+                        class="px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-xl shadow hover:bg-blue-700 flex items-center gap-1 transition-colors"><i
+                            data-lucide="plus" class="w-4 h-4"></i> Add Student</button>
+
                     <!-- Universal Delete Button Moved Here! -->
                     <button onclick="openUniversalDeleteModal('final')"
                         class="flex items-center justify-center bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 p-2 lg:px-3 lg:py-2 rounded-xl transition-colors"
@@ -410,7 +468,8 @@
                     </div>
                     <div class="relative">
                         <button onclick="document.getElementById('advFilterPanel').classList.toggle('hidden')"
-                            class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"><i data-lucide="filter" class="w-4 h-4"></i></button>
+                            class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"><i
+                                data-lucide="filter" class="w-4 h-4"></i></button>
                         <div id="advFilterPanel"
                             class="hidden absolute right-0 mt-2 w-64 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 p-4 z-50">
                             <h4 class="text-sm font-bold mb-3 dark:text-white">Advanced Filters</h4>
@@ -447,36 +506,69 @@
             </div>
 
             <!-- Class Filters Row -->
-            <div class="flex items-center gap-2 mb-4 overflow-x-auto scrollbar-hide pb-2 flex-shrink-0" id="classFilters">
-                <button onclick="applyClassFilter('All', this)" class="class-filter-btn filter-active bg-blue-600 dark:bg-blue-500 text-white px-4 py-1.5 rounded-full text-sm font-medium border border-blue-600 dark:border-blue-500 transition-colors whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">All</button>
-                <button onclick="applyClassFilter('1', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class 1</button>
-                <button onclick="applyClassFilter('2', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class 2</button>
-                <button onclick="applyClassFilter('3', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class 3</button>
-                <button onclick="applyClassFilter('4', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class 4</button>
-                <button onclick="applyClassFilter('5', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class 5</button>
-                <button onclick="applyClassFilter('6', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class 6</button>
-                <button onclick="applyClassFilter('7', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class 7</button>
-                <button onclick="applyClassFilter('8', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class 8</button>
-                <button onclick="applyClassFilter('9', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class 9</button>
-                <button onclick="applyClassFilter('10', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class 10</button>
-                <button onclick="applyClassFilter('11', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class 11</button>
-                <button onclick="applyClassFilter('12', this)" class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class 12</button>
+            <div class="flex items-center gap-2 mb-4 overflow-x-auto scrollbar-hide pb-2 flex-shrink-0"
+                id="classFilters">
+                <button onclick="applyClassFilter('All', this)"
+                    class="class-filter-btn filter-active bg-blue-600 dark:bg-blue-500 text-white px-4 py-1.5 rounded-full text-sm font-medium border border-blue-600 dark:border-blue-500 transition-colors whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">All</button>
+                <button onclick="applyClassFilter('1', this)"
+                    class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class
+                    1</button>
+                <button onclick="applyClassFilter('2', this)"
+                    class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class
+                    2</button>
+                <button onclick="applyClassFilter('3', this)"
+                    class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class
+                    3</button>
+                <button onclick="applyClassFilter('4', this)"
+                    class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class
+                    4</button>
+                <button onclick="applyClassFilter('5', this)"
+                    class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class
+                    5</button>
+                <button onclick="applyClassFilter('6', this)"
+                    class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class
+                    6</button>
+                <button onclick="applyClassFilter('7', this)"
+                    class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class
+                    7</button>
+                <button onclick="applyClassFilter('8', this)"
+                    class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class
+                    8</button>
+                <button onclick="applyClassFilter('9', this)"
+                    class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class
+                    9</button>
+                <button onclick="applyClassFilter('10', this)"
+                    class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class
+                    10</button>
+                <button onclick="applyClassFilter('11', this)"
+                    class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class
+                    11</button>
+                <button onclick="applyClassFilter('12', this)"
+                    class="class-filter-btn px-4 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors whitespace-nowrap hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900">Class
+                    12</button>
             </div>
 
             <!-- Full Page Scrolling Table Wrapper -->
-            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm transition-colors duration-300 relative mb-24 lg:mb-6">
+            <div
+                class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm transition-colors duration-300 relative mb-24 lg:mb-6">
                 <div class="overflow-x-auto scrollbar-hide relative rounded-2xl">
                     <table class="w-full text-left border-collapse min-w-max" id="studentsTableElement">
                         <thead class="bg-slate-50 dark:bg-slate-800/95 border-b border-slate-200 dark:border-slate-800">
-                            <tr class="text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold">
-                                <th class="px-4 py-3 w-10 text-center sticky left-0 z-20 bg-slate-50 dark:bg-slate-800/95 shadow-[4px_0_10px_rgba(0,0,0,0.04)] border-r border-slate-200 dark:border-slate-800">
-                                    <input type="checkbox" id="selectAll" onclick="toggleSelectAll(this)" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-800">
+                            <tr
+                                class="text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold">
+                                <th
+                                    class="px-4 py-3 w-10 text-center sticky left-0 z-20 bg-slate-50 dark:bg-slate-800/95 shadow-[4px_0_10px_rgba(0,0,0,0.04)] border-r border-slate-200 dark:border-slate-800">
+                                    <input type="checkbox" id="selectAll" onclick="toggleSelectAll(this)"
+                                        class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-800">
                                 </th>
                                 <th class="px-4 py-3">
                                     <div>Date & Time</div>
-                                    <div class="text-[10px] font-normal text-slate-400 normal-case mt-0.5 tracking-normal">DD/MM/YYYY</div>
+                                    <div
+                                        class="text-[10px] font-normal text-slate-400 normal-case mt-0.5 tracking-normal">
+                                        DD/MM/YYYY</div>
                                 </th>
-                                <th class="px-4 py-3 border-r border-slate-200 dark:border-slate-700">Application ID</th>
+                                <th class="px-4 py-3 border-r border-slate-200 dark:border-slate-700">Application ID
+                                </th>
                                 <th class="px-4 py-3">Student ID</th>
                                 <th class="px-4 py-3">Name</th>
                                 <th class="px-4 py-3">Class</th>
@@ -484,23 +576,35 @@
                                 <th class="px-4 py-3">Roll</th>
                                 <th class="px-4 py-3">
                                     <div>DOB</div>
-                                    <div class="text-[10px] font-normal text-slate-400 normal-case mt-0.5 tracking-normal">DD/MM/YYYY</div>
+                                    <div
+                                        class="text-[10px] font-normal text-slate-400 normal-case mt-0.5 tracking-normal">
+                                        DD/MM/YYYY</div>
                                 </th>
                                 <th class="px-4 py-3">Father's Name</th>
                                 <th class="px-4 py-3">Phone</th>
                                 <th class="px-4 py-3 border-r border-slate-200 dark:border-slate-800">Email ID</th>
-                                <th class="px-4 py-3 border-x border-slate-200 dark:border-slate-800 bg-amber-50/50 dark:bg-amber-900/10 text-amber-700 dark:text-amber-500">Admit Status</th>
-                                <th class="px-4 py-3 bg-blue-50/50 dark:bg-blue-900/10 text-blue-700 dark:text-blue-400">HY Serial No.</th>
-                                <th class="px-4 py-3 bg-blue-50/50 dark:bg-blue-900/10 text-blue-700 dark:text-blue-400">FY Serial No.</th>
-                                <th class="px-4 py-3 text-center sticky right-0 z-20 bg-slate-50 dark:bg-slate-800/95 shadow-[-4px_0_10px_rgba(0,0,0,0.04)] w-[100px]">Action</th>
+                                <th
+                                    class="px-4 py-3 border-x border-slate-200 dark:border-slate-800 bg-amber-50/50 dark:bg-amber-900/10 text-amber-700 dark:text-amber-500">
+                                    Admit Status</th>
+                                <th
+                                    class="px-4 py-3 bg-blue-50/50 dark:bg-blue-900/10 text-blue-700 dark:text-blue-400">
+                                    HY Serial No.</th>
+                                <th
+                                    class="px-4 py-3 bg-blue-50/50 dark:bg-blue-900/10 text-blue-700 dark:text-blue-400">
+                                    FY Serial No.</th>
+                                <th
+                                    class="px-4 py-3 text-center sticky right-0 z-20 bg-slate-50 dark:bg-slate-800/95 shadow-[-4px_0_10px_rgba(0,0,0,0.04)] w-[100px]">
+                                    Action</th>
                             </tr>
                         </thead>
                         <tbody id="studentsTableBody" class="divide-y divide-slate-200 dark:divide-slate-800 text-sm">
                             <tr>
                                 <td colspan="16" class="py-16 text-center">
                                     <div class="flex flex-col items-center justify-center gap-3 opacity-70">
-                                        <i data-lucide="loader-2" class="w-8 h-8 animate-spin text-blue-600 dark:text-blue-400"></i>
-                                        <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Loading student database...</span>
+                                        <i data-lucide="loader-2"
+                                            class="w-8 h-8 animate-spin text-blue-600 dark:text-blue-400"></i>
+                                        <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Loading
+                                            student database...</span>
                                     </div>
                                 </td>
                             </tr>
@@ -514,7 +618,8 @@
             <div class="flex items-start sm:items-center justify-between w-full mb-6 flex-shrink-0">
                 <div>
                     <h2 class="text-xl font-bold text-slate-900 dark:text-white">System Settings</h2>
-                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Master Control Room: Manage portal configurations, links, and global variables.</p>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Master Control Room: Manage portal
+                        configurations, links, and global variables.</p>
                 </div>
                 <button onclick="reloadSettingsAndRoutines(this)"
                     class="ml-auto flex items-center justify-center gap-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 text-slate-700 dark:text-slate-300 p-2.5 sm:px-4 sm:py-2 rounded-xl text-sm font-medium transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -554,11 +659,15 @@
                     <div class="mt-6 border-t border-slate-100 dark:border-slate-800 pt-4 cursor-pointer hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-xl p-3 transition-all duration-200 active:scale-[0.98] group flex items-center justify-between"
                         onclick="openModal('routineModal')">
                         <div>
-                            <p class="font-bold text-slate-800 dark:text-slate-200 text-sm group-hover:text-purple-700 dark:group-hover:text-purple-400 transition-colors">Exam Routines Setup</p>
+                            <p
+                                class="font-bold text-slate-800 dark:text-slate-200 text-sm group-hover:text-purple-700 dark:group-hover:text-purple-400 transition-colors">
+                                Exam Routines Setup</p>
                             <p class="text-xs text-slate-500">Create, edit, or delete exam dates & subjects.</p>
                         </div>
-                        <div class="bg-white dark:bg-slate-800 p-1 rounded-lg shadow-sm border border-slate-100 dark:border-slate-700 group-hover:border-purple-200 dark:group-hover:border-purple-800 transition-colors">
-                            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-purple-600 transition-colors"></i>
+                        <div
+                            class="bg-white dark:bg-slate-800 p-1 rounded-lg shadow-sm border border-slate-100 dark:border-slate-700 group-hover:border-purple-200 dark:group-hover:border-purple-800 transition-colors">
+                            <i data-lucide="chevron-right"
+                                class="w-4 h-4 text-slate-400 group-hover:text-purple-600 transition-colors"></i>
                         </div>
                     </div>
                 </div>
@@ -722,7 +831,8 @@
             class="fixed inset-0 z-[9999] hidden bg-slate-900/50 backdrop-blur-sm flex items-center justify-center opacity-0 transition-opacity duration-300">
             <div
                 class="bg-white dark:bg-slate-900 rounded-2xl shadow-xl max-w-3xl w-full p-6 transform scale-95 transition-transform duration-300 max-h-[90vh] overflow-y-auto custom-scrollbar">
-                <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-3 mb-5">
+                <div
+                    class="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-3 mb-5">
                     <h3 class="text-lg font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
                         <i data-lucide="calendar-clock" class="w-5 h-5 text-blue-600"></i> Manage Exam Routine
                     </h3>
@@ -920,8 +1030,8 @@
         // ==========================================
         // 1. CONFIGURATION & GLOBALS
         // ==========================================
-        const PENDING_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby6k0EClmq3WueP-0SwCuce3-z6W-PZW1pjRk3lzaIHe_xwG64qnKMWW2pDw2lAa9NW1A/exec";
-        const FINAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzyWAznrBo0sODWxruOJ3rmATu6egkwu9676BiGOqeeuIELR1dtRVj842mqTJSTHzv6sQ/exec";
+        const PENDING_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzsunYoWjZgePtylUdc6debjvvJbwokiRS-q4GWvBps2KnsdG48Y8VOCg7F1TRhIQEbYQ/exec";
+        const FINAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzhRNmF7DP18m2k81-wNRy-xpbWaA_U0Es4lBODWdc_wFQAPqdfbzm7gAx4E-_60AcI-Q/exec";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBBkITpfUjxFUFvgQhjnXedrIX4GhfCSCo",
@@ -952,12 +1062,12 @@
         // Debounce utility to prevent UI lag during search
         function debounce(func, wait) {
             let timeout;
-            return function(...args) {
+            return function (...args) {
                 clearTimeout(timeout);
                 timeout = setTimeout(() => func.apply(this, args), wait);
             };
         }
-        
+
         // Create debounced versions of your search functions
         const handlePendingSearch = debounce(filterPendingTable, 300);
         const handleStudentSearch = debounce(filterStudentsTable, 300);
@@ -988,16 +1098,63 @@
         const pageLoadTime = Date.now();
         const notificationsRef = db.ref('notifications').orderByChild('timestamp').startAt(pageLoadTime);
 
-        function toggleNotifications() {
-            document.getElementById('notificationPanel').classList.toggle('hidden');
-        }
-
         function markAllRead() {
             unreadCount = 0;
             updateBadge();
             document.getElementById('notificationList').querySelectorAll('.bg-blue-50').forEach(el => {
                 el.classList.remove('bg-blue-50', 'dark:bg-blue-900/20');
             });
+        }
+
+        // --- NEW NOTIFICATION & LOGOUT LOGIC ---
+
+        // 1. Responsive Notification Toggle
+        function toggleMobileNotif() {
+            const panel = document.getElementById('notificationPanel');
+            const overlay = document.getElementById('notifOverlay');
+            const isMobile = window.innerWidth < 768; // Tailwind 'md' breakpoint
+
+            if (isMobile) {
+                // Mobile Slide-in Logic
+                if (panel.classList.contains('translate-x-full')) {
+                    // Open panel
+                    panel.classList.remove('hidden');
+                    // Small delay to allow 'hidden' removal to render before translating
+                    setTimeout(() => {
+                        panel.classList.remove('translate-x-full');
+                    }, 10);
+                    overlay.classList.remove('hidden');
+                } else {
+                    // Close panel
+                    panel.classList.add('translate-x-full');
+                    overlay.classList.add('hidden');
+                    // Wait for slide animation to finish before hiding display
+                    setTimeout(() => {
+                        panel.classList.add('hidden');
+                    }, 300);
+                }
+            } else {
+                // Desktop Dropdown Logic
+                panel.classList.toggle('hidden');
+            }
+        }
+
+        // 2. Handle Logout
+        function handleLogout(event) {
+            event.preventDefault();
+
+            // Clear the secure token
+            sessionStorage.removeItem('adminToken');
+
+            // Show toast notification
+            if (typeof showToast === 'function') {
+                showToast('Logging out...', 'success');
+            }
+
+            // Redirect to login page
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 500);
         }
 
         function updateBadge() {
@@ -1060,13 +1217,13 @@
                 closeDrawer();
             }
         }
-        
+
         function openDrawer() {
             document.getElementById('sidebar').classList.remove('-translate-x-full');
             document.getElementById('drawerBackdrop').classList.remove('hidden');
             document.body.style.overflow = 'hidden'; // prevent background scroll
         }
-        
+
         function closeDrawer() {
             document.getElementById('sidebar').classList.add('-translate-x-full');
             document.getElementById('drawerBackdrop').classList.add('hidden');
@@ -1173,7 +1330,7 @@
                     // Re-sort and re-render the local data instantly instead of hitting the server again
                     if (['studentClass', 'section', 'rollNo', 'studentId'].includes(fieldKey)) {
                         if (dbType === 'pending') {
-                            filterPendingTable(); 
+                            filterPendingTable();
                         } else {
                             filterStudentsTable();
                         }
@@ -1335,20 +1492,20 @@
         async function fetchSystemConfig(btn = null) {
             // Stop click from bubbling up to the card
             if (btn && event) event.stopPropagation();
-            
+
             // Lucide replaces <i> with <svg>, so we must select the SVG to spin it!
             let icon = null;
             if (btn) {
                 icon = btn.querySelector('svg') || btn.querySelector('i');
                 if (icon) icon.classList.add('spin');
             }
-            
+
             try {
                 const res = await fetch(`${FINAL_SCRIPT_URL}?action=get_config&token=${ADMIN_SECRET}&_=${Date.now()}`);
                 const result = await res.json();
                 if (result.status === 'success') {
                     const conf = result.data;
-                    
+
                     // 1. Update Settings Tab Variables
                     document.getElementById('sysActiveExam').value = conf.Active_Exam_Type || 'FY';
                     document.getElementById('sysExamSession').value = conf.Exam_Session || '2025-2026';
@@ -1367,19 +1524,19 @@
                     const admitOn = conf.Admit_Portal_Status === 'ON';
                     const appBadge = document.getElementById('dashAppStatus');
                     const admitBadge = document.getElementById('dashAdmitStatus');
-                    
+
                     if (appBadge && admitBadge) {
                         appBadge.innerText = appOn ? 'ACTIVE' : 'CLOSED';
                         appBadge.className = appOn ? 'px-2 py-0.5 text-[10px] font-bold rounded-md bg-emerald-100 text-emerald-700 border border-emerald-200' : 'px-2 py-0.5 text-[10px] font-bold rounded-md bg-red-100 text-red-700 border border-red-200';
-                        
+
                         admitBadge.innerText = admitOn ? 'ACTIVE' : 'CLOSED';
                         admitBadge.className = admitOn ? 'px-2 py-0.5 text-[10px] font-bold rounded-md bg-emerald-100 text-emerald-700 border border-emerald-200' : 'px-2 py-0.5 text-[10px] font-bold rounded-md bg-red-100 text-red-700 border border-red-200';
                     }
 
                     if (btn) showToast('Portal config synced', 'success');
                 }
-            } catch (e) { 
-                console.error("Config load failed", e); 
+            } catch (e) {
+                console.error("Config load failed", e);
                 if (btn) showToast('Sync failed', 'error');
             } finally {
                 // Stop spinning the icon
@@ -2092,7 +2249,7 @@
         // ==========================================
         async function reloadSettingsAndRoutines(btn) {
             if (btn && event) event.stopPropagation();
-            
+
             // Start spin animation
             let icon = null;
             if (btn) {
@@ -2100,18 +2257,18 @@
                 if (icon) icon.classList.add('spin');
                 btn.disabled = true;
             }
-            
+
             try {
                 // 1. Refresh System Config (silently)
                 await fetchSystemConfig();
-                
+
                 // 2. Refresh Routines (via the Final Students script)
                 const res = await fetch(`${FINAL_SCRIPT_URL}?token=${ADMIN_SECRET}`);
                 const result = await res.json();
-                
+
                 if (result.status === 'success') {
                     window.allRoutines = result.routines || { 'HY': {}, 'FY': {} };
-                    
+
                     // If the modal is currently open, instantly update the input fields with the fresh data
                     if (!document.getElementById('routineModal').classList.contains('hidden')) {
                         populateRoutineForm();
@@ -2267,7 +2424,7 @@
 
         async function renderDashboard(btn = null) {
             if (btn && event) event.stopPropagation();
-            
+
             let icon = null;
             if (btn) {
                 icon = btn.querySelector('svg') || btn.querySelector('i');
@@ -2277,106 +2434,106 @@
 
             try {
                 const [appsRes, studentsRes, configRes] = await Promise.all([
-                fetch(PENDING_SCRIPT_URL).then(r => r.json()).catch(() => ({ status: 'error', data: [] })),
-                fetch(`${FINAL_SCRIPT_URL}?token=${ADMIN_SECRET}&_=${Date.now()}`).then(r => r.json()).catch(() => ({ status: 'error', data: [] })),
-                fetch(`${FINAL_SCRIPT_URL}?action=get_config&token=${ADMIN_SECRET}&_=${Date.now()}`).then(r => r.json()).catch(() => ({ status: 'error', data: {} }))
-            ]);
+                    fetch(PENDING_SCRIPT_URL).then(r => r.json()).catch(() => ({ status: 'error', data: [] })),
+                    fetch(`${FINAL_SCRIPT_URL}?token=${ADMIN_SECRET}&_=${Date.now()}`).then(r => r.json()).catch(() => ({ status: 'error', data: [] })),
+                    fetch(`${FINAL_SCRIPT_URL}?action=get_config&token=${ADMIN_SECRET}&_=${Date.now()}`).then(r => r.json()).catch(() => ({ status: 'error', data: {} }))
+                ]);
 
-            const apps = appsRes.status === 'success' ? appsRes.data : [];
-            const students = studentsRes.status === 'success' ? studentsRes.data : [];
-            const conf = configRes.status === 'success' ? configRes.data : {};
+                const apps = appsRes.status === 'success' ? appsRes.data : [];
+                const students = studentsRes.status === 'success' ? studentsRes.data : [];
+                const conf = configRes.status === 'success' ? configRes.data : {};
 
-            if (appsRes.status === 'success') window.currentApplications = apps;
-            if (studentsRes.status === 'success') { window.finalStudentsData = students; window.allRoutines = studentsRes.routines || { 'HY': {}, 'FY': {} }; }
+                if (appsRes.status === 'success') window.currentApplications = apps;
+                if (studentsRes.status === 'success') { window.finalStudentsData = students; window.allRoutines = studentsRes.routines || { 'HY': {}, 'FY': {} }; }
 
-            const examLabel = (conf.Active_Exam_Type === 'HY') ? 'Half-Yearly' : 'Final Year';
-            document.getElementById('dashSystemInfo').innerText = `${examLabel} Examination  •  Session: ${conf.Exam_Session || '—'}`;
+                const examLabel = (conf.Active_Exam_Type === 'HY') ? 'Half-Yearly' : 'Final Year';
+                document.getElementById('dashSystemInfo').innerText = `${examLabel} Examination  •  Session: ${conf.Exam_Session || '—'}`;
 
-            document.getElementById('statTotalStudents').innerText = students.length;
-            document.getElementById('statPending').innerText = apps.filter(a => (a.status || 'Pending') === 'Pending').length;
-            document.getElementById('statReleased').innerText = students.filter(s => (s.admitStatus || 'Not Release') === 'Release').length;
-            document.getElementById('statNotReleased').innerText = students.filter(s => (s.admitStatus || 'Not Release') === 'Not Release').length;
-            document.getElementById('statBlocked').innerText = students.filter(s => (s.admitStatus || 'Not Release') === 'Block').length;
+                document.getElementById('statTotalStudents').innerText = students.length;
+                document.getElementById('statPending').innerText = apps.filter(a => (a.status || 'Pending') === 'Pending').length;
+                document.getElementById('statReleased').innerText = students.filter(s => (s.admitStatus || 'Not Release') === 'Release').length;
+                document.getElementById('statNotReleased').innerText = students.filter(s => (s.admitStatus || 'Not Release') === 'Not Release').length;
+                document.getElementById('statBlocked').innerText = students.filter(s => (s.admitStatus || 'Not Release') === 'Block').length;
 
-            const appOn = conf.Portal_Status === 'ON';
-            const admitOn = conf.Admit_Portal_Status === 'ON';
-            const appBadge = document.getElementById('dashAppStatus');
-            const admitBadge = document.getElementById('dashAdmitStatus');
-            appBadge.innerText = appOn ? 'ACTIVE' : 'CLOSED';
-            appBadge.className = appOn ? 'px-2 py-0.5 text-[10px] font-bold rounded-md bg-emerald-100 text-emerald-700 border border-emerald-200' : 'px-2 py-0.5 text-[10px] font-bold rounded-md bg-red-100 text-red-700 border border-red-200';
-            admitBadge.innerText = admitOn ? 'ACTIVE' : 'CLOSED';
-            admitBadge.className = admitOn ? 'px-2 py-0.5 text-[10px] font-bold rounded-md bg-emerald-100 text-emerald-700 border border-emerald-200' : 'px-2 py-0.5 text-[10px] font-bold rounded-md bg-red-100 text-red-700 border border-red-200';
+                const appOn = conf.Portal_Status === 'ON';
+                const admitOn = conf.Admit_Portal_Status === 'ON';
+                const appBadge = document.getElementById('dashAppStatus');
+                const admitBadge = document.getElementById('dashAdmitStatus');
+                appBadge.innerText = appOn ? 'ACTIVE' : 'CLOSED';
+                appBadge.className = appOn ? 'px-2 py-0.5 text-[10px] font-bold rounded-md bg-emerald-100 text-emerald-700 border border-emerald-200' : 'px-2 py-0.5 text-[10px] font-bold rounded-md bg-red-100 text-red-700 border border-red-200';
+                admitBadge.innerText = admitOn ? 'ACTIVE' : 'CLOSED';
+                admitBadge.className = admitOn ? 'px-2 py-0.5 text-[10px] font-bold rounded-md bg-emerald-100 text-emerald-700 border border-emerald-200' : 'px-2 py-0.5 text-[10px] font-bold rounded-md bg-red-100 text-red-700 border border-red-200';
 
-            const isDark = document.documentElement.classList.contains('dark');
-            const gridColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
-            const labelColor = isDark ? '#94a3b8' : '#64748b';
+                const isDark = document.documentElement.classList.contains('dark');
+                const gridColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
+                const labelColor = isDark ? '#94a3b8' : '#64748b';
 
-            const today = new Date(); today.setHours(0, 0, 0, 0);
-            const dayLabels = [];
-            const dayCounts = new Array(7).fill(0);
-            for (let i = 6; i >= 0; i--) {
-                const d = new Date(today); d.setDate(today.getDate() - i);
-                dayLabels.push(d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }));
-            }
-            apps.forEach(app => {
-                const raw = String(app.timestamp || '').replace(/^'/, '').trim();
-                const parts = raw.split(' '); if (!parts[0]) return;
-                const dp = parts[0].split('/'); if (dp.length < 3) return;
-                const appDate = new Date(parseInt(dp[2]), parseInt(dp[1]) - 1, parseInt(dp[0]));
-                appDate.setHours(0, 0, 0, 0);
-                const diff = Math.round((today - appDate) / 86400000);
-                if (diff >= 0 && diff <= 6) dayCounts[6 - diff]++;
-            });
-
-            if (_chartTrend) _chartTrend.destroy();
-            _chartTrend = new Chart(document.getElementById('chartApplicationsTrend').getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: dayLabels,
-                    datasets: [{ label: 'Applications', data: dayCounts, backgroundColor: 'rgba(59,130,246,0.7)', borderColor: 'rgba(59,130,246,1)', borderWidth: 1, borderRadius: 6 }]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { grid: { color: gridColor }, ticks: { color: labelColor, font: { size: 11 } } },
-                        y: { grid: { color: gridColor }, ticks: { color: labelColor, font: { size: 11 }, stepSize: 1, precision: 0 }, beginAtZero: true }
-                    }
+                const today = new Date(); today.setHours(0, 0, 0, 0);
+                const dayLabels = [];
+                const dayCounts = new Array(7).fill(0);
+                for (let i = 6; i >= 0; i--) {
+                    const d = new Date(today); d.setDate(today.getDate() - i);
+                    dayLabels.push(d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }));
                 }
-            });
+                apps.forEach(app => {
+                    const raw = String(app.timestamp || '').replace(/^'/, '').trim();
+                    const parts = raw.split(' '); if (!parts[0]) return;
+                    const dp = parts[0].split('/'); if (dp.length < 3) return;
+                    const appDate = new Date(parseInt(dp[2]), parseInt(dp[1]) - 1, parseInt(dp[0]));
+                    appDate.setHours(0, 0, 0, 0);
+                    const diff = Math.round((today - appDate) / 86400000);
+                    if (diff >= 0 && diff <= 6) dayCounts[6 - diff]++;
+                });
 
-            const classNums = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
-            const relData = [], nrData = [], blData = [];
-            classNums.forEach(cls => {
-                const inClass = students.filter(s => String(s.studentClass) === cls);
-                relData.push(inClass.filter(s => (s.admitStatus || 'Not Release') === 'Release').length);
-                nrData.push(inClass.filter(s => (s.admitStatus || 'Not Release') === 'Not Release').length);
-                blData.push(inClass.filter(s => (s.admitStatus || 'Not Release') === 'Block').length);
-            });
-
-            if (_chartClass) _chartClass.destroy();
-            _chartClass = new Chart(document.getElementById('chartClassBreakdown').getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: classNums.map(c => 'Cls ' + c),
-                    datasets: [
-                        { label: 'Released', data: relData, backgroundColor: 'rgba(16,185,129,0.8)', borderRadius: 4, stack: 'a' },
-                        { label: 'Not Released', data: nrData, backgroundColor: 'rgba(148,163,184,0.7)', borderRadius: 0, stack: 'a' },
-                        { label: 'Blocked', data: blData, backgroundColor: 'rgba(239,68,68,0.8)', borderRadius: 0, stack: 'a' }
-                    ]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { display: true, position: 'bottom', labels: { color: labelColor, font: { size: 11 }, boxWidth: 12, padding: 12 } } },
-                    scales: {
-                        x: { stacked: true, grid: { color: gridColor }, ticks: { color: labelColor, font: { size: 10 } } },
-                        y: { stacked: true, grid: { color: gridColor }, ticks: { color: labelColor, font: { size: 11 }, stepSize: 1, precision: 0 }, beginAtZero: true }
+                if (_chartTrend) _chartTrend.destroy();
+                _chartTrend = new Chart(document.getElementById('chartApplicationsTrend').getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: dayLabels,
+                        datasets: [{ label: 'Applications', data: dayCounts, backgroundColor: 'rgba(59,130,246,0.7)', borderColor: 'rgba(59,130,246,1)', borderWidth: 1, borderRadius: 6 }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { grid: { color: gridColor }, ticks: { color: labelColor, font: { size: 11 } } },
+                            y: { grid: { color: gridColor }, ticks: { color: labelColor, font: { size: 11 }, stepSize: 1, precision: 0 }, beginAtZero: true }
+                        }
                     }
-                }
-            });
-            
-            if (btn) showToast('Dashboard updated', 'success');
-            
+                });
+
+                const classNums = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
+                const relData = [], nrData = [], blData = [];
+                classNums.forEach(cls => {
+                    const inClass = students.filter(s => String(s.studentClass) === cls);
+                    relData.push(inClass.filter(s => (s.admitStatus || 'Not Release') === 'Release').length);
+                    nrData.push(inClass.filter(s => (s.admitStatus || 'Not Release') === 'Not Release').length);
+                    blData.push(inClass.filter(s => (s.admitStatus || 'Not Release') === 'Block').length);
+                });
+
+                if (_chartClass) _chartClass.destroy();
+                _chartClass = new Chart(document.getElementById('chartClassBreakdown').getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: classNums.map(c => 'Cls ' + c),
+                        datasets: [
+                            { label: 'Released', data: relData, backgroundColor: 'rgba(16,185,129,0.8)', borderRadius: 4, stack: 'a' },
+                            { label: 'Not Released', data: nrData, backgroundColor: 'rgba(148,163,184,0.7)', borderRadius: 0, stack: 'a' },
+                            { label: 'Blocked', data: blData, backgroundColor: 'rgba(239,68,68,0.8)', borderRadius: 0, stack: 'a' }
+                        ]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { display: true, position: 'bottom', labels: { color: labelColor, font: { size: 11 }, boxWidth: 12, padding: 12 } } },
+                        scales: {
+                            x: { stacked: true, grid: { color: gridColor }, ticks: { color: labelColor, font: { size: 10 } } },
+                            y: { stacked: true, grid: { color: gridColor }, ticks: { color: labelColor, font: { size: 11 }, stepSize: 1, precision: 0 }, beginAtZero: true }
+                        }
+                    }
+                });
+
+                if (btn) showToast('Dashboard updated', 'success');
+
             } catch (err) {
                 console.error("Dashboard render failed", err);
                 if (btn) showToast('Failed to reload dashboard', 'error');
