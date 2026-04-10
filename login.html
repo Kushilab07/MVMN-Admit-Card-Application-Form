@@ -59,7 +59,16 @@
         </div>
 
         <form id="loginForm" onsubmit="handleLogin(event)">
-            <div class="mb-5">
+            <div class="mb-4">
+                <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Admin User ID</label>
+                <div class="relative">
+                    <i data-lucide="user" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400"></i>
+                    <input type="text" id="adminId" required placeholder="Enter Admin ID..."
+                        class="w-full pl-10 pr-4 py-3 border border-slate-200 dark:border-slate-700 rounded-xl bg-white/50 dark:bg-slate-900/50 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                </div>
+            </div>
+            
+            <div class="mb-6">
                 <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Admin Password</label>
                 <div class="relative">
                     <i data-lucide="lock" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400"></i>
@@ -110,7 +119,7 @@
         const db = firebase.database();
 
         // Target your FINAL_SCRIPT_URL (The App Script that manages settings/students)
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyA4mSwvqmxHGgI2lzxZBsQyjD6FUhl3yIHeOg0PGH7tB_nUsS8VZLKm6ZyM8YkErpYEQ/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzyWAznrBo0sODWxruOJ3rmATu6egkwu9676BiGOqeeuIELR1dtRVj842mqTJSTHzv6sQ/exec";
 
         function showToast(message, type = 'info') {
             const container = document.getElementById('toast-container');
@@ -130,6 +139,7 @@
 
         async function handleLogin(e) {
             e.preventDefault();
+            const idInput = document.getElementById('adminId').value.trim();
             const passInput = document.getElementById('adminPassword').value;
             const btn = document.getElementById('loginBtn');
             const origHtml = btn.innerHTML;
@@ -142,6 +152,7 @@
                 // 1. Verify with Google Sheet
                 const payload = {
                     action: 'verify_login',
+                    userId: idInput,
                     password: passInput
                 };
 
