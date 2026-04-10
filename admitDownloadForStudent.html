@@ -719,7 +719,7 @@
 
     <script>
         // Final Sheet URL
-        const API = 'https://script.google.com/macros/s/AKfycbzyWAznrBo0sODWxruOJ3rmATu6egkwu9676BiGOqeeuIELR1dtRVj842mqTJSTHzv6sQ/exec';
+        const API = 'https://script.google.com/macros/s/AKfycbzhRNmF7DP18m2k81-wNRy-xpbWaA_U0Es4lBODWdc_wFQAPqdfbzm7gAx4E-_60AcI-Q/exec';
 
         let generatedCaptcha = "";
 
@@ -774,8 +774,15 @@
             const sid = document.getElementById('sid').value.trim().toUpperCase();
             const dob = document.getElementById('dob').value;
             const userCaptcha = document.getElementById('captchaInput').value.trim().toUpperCase();
+
             const btn = document.getElementById('subBtn');
             const msg = document.getElementById('msg');
+
+            // DOB VALIDATION (CLEAN)
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(dob)) {
+                msg.innerHTML = '<span class="error-state">Invalid Date of Birth format</span>';
+                return;
+            }
 
             if (userCaptcha !== generatedCaptcha) {
                 msg.innerHTML = '<span class="error-state">Wrong Captcha</span>';
