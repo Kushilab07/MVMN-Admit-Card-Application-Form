@@ -460,13 +460,8 @@
             margin-top: 15px;
         }
 
-        /* PRINT STYLES */
+        /* PRINT STYLES - STRICTLY ORIGINAL */
         @media print {
-
-            @page {
-                size: legal portrait;
-                margin: 0;
-            }
 
             * {
                 -webkit-print-color-adjust: exact !important;
@@ -492,27 +487,15 @@
                 margin: 0;
             }
 
-            /* FIX: Removed fixed height: 296mm which caused blank page 2 on mobile.
-               Page separation is handled entirely by page-break-after + break-after. */
             .admit-card-page,
             .instructions-page {
                 border: 1px solid #000 !important;
+                height: 100%; /*!important; / * 2. Dynamically stretches the border to perfectly fit Legal, A4, or Letter */
                 page-break-after: always;
-                break-after: page;
                 box-shadow: none;
-                margin: 0 !important;
-                padding: 10mm !important;
-                width: 100% !important;
+                margin: 0;
+                width: 100%;
                 box-sizing: border-box;
-                /* Let content define the height naturally */
-                min-height: unset;
-                height: auto;
-            }
-
-            /* FIX: Prevent any element from creating orphan pages */
-            .footer-sigs {
-                margin-top: 20px !important;
-                padding-top: 20px !important;
             }
         }
     </style>
@@ -574,18 +557,6 @@
     </div> -->
 
     <!-- 3. ADMIT CARD RENDER AREA (STRICTLY ORIGINAL LAYOUT) -->
-    <!-- Mobile Paper Size Warning - only shown on mobile -->
-    <div id="mobilePrintWarning" style="display:none; position:fixed; bottom:0; left:0; right:0; background:#856404; color:#fff8e1; padding:10px 15px; font-size:13px; font-weight:700; text-align:center; z-index:9999;">
-        ⚠️ On mobile: In the print dialog, set Paper Size to <u>Legal (8.5×14)</u> for best results.
-        <span onclick="document.getElementById('mobilePrintWarning').style.display='none'" style="float:right;cursor:pointer;font-size:16px;">✕</span>
-    </div>
-    <script>
-        if (/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)) {
-            document.addEventListener('DOMContentLoaded', () => {
-                document.getElementById('mobilePrintWarning').style.display = 'block';
-            });
-        }
-    </script>
     <div class="page-container" id="admitCardRender">
         <!-- HTML Injected Here via JS -->
     </div>
@@ -823,7 +794,7 @@
                         <li>The admit card must clearly display all student details, the barcode, and the principal's signature. Admit cards without these will not be accepted.</li>
                         <li>Students must verify all details carefully before printing the admit card. In case of any errors, immediately inform the school administration.</li>
                     </ol>
-                    <div style="margin-top: 30px; position: relative; z-index: 1;">
+                    <div style="margin-top: auto; position: relative; z-index: 1;">
                         <div style="text-align: center;"><div class="hash-disp" style="font-family: 'Libre Barcode 39', cursive; font-size: 40px;">${barcodeID}</div></div>
                         <div class="page-timestamp-footer">Issued via Admin Portal: ${issuedTime}</div>
                     </div>
