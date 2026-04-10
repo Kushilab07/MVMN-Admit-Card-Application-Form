@@ -718,9 +718,9 @@
     </script>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby6k0EClmq3WueP-0SwCuce3-z6W-PZW1pjRk3lzaIHe_xwG64qnKMWW2pDw2lAa9NW1A/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzsunYoWjZgePtylUdc6debjvvJbwokiRS-q4GWvBps2KnsdG48Y8VOCg7F1TRhIQEbYQ/exec";
         // ADD FINAL SCRIPT URL SO WE CAN READ THE MASTER CONFIG
-        const FINAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzyWAznrBo0sODWxruOJ3rmATu6egkwu9676BiGOqeeuIELR1dtRVj842mqTJSTHzv6sQ/exec";
+        const FINAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzhRNmF7DP18m2k81-wNRy-xpbWaA_U0Es4lBODWdc_wFQAPqdfbzm7gAx4E-_60AcI-Q/exec";
 
         const urlParams = new URLSearchParams(window.location.search);
         const pageToken = urlParams.get('token');
@@ -731,17 +731,17 @@
                 // Use GET — POST gets silently converted to GET by browsers after GAS 302 redirect
                 const fetchUrl = `${FINAL_SCRIPT_URL}?action=get_public_config&appToken=${encodeURIComponent(pageToken)}&_=${Date.now()}`;
                 const res = await fetch(fetchUrl);
-                
+
                 // Read raw text first so we can show it on failure
                 const rawText = await res.text();
                 let result;
                 try {
                     result = JSON.parse(rawText);
-                } catch(parseErr) {
+                } catch (parseErr) {
                     lockPortal();
                     return;
                 }
-        
+
                 if (result.status === 'success' && result.isAppOpen) {
                     const classSelect = document.getElementById('class');
                     classSelect.innerHTML = '<option value="">-- SELECT --</option>';
@@ -806,8 +806,17 @@
 
         submitBtn.addEventListener('click', () => {
             modal.style.display = 'none';
-            document.getElementById('loader').style.display = 'block';
+        
             const formData = new FormData(form);
+            const dob = formData.get("dob");
+        
+            // VALIDATE BEFORE LOADER
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(dob)) {
+                alert("Invalid DOB format. Use YYYY-MM-DD.");
+                return;
+            }
+        
+            document.getElementById('loader').style.display = 'block';
             const dataObject = Object.fromEntries(formData.entries());
             dataObject.student_name = dataObject.student_name.toUpperCase();
             dataObject.father_name = dataObject.father_name.toUpperCase();
