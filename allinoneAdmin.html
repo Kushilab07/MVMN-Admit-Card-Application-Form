@@ -310,22 +310,23 @@
             <!-- 2. Toolbar Row -->
             <div
                 class="flex flex-col lg:flex-row items-start lg:items-center gap-3 mb-6 w-full flex-wrap flex-shrink-0">
-                <div class="flex items-center gap-2 flex-wrap">
+                <div class="flex items-center gap-2 w-full lg:w-auto">
                     <div
-                        class="flex bg-slate-100 dark:bg-slate-800/80 p-1 rounded-xl border border-slate-200 dark:border-slate-700 overflow-x-auto scrollbar-hide">
+                        class="flex flex-1 lg:flex-none bg-slate-100 dark:bg-slate-800/80 p-0.5 rounded-xl border border-slate-200 dark:border-slate-700">
                         <button onclick="setPendingFilter('All', this)"
-                            class="app-filter-btn px-4 py-1.5 text-sm font-medium rounded-lg border border-transparent text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500">All</button>
+                            class="app-filter-btn flex-1 lg:flex-none px-1.5 sm:px-2 lg:px-4 py-1.5 text-[11px] sm:text-xs lg:text-sm font-medium rounded-lg border border-transparent text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500">All</button>
                         <button onclick="setPendingFilter('Pending', this)"
-                            class="app-filter-btn px-4 py-1.5 text-sm font-medium rounded-lg bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 border border-slate-200 dark:border-slate-700 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500">Pending</button>
+                            class="app-filter-btn flex-1 lg:flex-none px-1.5 sm:px-2 lg:px-4 py-1.5 text-[11px] sm:text-xs lg:text-sm font-medium rounded-lg bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 border border-slate-200 dark:border-slate-700 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500">Pending</button>
                         <button onclick="setPendingFilter('Approved', this)"
-                            class="app-filter-btn px-4 py-1.5 text-sm font-medium rounded-lg border border-transparent text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500">Approved</button>
+                            class="app-filter-btn flex-1 lg:flex-none px-1.5 sm:px-2 lg:px-4 py-1.5 text-[11px] sm:text-xs lg:text-sm font-medium rounded-lg border border-transparent text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500">Approved</button>
                         <button onclick="setPendingFilter('Rejected', this)"
-                            class="app-filter-btn px-4 py-1.5 text-sm font-medium rounded-lg border border-transparent text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500">Rejected</button>
+                            class="app-filter-btn flex-1 lg:flex-none px-1.5 sm:px-2 lg:px-4 py-1.5 text-[11px] sm:text-xs lg:text-sm font-medium rounded-lg border border-transparent text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500">Rejected</button>
                     </div>
-                    <!-- Universal Delete Button Moved Here! -->
+
                     <button onclick="openUniversalDeleteModal('pending')"
-                        class="flex items-center justify-center bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 p-2.5 rounded-xl transition-colors"
-                        title="Delete ALL Pending Applications"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        class="shrink-0 flex items-center justify-center bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 p-2 lg:p-2.5 rounded-xl transition-colors"
+                        title="Delete ALL Pending Applications"><i data-lucide="trash-2"
+                            class="w-4 h-4 lg:w-5 lg:h-5"></i></button>
                 </div>
 
                 <div class="flex items-center gap-3 w-full lg:w-auto lg:ml-auto mt-2 lg:mt-0">
@@ -931,12 +932,13 @@
                 <form id="addStudentForm" onsubmit="submitAddStudent(event)">
                     <div class="grid grid-cols-2 gap-4 mb-4">
                         <div><label class="block text-xs font-medium text-slate-500 mb-1">Student Name</label><input
-                                type="text" id="addName" required
+                                type="text" id="addName" placeholder="Full Name" required
                                 class="w-full p-2 border rounded-lg uppercase dark:bg-slate-800 dark:border-slate-700 dark:text-white">
                         </div>
                         <div><label class="block text-xs font-medium text-slate-500 mb-1">Class</label><select
                                 id="addClass" required
                                 class="w-full p-2 border rounded-lg dark:bg-slate-800 dark:border-slate-700 dark:text-white">
+                                <option value="">-- SELECT --</option>
                                 <option value="1">1</option>
                                 <option value="2">2</option>
                                 <option value="3">3</option>
@@ -953,6 +955,7 @@
                         <div><label class="block text-xs font-medium text-slate-500 mb-1">Section</label><select
                                 id="addSection" required
                                 class="w-full p-2 border rounded-lg dark:bg-slate-800 dark:border-slate-700 dark:text-white">
+                                <option value="">-- SELECT --</option>
                                 <option value="MAHA">MAHA</option>
                                 <option value="RISHI">RISHI</option>
                                 <option value="NONE">NONE</option>
@@ -966,15 +969,16 @@
                                 class="w-full p-2 border rounded-lg dark:bg-slate-800 dark:border-slate-700 dark:text-white">
                         </div>
                         <div><label class="block text-xs font-medium text-slate-500 mb-1">Father's Name</label><input
-                                type="text" id="addFather" required
+                                type="text" id="addFather" placeholder="Father's Full Name" required
                                 class="w-full p-2 border rounded-lg uppercase dark:bg-slate-800 dark:border-slate-700 dark:text-white">
                         </div>
-                        <div><label class="block text-xs font-medium text-slate-500 mb-1">Phone</label><input
-                                type="text" id="addPhone" required
+                        <div><label class="block text-xs font-medium text-slate-500 mb-1">Phone</label><input type="tel"
+                                id="addPhone" required pattern="[6-9][0-9]{9}" title="Valid 10-digit number"
+                                placeholder="10-digit number"
                                 class="w-full p-2 border rounded-lg dark:bg-slate-800 dark:border-slate-700 dark:text-white">
                         </div>
                         <div><label class="block text-xs font-medium text-slate-500 mb-1">Email</label><input
-                                type="email" id="addEmail" required
+                                type="email" id="addEmail" placeholder="email@example.com" required
                                 class="w-full p-2 border rounded-lg dark:bg-slate-800 dark:border-slate-700 dark:text-white">
                         </div>
                         <div><label class="block text-xs font-medium text-slate-500 mb-1">Admit Status</label><select
@@ -1030,7 +1034,7 @@
         // ==========================================
         // 1. CONFIGURATION & GLOBALS
         // ==========================================
-        const PENDING_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzIONtRPMASMm-_1pVCCeegyZ18YYoi5tWHBiUPPwXmC3PcAGnN7PtUlaJEWHGvj5MQPA/exec";
+        const PENDING_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzz4H4NQ55QsCEquCWlvpJ1YYbK5eoUg-DjojaxyliGIFSOYWZegFFnUF0jISfsv5X_/exec";
         const FINAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby9swdAcS3RnR3QzsgECLVmCnTthuJbRRoTq-vcuByKYjPuTcHfo7u1y3UxFkODfkYUyQ/exec";
 
         const firebaseConfig = {
@@ -1378,9 +1382,9 @@
         function setPendingFilter(status, btnElement) {
             currentAppFilter = status;
             document.querySelectorAll('.app-filter-btn').forEach(btn => {
-                btn.className = "app-filter-btn px-4 py-1.5 text-sm font-medium rounded-lg border border-transparent text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500";
+                btn.className = "app-filter-btn flex-1 lg:flex-none px-1.5 sm:px-2 lg:px-4 py-1.5 text-[11px] sm:text-xs lg:text-sm font-medium rounded-lg border border-transparent text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500";
             });
-            btnElement.className = "app-filter-btn px-4 py-1.5 text-sm font-medium rounded-lg bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 border border-slate-200 dark:border-slate-700 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500";
+            btnElement.className = "app-filter-btn flex-1 lg:flex-none px-1.5 sm:px-2 lg:px-4 py-1.5 text-[11px] sm:text-xs lg:text-sm font-medium rounded-lg bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 border border-slate-200 dark:border-slate-700 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500";
             filterPendingTable();
         }
 
