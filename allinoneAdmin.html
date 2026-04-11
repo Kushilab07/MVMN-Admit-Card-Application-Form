@@ -173,40 +173,12 @@
             </div>
             <div class="flex items-center gap-5">
                 <div class="relative flex items-center">
-                    <div id="notifOverlay" onclick="toggleMobileNotif()"
-                        class="fixed inset-0 bg-black/40 z-[9998] hidden md:hidden transition-opacity"></div>
-
                     <button id="bellBtn" onclick="toggleMobileNotif()"
                         class="relative p-2 rounded-xl flex items-center justify-center text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-slate-800 transition-all focus:outline-none">
                         <i data-lucide="bell" class="w-5 h-5"></i>
                         <span id="notificationBadge"
                             class="hidden absolute top-0 right-0 transform translate-x-1/4 -translate-y-1/4 h-4 w-4 rounded-full bg-red-500 text-[10px] font-bold text-white flex items-center justify-center border-2 border-white dark:border-slate-900">0</span>
                     </button>
-
-                    <div id="notificationPanel"
-                        class="fixed top-0 right-0 h-full w-80 bg-white dark:bg-slate-800 shadow-2xl border-l border-slate-200 dark:border-slate-700 z-[9999] transform translate-x-full transition-transform duration-300 md:absolute md:top-full md:mt-2 md:right-0 md:h-auto md:w-80 md:rounded-xl md:shadow-xl md:border md:translate-x-0 hidden">
-
-                        <div
-                            class="md:hidden p-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50">
-                            <span class="font-bold text-lg text-slate-800 dark:text-slate-200">Notifications</span>
-                            <button onclick="toggleMobileNotif()"
-                                class="p-2 bg-slate-200 dark:bg-slate-700 rounded-full text-slate-600 dark:text-slate-300">
-                                <i data-lucide="x" class="w-4 h-4"></i>
-                            </button>
-                        </div>
-
-                        <div
-                            class="hidden md:flex p-3 border-b border-slate-100 dark:border-slate-700 justify-between items-center bg-slate-50 dark:bg-slate-800/50">
-                            <span class="font-bold text-sm text-slate-800 dark:text-slate-200">Notifications</span>
-                            <button onclick="markAllRead()" class="text-xs text-blue-600 hover:underline">Mark all
-                                read</button>
-                        </div>
-
-                        <div id="notificationList"
-                            class="h-[calc(100%-70px)] md:h-auto md:max-h-64 overflow-y-auto custom-scrollbar divide-y divide-slate-100 dark:divide-slate-700">
-                            <div class="p-4 text-center text-sm text-slate-500">No new notifications</div>
-                        </div>
-                    </div>
                 </div>
 
                 <button id="newDataAlert" onclick="loadNewData()"
@@ -1026,12 +998,40 @@
 
     <div id="admitCardRender"></div>
 
+    <div id="notifOverlay" onclick="toggleMobileNotif()"
+        class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[9998] hidden md:hidden"></div>
+
+    <div id="notificationPanel"
+        class="fixed top-0 right-0 h-[100dvh] w-72 flex flex-col bg-white dark:bg-slate-900 shadow-2xl border-l border-slate-200 dark:border-slate-800 z-[9999] transform translate-x-full transition-transform duration-300 ease-in-out md:absolute md:top-[64px] md:right-6 lg:right-10 md:h-auto md:w-80 md:rounded-xl md:shadow-xl md:border md:translate-x-0 hidden">
+
+        <div
+            class="p-3.5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-900 md:rounded-t-xl shrink-0">
+            <span class="font-bold text-lg md:text-sm text-slate-800 dark:text-slate-200">Notifications</span>
+
+            <div class="flex items-center gap-3">
+                <button onclick="markAllRead()"
+                    class="text-xs font-medium text-blue-600 hover:text-blue-700 hover:underline">
+                    Mark all read
+                </button>
+                <button onclick="toggleMobileNotif()"
+                    class="md:hidden p-1.5 bg-slate-200 dark:bg-slate-800 rounded-full text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="notificationList"
+            class="flex-1 md:h-auto md:max-h-80 overflow-y-auto custom-scrollbar divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-900 md:rounded-b-xl">
+            <div class="p-6 text-center text-sm text-slate-500">No new notifications</div>
+        </div>
+    </div>
+
     <script>
         // ==========================================
         // 1. CONFIGURATION & GLOBALS
         // ==========================================
-        const PENDING_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzsunYoWjZgePtylUdc6debjvvJbwokiRS-q4GWvBps2KnsdG48Y8VOCg7F1TRhIQEbYQ/exec";
-        const FINAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzhRNmF7DP18m2k81-wNRy-xpbWaA_U0Es4lBODWdc_wFQAPqdfbzm7gAx4E-_60AcI-Q/exec";
+        const PENDING_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxme17rnnFHSgwjSP2oFCuePqB0EJrJwXe57_jBTGfIIOu5Tj7HuROt1frDuGdxUPtPpw/exec";
+        const FINAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby4wqtnXvKMjJ15rx3ayQdvC_egggAvUz12LEWB0-Ynj-BKAHMTBtg9dzmB3zqOmfUwRw/exec";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBBkITpfUjxFUFvgQhjnXedrIX4GhfCSCo",
@@ -1108,27 +1108,27 @@
 
         // --- NEW NOTIFICATION & LOGOUT LOGIC ---
 
-        // 1. Responsive Notification Toggle
+        // 1. Responsive Notification Toggle (Drawer Style)
         function toggleMobileNotif() {
             const panel = document.getElementById('notificationPanel');
             const overlay = document.getElementById('notifOverlay');
             const isMobile = window.innerWidth < 768; // Tailwind 'md' breakpoint
 
             if (isMobile) {
-                // Mobile Slide-in Logic
                 if (panel.classList.contains('translate-x-full')) {
-                    // Open panel
+                    // Open Panel
                     panel.classList.remove('hidden');
-                    // Small delay to allow 'hidden' removal to render before translating
                     setTimeout(() => {
                         panel.classList.remove('translate-x-full');
                     }, 10);
                     overlay.classList.remove('hidden');
+                    document.body.style.overflow = 'hidden'; // Lock background scrolling
                 } else {
-                    // Close panel
+                    // Close Panel
                     panel.classList.add('translate-x-full');
                     overlay.classList.add('hidden');
-                    // Wait for slide animation to finish before hiding display
+                    document.body.style.overflow = ''; // Unlock background scrolling
+
                     setTimeout(() => {
                         panel.classList.add('hidden');
                     }, 300);
@@ -1194,8 +1194,15 @@
         });
 
         function loadNewData() {
-            // Force panel to close
-            document.getElementById('notificationPanel').classList.add('hidden');
+            // Force panel to close & reset mobile state completely
+            const panel = document.getElementById('notificationPanel');
+            const overlay = document.getElementById('notifOverlay');
+
+            panel.classList.add('hidden');
+            panel.classList.add('translate-x-full');
+            overlay.classList.add('hidden');
+            document.body.style.overflow = ''; // Unlock scroll in case they were on mobile!
+
             markAllRead();
 
             // Switch to Pending Applications tab if not already there, otherwise just fetch
@@ -1847,21 +1854,21 @@
                 // --- STRICT DD/MM/YYYY FORMATTING FOR TIMESTAMP ---
                 let rawTs = String(row.timestamp).replace(/^'/, '').trim();
                 let cleanTs = rawTs;
-                let tsDate = new Date(rawTs);
-                if (!isNaN(tsDate.getTime()) && (rawTs.includes('T') || parseInt(rawTs.split('/')[0]) <= 12)) {
-                    cleanTs = `${("0" + tsDate.getDate()).slice(-2)}/${("0" + (tsDate.getMonth() + 1)).slice(-2)}/${tsDate.getFullYear()} <span class="text-slate-400 text-xs ml-1">${tsDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>`;
+                if (rawTs.includes('T')) {
+                    const dt = new Date(rawTs);
+                    if (!isNaN(dt.getTime())) { cleanTs = `${("0" + dt.getDate()).slice(-2)}/${("0" + (dt.getMonth() + 1)).slice(-2)}/${dt.getFullYear()} <span class="text-slate-400 text-xs ml-1">${dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>`; }
                 } else if (rawTs.includes('/')) {
-                    let parts = rawTs.split(' '); let p = parts[0].split('/');
-                    cleanTs = `${("0" + p[0]).slice(-2)}/${("0" + p[1]).slice(-2)}/${p[2]}`;
+                    let parts = rawTs.split(' ');
+                    cleanTs = parts[0];
                     if (parts.length > 1) cleanTs += ` <span class="text-slate-400 text-xs ml-1">${parts.slice(1).join(' ')}</span>`;
                 }
 
                 // --- STRICT DD/MM/YYYY FORMATTING FOR DOB ---
                 let rawDob = String(row.dob).replace(/^'/, '').trim().split(' ')[0];
                 let cleanDob = rawDob;
-                let dobDate = new Date(rawDob);
-                if (!isNaN(dobDate.getTime()) && (rawDob.includes('T') || parseInt(rawDob.split('/')[0]) <= 12)) {
-                    cleanDob = `${("0" + dobDate.getDate()).slice(-2)}/${("0" + (dobDate.getMonth() + 1)).slice(-2)}/${dobDate.getFullYear()}`;
+                if (rawDob.includes('T')) {
+                    const dt = new Date(rawDob);
+                    if (!isNaN(dt.getTime())) { cleanDob = `${("0" + dt.getDate()).slice(-2)}/${("0" + (dt.getMonth() + 1)).slice(-2)}/${dt.getFullYear()}`; }
                 } else if (rawDob.includes('-')) {
                     let p = rawDob.split('-'); cleanDob = p[0].length === 4 ? `${p[2]}/${p[1]}/${p[0]}` : `${("0" + p[0]).slice(-2)}/${("0" + p[1]).slice(-2)}/${p[2]}`;
                 } else if (rawDob.includes('/')) {
