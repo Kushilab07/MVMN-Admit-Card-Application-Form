@@ -20,6 +20,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 
     <script>
+        // 1. STRICT SECURITY GATEKEEPER: Runs before the page even begins to draw!
+        if (!sessionStorage.getItem("adminToken")) {
+            window.location.replace("/"); // Immediately abort and redirect
+        }
+
+        // 2. Tailwind Config
         tailwind.config = {
             darkMode: 'class',
             theme: {
@@ -29,6 +35,7 @@
             }
         }
 
+        // 3. Theme Initialization
         if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark')
         } else {
@@ -292,7 +299,7 @@
         </div>
 
         <!-- ================= PENDING APPLICATIONS TAB ================= -->
-        <div id="pendingView" class="flex-1 flex flex-col p-4 lg:p-8 overflow-y-auto scrollbar-hide">
+        <div id="pendingView" class="flex-1 flex flex-col p-4 lg:p-8 overflow-y-auto lg:overflow-hidden scrollbar-hide">
             <!-- 1. Header Row -->
             <div class="flex items-start sm:items-center justify-between w-full mb-6 flex-shrink-0">
                 <div>
@@ -310,7 +317,7 @@
             <!-- 2. Toolbar Row -->
             <div
                 class="flex flex-col lg:flex-row items-start lg:items-center gap-3 mb-6 w-full flex-wrap flex-shrink-0">
-                <div class="flex items-center gap-2 w-full lg:w-auto">
+                <div class="flex items-center gap-2 w-full lg:w-auto flex-wrap">
                     <div
                         class="flex flex-1 lg:flex-none bg-slate-100 dark:bg-slate-800/80 p-0.5 rounded-xl border border-slate-200 dark:border-slate-700">
                         <button onclick="setPendingFilter('All', this)"
@@ -323,6 +330,9 @@
                             class="app-filter-btn flex-1 lg:flex-none px-1.5 sm:px-2 lg:px-4 py-1.5 text-[11px] sm:text-xs lg:text-sm font-medium rounded-lg border border-transparent text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500">Rejected</button>
                     </div>
 
+                    <button onclick="bulkPendingAction('approve')" class="px-3 py-1.5 text-sm font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg hover:bg-emerald-100 hidden pending-bulk-btn transition-colors shadow-sm">Approve</button>
+                    <button onclick="bulkPendingAction('reject')" class="px-3 py-1.5 text-sm font-medium bg-orange-50 text-orange-700 border border-orange-200 rounded-lg hover:bg-orange-100 hidden pending-bulk-btn transition-colors shadow-sm">Reject</button>
+
                     <button onclick="openUniversalDeleteModal('pending')"
                         class="shrink-0 flex items-center justify-center bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 p-2 lg:p-2.5 rounded-xl transition-colors"
                         title="Delete ALL Pending Applications"><i data-lucide="trash-2"
@@ -330,33 +340,66 @@
                 </div>
 
                 <div class="flex items-center gap-3 w-full lg:w-auto lg:ml-auto mt-2 lg:mt-0">
-                    <div class="relative w-full lg:w-64">
+                    <div class="relative w-full lg:w-56">
                         <i data-lucide="search"
                             class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400"></i>
                         <input type="text" id="searchPending" placeholder="Search ID or Name..."
                             oninput="handlePendingSearch()"
                             class="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
+                    
+                    <div class="relative">
+                        <button onclick="document.getElementById('advFilterPanelPending').classList.toggle('hidden')"
+                            class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"><i
+                                data-lucide="filter" class="w-4 h-4"></i></button>
+                        <div id="advFilterPanelPending"
+                            class="hidden absolute right-0 mt-2 w-64 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 p-4 z-50">
+                            <h4 class="text-sm font-bold mb-3 dark:text-white">Advanced Filters</h4>
+                            
+                            <label class="block text-xs font-medium text-slate-500 mb-1">Class</label>
+                            <select id="filterPendingClass" onchange="filterPendingTable()"
+                                class="w-full mb-3 p-1.5 text-sm border rounded dark:bg-slate-900 dark:border-slate-700 dark:text-white outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="All">All Classes</option>
+                                <option value="1">1</option> <option value="2">2</option> <option value="3">3</option>
+                                <option value="4">4</option> <option value="5">5</option> <option value="6">6</option>
+                                <option value="7">7</option> <option value="8">8</option> <option value="9">9</option>
+                                <option value="10">10</option> <option value="11">11</option> <option value="12">12</option>
+                            </select>
+
+                            <label class="block text-xs font-medium text-slate-500 mb-1">Section</label>
+                            <select id="filterPendingSection" onchange="filterPendingTable()"
+                                class="w-full mb-3 p-1.5 text-sm border rounded dark:bg-slate-900 dark:border-slate-700 dark:text-white outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="All">All Sections</option>
+                                <option value="MAHA">MAHA</option>
+                                <option value="RISHI">RISHI</option>
+                                <option value="NONE">NONE</option>
+                            </select>
+
+                            <label class="block text-xs font-medium text-slate-500 mb-1">Roll No (Optional)</label>
+                            <input type="text" id="filterPendingRoll" oninput="handlePendingSearch()" placeholder="e.g. 05"
+                                class="w-full p-1.5 text-sm border rounded dark:bg-slate-900 dark:border-slate-700 dark:text-white outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <!-- 3. Table -->
             <!-- flex-shrink-0 is the secret here to let it grow vertically without getting squished by flexbox! -->
-            <div
-                class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm transition-colors duration-300 relative mb-24 lg:mb-6 flex-shrink-0">
-                <div class="overflow-x-auto scrollbar-hide relative rounded-2xl">
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm transition-colors duration-300 relative mb-24 lg:mb-0 flex-shrink-0 lg:flex-shrink lg:flex-1 lg:min-h-0 flex flex-col">
+                
+                <div class="overflow-x-auto lg:overflow-auto custom-scrollbar relative rounded-2xl pb-2 lg:flex-1">
                     <table class="w-full text-left border-collapse min-w-max">
-                        <thead class="bg-slate-50 dark:bg-slate-800/95 border-b border-slate-200 dark:border-slate-800">
-                            <tr
-                                class="text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold">
+                        
+                        <thead class="bg-slate-50 dark:bg-slate-800/95 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-30 shadow-sm">
+                            <tr class="text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold">
+                                <th class="px-4 py-3 w-10 text-center sticky left-0 z-40 bg-slate-50 dark:bg-slate-800/95 shadow-[4px_0_10px_rgba(0,0,0,0.04)] border-r border-slate-200 dark:border-slate-800">
+                                    <input type="checkbox" id="selectAllPending" onclick="toggleSelectAllPending(this)" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-800">
+                                </th>
                                 <th class="px-4 py-3">
                                     <div>Date & Time</div>
-                                    <div
-                                        class="text-[10px] font-normal text-slate-400 normal-case mt-0.5 tracking-normal">
-                                        DD/MM/YYYY</div>
+                                    <div class="text-[10px] font-normal text-slate-400 normal-case mt-0.5 tracking-normal">DD/MM/YYYY</div>
                                 </th>
-                                <th class="px-4 py-3 border-r border-slate-200 dark:border-slate-700">Application ID
-                                </th>
+                                <th class="px-4 py-3 border-r border-slate-200 dark:border-slate-700">Application ID</th>
                                 <th class="px-4 py-3">Student ID</th>
                                 <th class="px-4 py-3">Student Name</th>
                                 <th class="px-4 py-3">Class</th>
@@ -364,16 +407,13 @@
                                 <th class="px-4 py-3">Roll No</th>
                                 <th class="px-4 py-3">
                                     <div>Date of Birth</div>
-                                    <div
-                                        class="text-[10px] font-normal text-slate-400 normal-case mt-0.5 tracking-normal">
-                                        DD/MM/YYYY</div>
+                                    <div class="text-[10px] font-normal text-slate-400 normal-case mt-0.5 tracking-normal">DD/MM/YYYY</div>
                                 </th>
                                 <th class="px-4 py-3">Father's Name</th>
                                 <th class="px-4 py-3">Phone Number</th>
                                 <th class="px-4 py-3 border-r border-slate-200 dark:border-slate-800">Email ID</th>
-                                <th
-                                    class="px-4 py-3 text-center sticky right-0 z-20 bg-slate-50 dark:bg-slate-800/95 shadow-[-4px_0_10px_rgba(0,0,0,0.04)] w-[120px]">
-                                    Action</th>
+                                
+                                <th class="px-4 py-3 text-center sticky right-0 z-40 bg-slate-50 dark:bg-slate-800/95 shadow-[-4px_0_10px_rgba(0,0,0,0.04)] w-[120px]">Action</th>
                             </tr>
                         </thead>
                         <tbody id="tableBody" class="divide-y divide-slate-200 dark:divide-slate-800 text-sm">
@@ -393,7 +433,7 @@
             </div>
         </div>
 
-        <div id="studentsView" class="flex-1 flex flex-col p-4 lg:p-8 overflow-y-auto scrollbar-hide">
+        <div id="studentsView" class="flex-1 flex flex-col p-4 lg:p-8 overflow-y-auto lg:overflow-hidden scrollbar-hide">
             <!-- 1. Header Row -->
             <div class="flex items-start sm:items-center justify-between w-full mb-6 flex-shrink-0">
                 <div>
@@ -522,26 +562,22 @@
             </div>
 
             <!-- Full Page Scrolling Table Wrapper -->
-            <div
-                class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm transition-colors duration-300 relative mb-24 lg:mb-6">
-                <div class="overflow-x-auto scrollbar-hide relative rounded-2xl">
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm transition-colors duration-300 relative mb-24 lg:mb-0 flex-shrink-0 lg:flex-shrink lg:flex-1 lg:min-h-0 flex flex-col">
+                
+                <div class="overflow-x-auto lg:overflow-auto custom-scrollbar relative rounded-2xl pb-2 lg:flex-1">
                     <table class="w-full text-left border-collapse min-w-max" id="studentsTableElement">
-                        <thead class="bg-slate-50 dark:bg-slate-800/95 border-b border-slate-200 dark:border-slate-800">
-                            <tr
-                                class="text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold">
-                                <th
-                                    class="px-4 py-3 w-10 text-center sticky left-0 z-20 bg-slate-50 dark:bg-slate-800/95 shadow-[4px_0_10px_rgba(0,0,0,0.04)] border-r border-slate-200 dark:border-slate-800">
+                        
+                        <thead class="bg-slate-50 dark:bg-slate-800/95 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-30 shadow-sm">
+                            <tr class="text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold">
+                                <th class="px-4 py-3 w-10 text-center sticky left-0 z-40 bg-slate-50 dark:bg-slate-800/95 shadow-[4px_0_10px_rgba(0,0,0,0.04)] border-r border-slate-200 dark:border-slate-800">
                                     <input type="checkbox" id="selectAll" onclick="toggleSelectAll(this)"
                                         class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-800">
                                 </th>
                                 <th class="px-4 py-3">
                                     <div>Date & Time</div>
-                                    <div
-                                        class="text-[10px] font-normal text-slate-400 normal-case mt-0.5 tracking-normal">
-                                        DD/MM/YYYY</div>
+                                    <div class="text-[10px] font-normal text-slate-400 normal-case mt-0.5 tracking-normal">DD/MM/YYYY</div>
                                 </th>
-                                <th class="px-4 py-3 border-r border-slate-200 dark:border-slate-700">Application ID
-                                </th>
+                                <th class="px-4 py-3 border-r border-slate-200 dark:border-slate-700">Application ID</th>
                                 <th class="px-4 py-3">Student ID</th>
                                 <th class="px-4 py-3">Name</th>
                                 <th class="px-4 py-3">Class</th>
@@ -549,25 +585,16 @@
                                 <th class="px-4 py-3">Roll</th>
                                 <th class="px-4 py-3">
                                     <div>DOB</div>
-                                    <div
-                                        class="text-[10px] font-normal text-slate-400 normal-case mt-0.5 tracking-normal">
-                                        DD/MM/YYYY</div>
+                                    <div class="text-[10px] font-normal text-slate-400 normal-case mt-0.5 tracking-normal">DD/MM/YYYY</div>
                                 </th>
                                 <th class="px-4 py-3">Father's Name</th>
                                 <th class="px-4 py-3">Phone</th>
                                 <th class="px-4 py-3 border-r border-slate-200 dark:border-slate-800">Email ID</th>
-                                <th
-                                    class="px-4 py-3 border-x border-slate-200 dark:border-slate-800 bg-amber-50/50 dark:bg-amber-900/10 text-amber-700 dark:text-amber-500">
-                                    Admit Status</th>
-                                <th
-                                    class="px-4 py-3 bg-blue-50/50 dark:bg-blue-900/10 text-blue-700 dark:text-blue-400">
-                                    HY Serial No.</th>
-                                <th
-                                    class="px-4 py-3 bg-blue-50/50 dark:bg-blue-900/10 text-blue-700 dark:text-blue-400">
-                                    FY Serial No.</th>
-                                <th
-                                    class="px-4 py-3 text-center sticky right-0 z-20 bg-slate-50 dark:bg-slate-800/95 shadow-[-4px_0_10px_rgba(0,0,0,0.04)] w-[100px]">
-                                    Action</th>
+                                <th class="px-4 py-3 border-x border-slate-200 dark:border-slate-800 bg-amber-50/50 dark:bg-amber-900/10 text-amber-700 dark:text-amber-500">Admit Status</th>
+                                <th class="px-4 py-3 bg-blue-50/50 dark:bg-blue-900/10 text-blue-700 dark:text-blue-400">HY Serial No.</th>
+                                <th class="px-4 py-3 bg-blue-50/50 dark:bg-blue-900/10 text-blue-700 dark:text-blue-400">FY Serial No.</th>
+                                
+                                <th class="px-4 py-3 text-center sticky right-0 z-40 bg-slate-50 dark:bg-slate-800/95 shadow-[-4px_0_10px_rgba(0,0,0,0.04)] w-[100px]">Action</th>
                             </tr>
                         </thead>
                         <tbody id="studentsTableBody" class="divide-y divide-slate-200 dark:divide-slate-800 text-sm">
@@ -728,6 +755,33 @@
                                 class="px-4 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-r-lg font-bold transition-colors"><i
                                     data-lucide="copy" class="w-4 h-4"></i></button>
                         </div>
+                    </div>
+                </div>
+
+                <!-- 4. SCANNER VERIFIER APP CARD -->
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm transition-all duration-300 hover:shadow-md hover:border-amber-300 dark:hover:border-amber-700">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-full bg-amber-50 dark:bg-amber-900/30 flex items-center justify-center">
+                            <i data-lucide="scan-line" class="w-5 h-5 text-amber-600 dark:text-amber-400"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-800 dark:text-slate-200">Scanner Verifier App</h3>
+                    </div>
+
+                    <div class="flex items-center justify-between bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-800 mb-4">
+                        <span id="verifierStatusBadge" class="px-2.5 py-1 text-xs font-bold rounded-md bg-red-100 text-red-700 border border-red-200">OFFLINE</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="verifierToggle" class="sr-only peer" onchange="toggleVerifier()">
+                            <div class="w-14 h-7 bg-red-500 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-emerald-500 shadow-inner"></div>
+                        </label>
+                    </div>
+
+                    <div id="verifierPinContainer" class="hidden">
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Active Access PIN</label>
+                        <div class="flex">
+                            <input type="text" id="sysVerifierPin" readonly class="w-full p-2.5 text-center text-lg tracking-[0.5em] font-mono font-bold border border-r-0 border-slate-200 rounded-l-lg bg-white dark:bg-slate-950 dark:border-slate-700 dark:text-slate-300 focus:outline-none">
+                            <button onclick="copyLink('sysVerifierPin')" class="px-4 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-r-lg font-bold transition-colors" title="Copy PIN"><i data-lucide="copy" class="w-4 h-4"></i></button>
+                        </div>
+                        <p class="text-[10px] text-slate-400 mt-2 text-center">Give this 6-digit PIN to teachers to unlock the scanner.</p>
                     </div>
                 </div>
 
@@ -1035,27 +1089,23 @@
         // 1. CONFIGURATION & GLOBALS
         // ==========================================
         const PENDING_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzz4H4NQ55QsCEquCWlvpJ1YYbK5eoUg-DjojaxyliGIFSOYWZegFFnUF0jISfsv5X_/exec";
-        const FINAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby9swdAcS3RnR3QzsgECLVmCnTthuJbRRoTq-vcuByKYjPuTcHfo7u1y3UxFkODfkYUyQ/exec";
+        const FINAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxZzoZwsNw97dc6FG_mUKUjPsPjn-W483J3LFtv8kbxx30louY1DN7jOefI53mkvUq9rw/exec";
 
         const firebaseConfig = {
-            apiKey: "AIzaSyBBkITpfUjxFUFvgQhjnXedrIX4GhfCSCo",
-            authDomain: "mvmn-exam-management-system.firebaseapp.com",
-            databaseURL: "https://mvmn-exam-management-system-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "mvmn-exam-management-system",
-            storageBucket: "mvmn-exam-management-system.firebasestorage.app",
-            messagingSenderId: "652018919071",
-            appId: "1:652018919071:web:65cd8e632cda4c3f9624aa"
+            apiKey: "AIzaSyBBenVtQ2T7Izy27mCf4anRZrUqibWIpyE",
+            authDomain: "exam-management-system-mvmn.firebaseapp.com",
+            databaseURL: "https://exam-management-system-mvmn-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "exam-management-system-mvmn",
+            storageBucket: "exam-management-system-mvmn.firebasestorage.app",
+            messagingSenderId: "47466507295",
+            appId: "1:47466507295:web:c85b57e6a782686c5df92a",
+            measurementId: "G-Y5CGYCYEBQ"
         };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // SECURE AUTHENTICATION: Pull the token from session storage (granted by login.html)
+        // SECURE AUTHENTICATION: Pull the token from session storage
         const ADMIN_SECRET = sessionStorage.getItem("adminToken");
-
-        // SECURITY CHECK: If there is no token in memory, immediately kick them to the login page
-        if (!ADMIN_SECRET) {
-            window.location.replace("login.html");
-        }
 
         window.currentApplications = [];
         window.finalStudentsData = [];
@@ -1157,7 +1207,7 @@
 
             // Redirect to login page
             setTimeout(() => {
-                window.location.href = 'login.html';
+                window.location.href = '/';
             }, 500);
         }
 
@@ -1295,30 +1345,76 @@
         window.enableEdit = function (tdElement, rowId, fieldKey, dbType, studentClass) {
             if (tdElement.classList.contains('is-editing')) return;
             tdElement.classList.add('is-editing'); tdElement.classList.remove('cursor-pointer');
+            
             const currentVal = tdElement.getAttribute('data-value');
+            let inputHTML = '';
             const isUpper = ['studentId', 'studentName', 'section', 'fatherName'].includes(fieldKey) ? 'uppercase' : '';
+
+            // 1. SMART INPUT ROUTER (Text, Date, or Select Dropdowns)
+            if (fieldKey === 'dob') {
+                let inputValue = currentVal;
+                if (currentVal.includes('/')) {
+                    const p = currentVal.split('/');
+                    if (p.length === 3) inputValue = `${p[2]}-${p[1]}-${p[0]}`;
+                }
+                inputHTML = `<input type="date" value="${inputValue}" class="edit-input w-full px-2 py-1 text-sm border border-blue-400 dark:border-blue-500 rounded bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 shadow-inner">`;
+            } else if (fieldKey === 'studentClass') {
+                const classes = ['1','2','3','4','5','6','7','8','9','10','11','12'];
+                let opts = classes.map(c => `<option value="${c}" ${String(currentVal) === c ? 'selected' : ''}>${c}</option>`).join('');
+                inputHTML = `<select class="edit-input w-full px-2 py-1 text-sm border border-blue-400 dark:border-blue-500 rounded bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 shadow-inner cursor-pointer">${opts}</select>`;
+            } else if (fieldKey === 'section') {
+                const sections = ['MAHA', 'RISHI', 'NONE'];
+                let opts = sections.map(s => `<option value="${s}" ${String(currentVal).toUpperCase() === s ? 'selected' : ''}>${s}</option>`).join('');
+                inputHTML = `<select class="edit-input w-full px-2 py-1 text-sm border border-blue-400 dark:border-blue-500 rounded bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 shadow-inner cursor-pointer">${opts}</select>`;
+            } else {
+                inputHTML = `<input type="text" value="${currentVal}" class="edit-input w-full px-2 py-1 text-sm border border-blue-400 dark:border-blue-500 rounded bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 shadow-inner ${isUpper}">`;
+            }
 
             tdElement.innerHTML = `
         <div class="flex items-center gap-1 min-w-[140px]" onclick="event.stopPropagation()">
-            <input type="text" value="${currentVal}" class="w-full px-2 py-1 text-sm border border-blue-400 dark:border-blue-500 rounded bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 shadow-inner ${isUpper}">
-            <button onclick="saveEdit(this, '${rowId}', '${fieldKey}', '${dbType}', '${studentClass}')" class="p-1.5 text-emerald-600 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 rounded transition-colors"><i data-lucide="check" class="w-4 h-4 stroke-[3]"></i></button>
+            ${inputHTML}
+            <button onclick="saveEdit(this, '${rowId}', '${fieldKey}', '${dbType}', '${studentClass}')" class="save-btn p-1.5 text-emerald-600 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 rounded transition-colors"><i data-lucide="check" class="w-4 h-4 stroke-[3]"></i></button>
             <button onclick="cancelEdit(this, '${escapeHtml(currentVal)}', '${rowId}', '${fieldKey}', '${dbType}', '${studentClass}')" class="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors"><i data-lucide="x" class="w-4 h-4 stroke-[3]"></i></button>
         </div>`;
+            
             lucide.createIcons({ root: tdElement });
-            const input = tdElement.querySelector('input'); input.focus(); input.setSelectionRange(input.value.length, input.value.length);
+            const input = tdElement.querySelector('.edit-input'); 
+            input.focus(); 
+            
+            // 2. AUTO-OPEN CALENDAR OR AUTO-SELECT TEXT
+            if (input.tagName === 'INPUT') {
+                if (input.type === 'text') {
+                    input.setSelectionRange(input.value.length, input.value.length);
+                } else if (input.type === 'date') {
+                    try { input.showPicker(); } catch(e) {} 
+                }
+            }
+
+            // 3. ENTER KEY TO SAVE FUNCTIONALITY
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    tdElement.querySelector('.save-btn').click();
+                }
+            });
         };
 
         window.cancelEdit = function (btn, origVal, rowId, fieldKey, dbType, studentClass) { restoreCell(btn.closest('td'), origVal, rowId, fieldKey, dbType, studentClass); };
 
         window.saveEdit = async function (btn, rowId, fieldKey, dbType, studentClass) {
-            const tdElement = btn.closest('td'); const input = tdElement.querySelector('input');
+            const tdElement = btn.closest('td'); const input = tdElement.querySelector('.edit-input');
             let newValue = input.value.trim();
             if (['studentId', 'studentName', 'section', 'fatherName'].includes(fieldKey)) newValue = newValue.toUpperCase();
+
+            // Prevent saving empty dates
+            if (fieldKey === 'dob' && !newValue) {
+                showToast('Date of Birth cannot be empty!', 'error');
+                return;
+            }
 
             input.disabled = true; btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 spin"></i>`; lucide.createIcons({ root: tdElement });
 
             const targetUrl = dbType === 'pending' ? PENDING_SCRIPT_URL : FINAL_SCRIPT_URL;
-            // FIX: Added the security token to the payload
             const payload = { action: 'update_cell', token: ADMIN_SECRET, field: fieldKey, value: newValue };
             if (dbType === 'pending') payload.appId = String(rowId).trim();
             if (dbType === 'final') { payload.studentId = String(rowId).trim(); payload.studentClass = studentClass; }
@@ -1326,29 +1422,51 @@
             try {
                 const response = await fetch(targetUrl, { method: 'POST', body: JSON.stringify(payload) });
                 const result = await response.json();
+                
                 if (result.status === 'success') {
                     showToast(`Updated successfully`, 'success');
-                    restoreCell(tdElement, newValue, rowId, fieldKey, dbType, studentClass);
-
-                    if (dbType === 'pending') {
-                        const memoryRow = window.currentApplications.find(r => r.applicationId === rowId);
-                        if (memoryRow) memoryRow[fieldKey] = newValue;
-                    } else {
-                        const memFinal = window.finalStudentsData.find(r => r.studentId === rowId);
-                        if (memFinal) memFinal[fieldKey] = newValue;
+                    
+                    let displayValue = newValue;
+                    if (fieldKey === 'dob' && newValue.includes('-')) {
+                        const p = newValue.split('-');
+                        displayValue = `${p[2]}/${p[1]}/${p[0]}`;
                     }
 
-                    // Re-sort and re-render the local data instantly instead of hitting the server again
-                    if (['studentClass', 'section', 'rollNo', 'studentId'].includes(fieldKey)) {
-                        if (dbType === 'pending') {
-                            filterPendingTable();
-                        } else {
-                            filterStudentsTable();
+                    // 4. INSTANT LOCAL MEMORY UPDATE & ID GENERATION
+                    let memoryRow = (dbType === 'pending') ? window.currentApplications.find(r => r.applicationId === rowId) : window.finalStudentsData.find(r => r.studentId === rowId);
+
+                    if (memoryRow) {
+                        memoryRow[fieldKey] = displayValue; // Update the edited field
+
+                        // If Class, Section, or Roll No was edited, Auto-Generate new Student ID instantly
+                        if (['studentClass', 'section', 'rollNo'].includes(fieldKey)) {
+                            const cCls = String(memoryRow.studentClass || '').padStart(2, '0');
+                            const cSec = String(memoryRow.section || '').toUpperCase();
+                            const cRol = String(memoryRow.rollNo || '').padStart(2, '0');
+                            const sCode = cSec === 'MAHA' ? 'M' : cSec === 'RISHI' ? 'R' : 'N';
+                            const yr = new Date().getFullYear().toString().slice(-2);
+                            const newId = `MVMN${cCls}${cRol}${sCode}${yr}`;
+
+                            if (memoryRow.studentId !== newId) {
+                                memoryRow.studentId = newId;
+                                // Fire a secondary toast a brief moment later to show the new ID
+                                setTimeout(() => showToast(`ID Auto-Updated: ${newId}`, 'info'), 600);
+                            }
                         }
                     }
+
+                    // Restore the cell to non-edit mode
+                    restoreCell(tdElement, displayValue, rowId, fieldKey, dbType, studentClass);
+
+                    // 5. INSTANT RE-RENDER
+                    // This forces the table to redraw using the new Local Memory (which now includes the new Student ID)
+                    if (['studentClass', 'section', 'rollNo', 'studentId', 'dob'].includes(fieldKey)) {
+                        if (dbType === 'pending') { filterPendingTable(); } 
+                        else { filterStudentsTable(); }
+                    }
+                    
                 } else throw new Error(result.message || "Unknown server error");
             } catch (err) {
-                // Show the exact backend failure message for easy debugging
                 showToast(`Error: ${err.message}`, 'error');
                 restoreCell(tdElement, tdElement.getAttribute('data-value'), rowId, fieldKey, dbType, studentClass);
             }
@@ -1390,12 +1508,31 @@
 
         function filterPendingTable() {
             const query = document.getElementById('searchPending').value.toLowerCase();
+            
+            // Get Advanced Filter Values
+            const fClass = document.getElementById('filterPendingClass') ? document.getElementById('filterPendingClass').value : 'All';
+            const fSec = document.getElementById('filterPendingSection') ? document.getElementById('filterPendingSection').value : 'All';
+            const fRoll = document.getElementById('filterPendingRoll') ? document.getElementById('filterPendingRoll').value.trim() : '';
+
             const filteredData = window.currentApplications.filter(app => {
-                const currentStatus = app.status || 'Pending'; // Fallback
+                const currentStatus = app.status || 'Pending'; 
+                
+                // 1. Matches the Top Tabs (All, Pending, Approved, Rejected)
                 const matchesStatus = currentAppFilter === 'All' || currentStatus === currentAppFilter;
+                
+                // 2. Matches the Search Bar
                 const matchesSearch = String(app.studentName).toLowerCase().includes(query) || String(app.applicationId).toLowerCase().includes(query);
-                return matchesStatus && matchesSearch;
+                
+                // 3. Matches the Advanced Filters
+                const matchesClass = fClass === 'All' || String(app.studentClass) === fClass;
+                const matchesSec = fSec === 'All' || String(app.section).toUpperCase() === fSec;
+                
+                // Roll number padding ensures "5" matches "05"
+                const matchesRoll = fRoll === '' || String(app.rollNo).padStart(2, '0') === String(fRoll).padStart(2, '0');
+
+                return matchesStatus && matchesSearch && matchesClass && matchesSec && matchesRoll;
             });
+            
             renderTable(filteredData);
         }
 
@@ -1453,8 +1590,16 @@
                 } else if (row.status === 'Approved') { actionHtml = `<div class="flex items-center justify-center gap-2"><span class="px-2.5 py-1 text-xs font-bold rounded-md bg-emerald-100 text-emerald-700 border border-emerald-200">Approved</span><button onclick="openDeletePendingModal('${row.applicationId}')" class="p-1 text-slate-400 hover:text-red-600 transition-colors" title="Delete Record"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div>`; }
                 else { actionHtml = `<div class="flex items-center justify-center gap-2"><span class="px-2.5 py-1 text-xs font-bold rounded-md bg-red-100 text-red-700 border border-red-200">Rejected</span><button onclick="openDeletePendingModal('${row.applicationId}')" class="p-1 text-slate-400 hover:text-red-600 transition-colors" title="Delete Record"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div>`; }
 
-                const tr = document.createElement('tr'); tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/20 transition-colors";
+                const tr = document.createElement('tr'); 
+                tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/20 transition-colors";
+                
+                // NEW: Inject the applicationId into the row so the bulk script can find it
+                tr.setAttribute('data-appid', row.applicationId);
+
                 tr.innerHTML = `
+                    <td class="px-4 py-3 text-center sticky left-0 z-10 bg-white dark:bg-slate-900 shadow-[4px_0_10px_rgba(0,0,0,0.04)] border-r border-slate-100 dark:border-slate-800">
+                        <input type="checkbox" onchange="togglePendingBulkButtons()" class="pending-checkbox rounded border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500">
+                    </td>
                     <td class="px-4 py-3 whitespace-nowrap text-slate-500 dark:text-slate-400">${cleanTs}</td>
                     <td class="px-4 py-3 whitespace-nowrap font-medium text-slate-600 dark:text-slate-300 border-r border-slate-200 dark:border-slate-700">${row.applicationId}</td>
                     ${editableCell(row.studentId, 'studentId', row.applicationId)}
@@ -1466,11 +1611,112 @@
                     ${editableCell(row.fatherName, 'fatherName', row.applicationId)}
                     ${editableCell(row.phone, 'phone', row.applicationId)}
                     ${editableCell(row.email, 'email', row.applicationId)}
-                    <td class="px-4 py-3 whitespace-nowrap text-center sticky right-0 z-10 bg-white dark:bg-slate-900 shadow-[-4px_0_10px_rgba(0,0,0,0.04)] border-l border-slate-200 dark:border-slate-800">${actionHtml}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-center sticky right-0 z-40 bg-white dark:bg-slate-900 shadow-[-4px_0_10px_rgba(0,0,0,0.04)] border-l border-slate-200 dark:border-slate-800">${actionHtml}</td>
                 `;
                 tbody.appendChild(tr);
             });
             lucide.createIcons();
+        }
+
+        // ==========================================
+        // APPLICATIONS BULK ACTIONS (Sequential Processing)
+        // ==========================================
+        function toggleSelectAllPending(source) {
+            document.querySelectorAll('.pending-checkbox').forEach(cb => cb.checked = source.checked);
+            togglePendingBulkButtons();
+        }
+
+        function togglePendingBulkButtons() {
+            const anyChecked = document.querySelectorAll('.pending-checkbox:checked').length > 0;
+            document.querySelectorAll('.pending-bulk-btn').forEach(btn => anyChecked ? btn.classList.remove('hidden') : btn.classList.add('hidden'));
+        }
+
+        function bulkPendingAction(actionType) {
+            const checkedBoxes = document.querySelectorAll('.pending-checkbox:checked');
+            if (checkedBoxes.length === 0) return;
+
+            const actionText = actionType === 'approve' ? 'Approve' : 'Reject';
+            
+            // Setup Modal UI
+            document.getElementById('confirmIconBox').className = actionType === 'approve' 
+                ? "w-12 h-12 rounded-full flex items-center justify-center bg-emerald-100 text-emerald-600"
+                : "w-12 h-12 rounded-full flex items-center justify-center bg-orange-100 text-orange-600";
+            document.getElementById('confirmIcon').setAttribute('data-lucide', actionType === 'approve' ? 'check-circle' : 'alert-octagon');
+            document.getElementById('confirmTitle').innerText = `Bulk ${actionText} Applications`;
+            document.getElementById('confirmAppId').innerText = `${checkedBoxes.length} Applications Selected`;
+            document.getElementById('confirmMessage').innerText = `Are you sure you want to ${actionText.toLowerCase()} these ${checkedBoxes.length} applications? Emails will be sent sequentially to prevent server overload. Please do not close the tab until processing is complete.`;
+
+            const btn = document.getElementById('confirmExecuteBtn');
+            btn.className = actionType === 'approve' 
+                ? "px-5 py-2.5 rounded-xl font-medium text-white shadow-sm flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 transition-colors"
+                : "px-5 py-2.5 rounded-xl font-medium text-white shadow-sm flex items-center gap-2 bg-orange-600 hover:bg-orange-700 transition-colors";
+            btn.innerHTML = `Start Bulk ${actionText}`;
+
+            btn.onclick = async function () {
+                btn.disabled = true;
+                
+                // SEQUENTIAL LOOP to protect Google Mail Quotas and API Rate Limits
+                for (let i = 0; i < checkedBoxes.length; i++) {
+                    const cb = checkedBoxes[i];
+                    const tr = cb.closest('tr');
+                    const appId = tr.getAttribute('data-appid');
+                    const data = window.currentApplications.find(r => r.applicationId === appId);
+                    
+                    if (!data) continue;
+
+                    // Update UI Progress Bar
+                    btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 spin"></i> Processing ${i + 1} of ${checkedBoxes.length}...`;
+                    lucide.createIcons({ root: btn });
+
+                    try {
+                        if (actionType === 'approve') {
+                            data.action = 'approve_student';
+                            data.token = ADMIN_SECRET;
+                            
+                            // 1. Send to Final DB (Emails student)
+                            const fRes = await fetch(FINAL_SCRIPT_URL, { method: 'POST', body: JSON.stringify(data) });
+                            const fResult = await fRes.json();
+                            if (fResult.status !== 'success') throw new Error(fResult.message);
+                            
+                            // 2. Mark as Approved in Pending DB
+                            await fetch(PENDING_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'delete_pending', token: ADMIN_SECRET, appId: appId }) });
+                            
+                            // 3. Optimistically update local memory
+                            data.status = 'Approved';
+                            
+                        } else { // Reject logic
+                            const rRes = await fetch(PENDING_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'reject_application', token: ADMIN_SECRET, appId: appId }) });
+                            const rResult = await rRes.json();
+                            if (rResult.status !== 'success') throw new Error(rResult.message);
+                            
+                            // Optimistically update local memory
+                            data.status = 'Rejected';
+                        }
+                    } catch (e) {
+                        console.error(`Error processing ${appId}:`, e);
+                    }
+                }
+
+                // Clean up when the entire loop finishes
+                showToast(`Bulk ${actionText} Complete!`, 'success');
+                btn.disabled = false;
+                closeModal('confirmModal');
+                
+                // Uncheck master box
+                const masterCheck = document.getElementById('selectAllPending');
+                if (masterCheck) {
+                    masterCheck.checked = false;
+                    toggleSelectAllPending(masterCheck);
+                }
+                
+                // Instantly re-render table with new statuses
+                filterPendingTable();
+                
+                // Fetch Final Students silently in background so the other tab is up to date!
+                if (actionType === 'approve') fetchFinalStudents(); 
+            };
+
+            openModal('confirmModal');
         }
 
         // ==========================================
@@ -1500,6 +1746,9 @@
         let memAppToken = ''; let memAdmitToken = '';
         let memAppClasses = ''; let memAppClose = ''; let memAdmitClose = '';
 
+        // NEW: Add these two variables for the Scanner Verifier
+        let memVerifierStatus = 'OFF'; let memVerifierPin = '';
+
         async function fetchSystemConfig(btn = null) {
             // Stop click from bubbling up to the card
             if (btn && event) event.stopPropagation();
@@ -1526,9 +1775,15 @@
                     memAppClasses = conf.App_Classes || '';
                     memAppClose = conf.App_Auto_Close || '';
                     memAdmitClose = conf.Admit_Auto_Close || '';
+                    
+                    // NEW: Read the Verifier Data from the DB
+                    memVerifierStatus = conf.Verifier_Status || 'OFF';
+                    memVerifierPin = conf.Verifier_Pin || '';
 
                     updateToggleUI('app', conf.Portal_Status || 'OFF', memAppToken, memAppClose);
                     updateToggleUI('admit', conf.Admit_Portal_Status || 'OFF', memAdmitToken, memAdmitClose);
+                    // NEW: Update the Verifier Card UI
+                    updateVerifierUI(memVerifierStatus, memVerifierPin);
 
                     // 2. Update Dashboard Badges directly
                     const appOn = conf.Portal_Status === 'ON';
@@ -1575,7 +1830,7 @@
                 badge.className = "px-2.5 py-1 text-xs font-bold rounded-md bg-emerald-100 text-emerald-700 border border-emerald-200";
                 container.classList.remove('hidden');
 
-                const base = type === 'app' ? 'https://kushilab07.github.io/MVMN-Admit-Card-Application-Form/' : 'https://kushilab07.github.io/MVMN-Admit-Card-Application-Form/admitDownloadForStudent.html';
+                const base = type === 'app' ? 'https://mvmn-online-application-form.netlify.app/' : 'https://mvmn-admit-card-download-portal.netlify.app/';
                 input.value = `${base}?token=${token}`;
 
                 if (autoCloseMs) {
@@ -1607,6 +1862,65 @@
                     clearTimeout(window[`_autoCloseTimer_${type}`]);
                     window[`_autoCloseTimer_${type}`] = null;
                 }
+            }
+        }
+
+        // --- NEW: Verifier UI Updater ---
+        function updateVerifierUI(status, pin) {
+            const toggle = document.getElementById('verifierToggle');
+            const badge = document.getElementById('verifierStatusBadge');
+            const container = document.getElementById('verifierPinContainer');
+            const input = document.getElementById('sysVerifierPin');
+
+            if (status === 'ON') {
+                toggle.checked = true;
+                badge.innerText = "ONLINE";
+                badge.className = "px-2.5 py-1 text-xs font-bold rounded-md bg-emerald-100 text-emerald-700 border border-emerald-200";
+                container.classList.remove('hidden');
+                input.value = pin;
+            } else {
+                toggle.checked = false;
+                badge.innerText = "OFFLINE";
+                badge.className = "px-2.5 py-1 text-xs font-bold rounded-md bg-red-100 text-red-700 border border-red-200";
+                container.classList.add('hidden');
+                input.value = '';
+            }
+        }
+
+        // --- NEW: Verifier Toggle Logic (Generates PIN) ---
+        async function toggleVerifier() {
+            const toggle = document.getElementById('verifierToggle');
+            const isTurningOn = toggle.checked;
+
+            // Generate a random 6-digit PIN if turning ON, else erase it
+            let newStatus = isTurningOn ? 'ON' : 'OFF';
+            let newPin = isTurningOn ? Math.floor(100000 + Math.random() * 900000).toString() : '';
+
+            // Optimistically update the UI instantly
+            updateVerifierUI(newStatus, newPin);
+            showToast(isTurningOn ? 'Generating PIN...' : 'Revoking PIN...', 'info');
+
+            const payload = {
+                action: 'save_system_config',
+                token: ADMIN_SECRET,
+                configs: [
+                    { key: 'Verifier_Status', value: newStatus },
+                    { key: 'Verifier_Pin', value: newPin }
+                ]
+            };
+
+            try {
+                const res = await fetch(FINAL_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+                const result = await res.json();
+                if (result.status === 'success') {
+                    memVerifierStatus = newStatus;
+                    memVerifierPin = newPin;
+                    showToast(isTurningOn ? 'Scanner App is Online!' : 'Scanner App is Offline!', 'success');
+                } else throw new Error();
+            } catch (err) {
+                showToast('Update Failed. Check network.', 'error');
+                // Revert UI if the network request fails
+                updateVerifierUI(memVerifierStatus, memVerifierPin);
             }
         }
 
@@ -1707,7 +2021,10 @@
                     { key: 'App_Auto_Close', value: memAppClose },
                     { key: 'Admit_Portal_Status', value: document.getElementById('admitPortalToggle').checked ? 'ON' : 'OFF' },
                     { key: 'Admit_Portal_Token', value: memAdmitToken },
-                    { key: 'Admit_Auto_Close', value: memAdmitClose }
+                    { key: 'Admit_Auto_Close', value: memAdmitClose },
+                    // NEW: Ensure we save the current verifier state so it isn't erased
+                    { key: 'Verifier_Status', value: memVerifierStatus }, 
+                    { key: 'Verifier_Pin', value: memVerifierPin }
                 ]
             };
             try {
@@ -1743,7 +2060,10 @@
                     { key: 'App_Auto_Close', value: memAppClose },
                     { key: 'Admit_Portal_Status', value: document.getElementById('admitPortalToggle').checked ? 'ON' : 'OFF' },
                     { key: 'Admit_Portal_Token', value: memAdmitToken },
-                    { key: 'Admit_Auto_Close', value: memAdmitClose }
+                    { key: 'Admit_Auto_Close', value: memAdmitClose },
+                    // NEW: Ensure we save the current verifier state so it isn't erased
+                    { key: 'Verifier_Status', value: memVerifierStatus }, 
+                    { key: 'Verifier_Pin', value: memVerifierPin }
                 ]
             };
             try {
@@ -1798,29 +2118,81 @@
             document.querySelectorAll('.bulk-btn').forEach(btn => anyChecked ? btn.classList.remove('hidden') : btn.classList.add('hidden'));
         }
 
+        let pendingBulkStatus = null;
+
         function bulkAction(status) {
             const checkedBoxes = document.querySelectorAll('.student-checkbox:checked');
             if (checkedBoxes.length === 0) return;
-            if (!confirm(`Are you sure you want to change Admit Status to "${status}" for ${checkedBoxes.length} students?`)) return;
 
-            checkedBoxes.forEach(cb => {
-                const tr = cb.closest('tr');
-                const sId = tr.getAttribute('data-sid');
-                const sClass = tr.getAttribute('data-sclass');
+            pendingBulkStatus = status;
 
-                // Force update UI locally instantly
-                tr.querySelector('[data-field="admitStatus"] .cell-text').innerText = status;
+            // 1. Setup the beautiful Custom Confirm Modal instead of the ugly browser alert
+            document.getElementById('confirmIconBox').className = "w-12 h-12 rounded-full flex items-center justify-center bg-amber-100 text-amber-600";
+            document.getElementById('confirmIcon').setAttribute('data-lucide', 'alert-circle');
+            document.getElementById('confirmTitle').innerText = "Confirm Status Update";
+            document.getElementById('confirmAppId').innerText = `${checkedBoxes.length} Students Selected`;
+            document.getElementById('confirmMessage').innerText = `Are you sure you want to change the Admit Status to "${status}" for all selected students?`;
 
-                // Send background fetch
-                fetch(FINAL_SCRIPT_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    // FIX: Added the security token
-                    body: JSON.stringify({ action: 'update_cell', token: ADMIN_SECRET, studentId: sId, studentClass: sClass, field: 'admitStatus', value: status })
+            const btn = document.getElementById('confirmExecuteBtn');
+            btn.className = "px-5 py-2.5 rounded-xl font-medium text-white shadow-sm flex items-center gap-2 bg-amber-600 hover:bg-amber-700 transition-colors";
+            btn.innerHTML = `Update Status`;
+
+            // 2. Define what happens when they click "Update Status"
+            btn.onclick = async function () {
+                btn.disabled = true;
+                btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 spin"></i> Updating...`;
+                lucide.createIcons({ root: btn });
+
+                const fetchPromises = [];
+
+                checkedBoxes.forEach(cb => {
+                    const tr = cb.closest('tr');
+                    const sId = tr.getAttribute('data-sid');
+                    const sClass = tr.getAttribute('data-sclass');
+
+                    // A. Update Local Memory Instantly (This FIXES the crash!)
+                    const memRow = window.finalStudentsData.find(r => r.studentId === sId);
+                    if (memRow) memRow.admitStatus = status;
+
+                    // B. Queue up the background fetch to Google Sheets
+                    const payload = { 
+                        action: 'update_cell', 
+                        token: ADMIN_SECRET, 
+                        studentId: sId, 
+                        studentClass: sClass, 
+                        field: 'admitStatus', 
+                        value: status 
+                    };
+                    
+                    fetchPromises.push(
+                        fetch(FINAL_SCRIPT_URL, {
+                            method: 'POST',
+                            body: JSON.stringify(payload)
+                        })
+                    );
                 });
-            });
-            showToast(`Bulk updated to ${status}`, 'success');
-            document.getElementById('selectAll').checked = false; toggleSelectAll(document.getElementById('selectAll'));
+
+                try {
+                    // Wait for all background saves to finish
+                    await Promise.all(fetchPromises);
+                    showToast(`Status updated to ${status} successfully!`, 'success');
+                } catch (e) {
+                    showToast(`Warning: Some updates may have failed on the server.`, 'error');
+                } finally {
+                    // Reset Modal and UI
+                    btn.disabled = false;
+                    closeModal('confirmModal');
+                    
+                    // Uncheck the "Select All" box
+                    document.getElementById('selectAll').checked = false; 
+                    
+                    // Re-render the table safely to show the new colored badges
+                    filterStudentsTable();
+                }
+            };
+
+            // Trigger the modal to open
+            openModal('confirmModal');
         }
 
         function exportData() {
@@ -1975,10 +2347,44 @@
             openModal('admitModal');
         }
         async function submitAdmitStatus(status) {
-            closeModal('admitModal'); showToast('Updating status...', 'info');
-            // FIX: Token added
-            await fetch(FINAL_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'update_cell', token: ADMIN_SECRET, studentId: activeStudentId, studentClass: activeStudentClass, field: 'admitStatus', value: status }) });
-            fetchFinalStudents(); showToast('Status updated', 'success');
+            closeModal('admitModal');
+            
+            // 1. Optimistic UI: Update local memory instantly
+            const memRow = window.finalStudentsData.find(r => r.studentId === activeStudentId);
+            if (memRow) {
+                memRow.admitStatus = status;
+            }
+
+            // 2. Instantly re-render the table to show the new colored badge (NO server reload!)
+            filterStudentsTable();
+            
+            showToast(`Status changed to ${status}. Saving to sheet...`, 'info');
+
+            // 3. Send the actual update to Google Sheets in the background
+            const payload = { 
+                action: 'update_cell', 
+                token: ADMIN_SECRET, 
+                studentId: activeStudentId, 
+                studentClass: activeStudentClass, 
+                field: 'admitStatus', 
+                value: status 
+            };
+
+            try {
+                const res = await fetch(FINAL_SCRIPT_URL, { 
+                    method: 'POST', 
+                    body: JSON.stringify(payload) 
+                });
+                const result = await res.json();
+                
+                if (result.status === 'success') {
+                    showToast('Successfully saved to database!', 'success');
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (err) {
+                showToast('Warning: Failed to save to Google Sheets.', 'error');
+            }
         }
 
         // ADD STUDENT MODAL
@@ -2092,7 +2498,7 @@
             }
 
             localStorage.setItem('directPrintData', JSON.stringify(printPayload));
-            window.open('admitDownloadByAdmin.html?mode=direct', '_blank');
+            window.open('/Admit_Card_Download?mode=direct', '_blank');
         }
 
         let activePrintStudentId = null;
