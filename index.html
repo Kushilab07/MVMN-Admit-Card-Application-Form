@@ -548,8 +548,8 @@
     <div class="page-container">
         <div id="statusPage" style="display:none;">
             <div class="status-card">
-                <h2 style="color: var(--accent-red); margin-top: 0;">Portal Closed</h2>
-                <p>The secure link is invalid, expired, or the online application window is currently closed.</p>
+                <h2 id="statusTitle" style="color: var(--accent-red); margin-top: 0;">Portal Closed</h2>
+                <p id="statusMessage">The secure link is invalid, expired, or the online application window is currently closed.</p>
             </div>
         </div>
 
@@ -694,14 +694,14 @@
     <script>
         // 1. Initialize Firebase using the Compat SDK
         const firebaseConfig = {
-            apiKey: "AIzaSyBBkITpfUjxFUFvgQhjnXedrIX4GhfCSCo",
-            authDomain: "mvmn-exam-management-system.firebaseapp.com",
-            databaseURL: "https://mvmn-exam-management-system-default-rtdb.asia-southeast1.firebasedatabase.app", // 🔴 ADD THIS LINE
-            projectId: "mvmn-exam-management-system",
-            storageBucket: "mvmn-exam-management-system.firebasestorage.app",
-            messagingSenderId: "652018919071",
-            appId: "1:652018919071:web:65cd8e632cda4c3f9624aa",
-            measurementId: "G-CX06N7M3HX"
+            apiKey: "AIzaSyBBenVtQ2T7Izy27mCf4anRZrUqibWIpyE",
+            authDomain: "exam-management-system-mvmn.firebaseapp.com",
+            databaseURL: "https://exam-management-system-mvmn-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "exam-management-system-mvmn",
+            storageBucket: "exam-management-system-mvmn.firebasestorage.app",
+            messagingSenderId: "47466507295",
+            appId: "1:47466507295:web:c85b57e6a782686c5df92a",
+            measurementId: "G-Y5CGYCYEBQ"
         };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
@@ -718,9 +718,9 @@
     </script>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzz4H4NQ55QsCEquCWlvpJ1YYbK5eoUg-DjojaxyliGIFSOYWZegFFnUF0jISfsv5X_/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxKB7ByhESaS5agxk8bH2ktwirJplSlzRt8ae6c8UV-DRc_3xXVX2AO50nTbAicdDLesg/exec";
         // ADD FINAL SCRIPT URL SO WE CAN READ THE MASTER CONFIG
-        const FINAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxZzoZwsNw97dc6FG_mUKUjPsPjn-W483J3LFtv8kbxx30louY1DN7jOefI53mkvUq9rw/exec";
+        const FINAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyz0IgkDwkmdPbe9aztmO0yAcfP2iJpYcv76UhAPfBqW6rLFjk3b2yLG5fgmARVXQyJng/exec";
 
         const urlParams = new URLSearchParams(window.location.search);
         const pageToken = urlParams.get('token');
@@ -754,6 +754,10 @@
                     document.getElementById('initLoader').style.display = 'none';
                     document.getElementById('formContainer').style.display = 'block';
                 } else {
+                    if (result.isQuotaFull) {
+                        document.getElementById('statusTitle').innerText = "Daily Limit Reached";
+                        document.getElementById('statusMessage').innerText = "We have reached our maximum daily allowance for new applications. Please try again tomorrow.";
+                    }
                     lockPortal();
                 }
             } catch (e) { lockPortal(); }
