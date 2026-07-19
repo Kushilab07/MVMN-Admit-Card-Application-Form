@@ -712,12 +712,21 @@
 
         // 2. Expose the global push function
         window.notifyAdmin = function (appId, studentName) {
+            const now = Date.now();
             db.ref('notifications').push({
                 appId: appId,
                 studentName: studentName,
-                timestamp: Date.now(),
+                timestamp: now,
                 read: false
             }).catch(error => console.error("Firebase push failed:", error));
+            
+            // NEW: Push a lightweight telemetry dot to Firebase Analytics
+            db.ref('analytics/submissions').push({
+                appId: appId,
+                name: studentName,
+                status: 'Submitted',
+                timestamp: now
+            });
         };
     </script>
 
